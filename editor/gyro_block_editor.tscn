@@ -1,0 +1,198 @@
+[gd_scene format=3 uid="uid://dgwyoh1l8bygr"]
+
+[ext_resource type="Script" uid="uid://br4nshcx4nbr" path="res://editor/gyro_block_editor.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="2"]
+[ext_resource type="Texture2D" uid="uid://cmg1b0qg1nod1" path="res://ui/icons/undo.svg" id="3"]
+[ext_resource type="Texture2D" uid="uid://i3em2bx768cl" path="res://ui/icons/redo.svg" id="4"]
+[ext_resource type="Texture2D" uid="uid://0uhodap1jf5f" path="res://ui/icons/play.svg" id="6"]
+[ext_resource type="Texture2D" uid="uid://cdunf70p8afqt" path="res://ui/icons/trash.svg" id="6_4hjc3"]
+[ext_resource type="Texture2D" uid="uid://bggtq05j7g2yk" path="res://ui/icons/rename.svg" id="6_tjnnb"]
+[ext_resource type="Texture2D" uid="uid://b3reygrfh870w" path="res://ui/icons/close.svg" id="7_pnltc"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_aesr4"]
+load_path = "res://.godot/imported/plus.svg-48996fd09fe48008fc647336a95694f4.ctex"
+
+[node name="BlockEditor" type="Control" unique_id=602873415]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1930184986]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.13, 0.14, 0.16, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=632373433]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=1892926124]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=2087481057]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("2")
+flat = true
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=898459810]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UndoButton" type="Button" parent="Root/Header" unique_id=13949530]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("3")
+flat = true
+
+[node name="RedoButton" type="Button" parent="Root/Header" unique_id=14040897]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("4")
+flat = true
+
+[node name="Scroll" type="ScrollContainer" parent="Root" unique_id=481037437]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="EventsVBox" type="VBoxContainer" parent="Root/Scroll" unique_id=1327655433]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Bottom" type="HBoxContainer" parent="Root" unique_id=1016265184]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlusButton" type="Button" parent="Root/Bottom" unique_id=145104778]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 35
+icon = SubResource("CompressedTexture2D_aesr4")
+icon_alignment = 1
+expand_icon = true
+
+[node name="PlayButton" type="Button" parent="Root/Bottom" unique_id=920770437]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("6")
+icon_alignment = 1
+expand_icon = true
+
+[node name="VarsOverlay" type="ColorRect" parent="." unique_id=2085538045]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="VarsPanel" type="PanelContainer" parent="." unique_id=365842139]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+custom_maximum_size = Vector2(400, 400)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -43.0
+offset_right = 180.0
+offset_bottom = 43.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VarsVBox" type="VBoxContainer" parent="VarsPanel" unique_id=1331749485]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="VarsTop" type="HBoxContainer" parent="VarsPanel/VarsVBox" unique_id=16732810]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="VarsTitle" type="Label" parent="VarsPanel/VarsVBox/VarsTop" unique_id=888125856]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VarsRenameButton" type="Button" parent="VarsPanel/VarsVBox/VarsTop" unique_id=2110638128]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 25
+disabled = true
+icon = ExtResource("6_tjnnb")
+flat = true
+
+[node name="VarsDeleteButton" type="Button" parent="VarsPanel/VarsVBox/VarsTop" unique_id=2110638129]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 25
+disabled = true
+icon = ExtResource("6_4hjc3")
+flat = true
+
+[node name="VarsCloseButton" type="Button" parent="VarsPanel/VarsVBox/VarsTop" unique_id=2110638127]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 25
+icon = ExtResource("7_pnltc")
+flat = true
+
+[node name="VarsList" type="ScrollContainer" parent="VarsPanel/VarsVBox" unique_id=1550849929]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="VarsListInner" type="VBoxContainer" parent="VarsPanel/VarsVBox/VarsList" unique_id=1011653514]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AddRow" type="HBoxContainer" parent="VarsPanel/VarsVBox" unique_id=654631344]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="VarNameEdit" type="LineEdit" parent="VarsPanel/VarsVBox/AddRow" unique_id=1186258287]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VarTypeOption" type="OptionButton" parent="VarsPanel/VarsVBox/AddRow" unique_id=324416306]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VarAddButton" type="Button" parent="VarsPanel/VarsVBox/AddRow" unique_id=1279077730]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+"

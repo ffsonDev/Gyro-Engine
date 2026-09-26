@@ -1,0 +1,6 @@
+[configuration]
+entry_point="GodotPlugin"
+name="GodotFilePicker"
+
+[dependencies]
+libs=app-debug.aar

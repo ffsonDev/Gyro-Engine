@@ -1,0 +1,217 @@
+[gd_scene format=3 uid="uid://cj0wke1c1d5ks"]
+
+[ext_resource type="Script" uid="uid://3t7kwpxqh8br" path="res://ui/screens/project_menu.gd" id="1"]
+[ext_resource type="PackedScene" path="res://ui/components/gyro_input_dialog.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://ui/components/gyro_dialog.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="4"]
+[ext_resource type="Texture2D" uid="uid://b5ecq7jdrdtj" path="res://ui/icons/gear.svg" id="5"]
+[ext_resource type="Texture2D" uid="uid://b4v3vdbw8quiv" path="res://ui/icons/plus.svg" id="6"]
+[ext_resource type="Texture2D" path="res://ui/icons/import.svg" id="7"]
+
+[node name="ProjectMenu" type="Control" unique_id=1216420295]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1665629412]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.13, 0.14, 0.16, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=2102673930]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=2013548012]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=1073473638]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("4")
+flat = true
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=1806751991]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GearButton" type="Button" parent="Root/Header" unique_id=850324679]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("5")
+flat = true
+icon_alignment = 2
+
+[node name="Scroll" type="ScrollContainer" parent="Root" unique_id=838376435]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ListVBox" type="VBoxContainer" parent="Root/Scroll" unique_id=124090930]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Bottom" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlusButton" type="Button" parent="Root/Bottom"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("6")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ImportButton" type="Button" parent="Root/Bottom"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("7")
+icon_alignment = 1
+expand_icon = true
+
+[node name="EmptyState" type="Control" parent="." unique_id=535165721]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="EmptyState" unique_id=524016056]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Box" type="VBoxContainer" parent="EmptyState/Center" unique_id=440528018]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="EmptyTitle" type="Label" parent="EmptyState/Center/Box" unique_id=1160489563]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="EmptyHint" type="Label" parent="EmptyState/Center/Box" unique_id=2012554774]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ProjectPanelOverlay" type="ColorRect" parent="." unique_id=1547612765]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="ProjectPanel" type="PanelContainer" parent="." unique_id=1812847664]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+custom_minimum_size = Vector2(320, 0)
+custom_maximum_size = Vector2(400, -1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -139.5
+offset_right = 240.0
+offset_bottom = 139.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="ProjectPanel" unique_id=1784593986]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PanelTitle" type="Label" parent="ProjectPanel/VBox"]
+unique_name_in_owner = true
+autowrap_mode = 3
+
+[node name="OpenButton" type="Button" parent="ProjectPanel/VBox" unique_id=2102592368]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="RenameButton" type="Button" parent="ProjectPanel/VBox" unique_id=412688582]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="DuplicateButton" type="Button" parent="ProjectPanel/VBox" unique_id=749896254]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="DeleteButton" type="Button" parent="ProjectPanel/VBox" unique_id=768649491]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="CreateDialog" parent="." unique_id=1512513870 instance=ExtResource("2")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RenameDialog" parent="." unique_id=771646701 instance=ExtResource("2")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConfirmDialog" parent="." unique_id=748246308 instance=ExtResource("3")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2

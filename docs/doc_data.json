@@ -1,0 +1,376 @@
+{
+  "version": 1,
+  "categories": [
+	{
+	  "id": "basics",
+	  "title_key": "doc_cat_basics",
+	  "sections": [
+		{
+		  "id": "intro",
+		  "title_key": "doc_intro",
+		  "tags": [
+			"введение",
+			"начало",
+            "что это"
+		  ],
+		  "content": "# Введение\nGyro Engine — визуальный движок для 2D-игр без кода. Вместо текста вы собираете логику из цветных блоков, как конструктор.\n> Аналогия: Представьте, что собираете Лего. Каждый блок — кирпичик логики. Соединяя их, вы создаёте поведение игры. Событие — «когда...», условие — «если...», действие — «делаем...».\n## Что умеет Gyro Engine\n* Создавать 2D-игры: платформеры, аркады, головоломки, клинкеры.\n* Работать с физикой, столкновениями, гравитацией.\n* Управлять звуками, спрайтами, анимациями.\n* Собирать APK прямо на телефоне.\n> Заметка: Работает на Godot 4 и экспортируется в Android APK. Все проекты хранятся локально на устройстве.\n## Для кого\nДля новичков, которые хотят создать первую игру без программирования. Для тех, кому важна скорость прототипирования. Для мобильных разработчиков.",
+		  "content_en": "# Introduction\nGyro Engine is a visual engine for 2D games without code. Instead of text, you assemble logic from colored blocks, like a constructor.\n> Analogy: Imagine building with Lego. Each block is a brick of logic. By connecting them, you create game behavior. An event is 'when...', a condition is 'if...', an action is 'do...'.\n## What Gyro Engine can do\n* Create 2D games: platformers, arcades, puzzles, clickers.\n* Work with physics, collisions, gravity.\n* Control sounds, sprites, animations.\n* Build APK right on your phone.\n> Note: Runs on Godot 4 and exports to Android APK. All projects are stored locally on the device.\n## For whom\nFor beginners who want to create their first game without programming. For those who value prototyping speed. For mobile developers."
+		},
+		{
+		  "id": "quickstart",
+		  "title_key": "doc_quickstart",
+		  "tags": [
+			"быстрый старт",
+			"начало",
+            "урок"
+		  ],
+		  "content": "# Быстрый старт\nЗа 5 минут вы создадите первую игру: квадрат, который прыгает по клику.\n## Шаг 1: Создайте проект\nОткройте «Менеджер проектов» → нажмите «+» → введите название → «Создать».\n## Шаг 2: Создайте скрипт\nВ хабе проекта откройте «Структура» → «+» → «Скрипт» → назовите «Основной».\n## Шаг 3: Добавьте событие\nОткройте скрипт → «+» → раздел «События» → «При старте».\n## Шаг 4: Добавьте действие\nВнутри события нажмите «+» → «Объекты» → «Создать объект». Появится оранжевый прямоугольник.\n[code]\nСобытие: При старте\n→ Действие: Создать объект\nимя: объект1\nтип: прямоугольник\nx: 200, y: 400\nширина: 80, высота: 80\nцвет: #ff8800\n[/code]\n## Шаг 5: Добавьте прыжок\nДобавьте событие «Касание экрана» → действие «Импульс» с Y = -700. Не забудьте сделать объект твёрдым: действие «Твёрдый объект» = да.\n> Совет: Нажмите ▶ внизу, чтобы запустить игру. Кнопка «■» в правом верхнем углу останавливает тест.\n[link=events]См. также: События[/link]",
+		  "content_en": "# Quick Start\nIn 5 minutes you'll create your first game: a square that jumps on tap.\n## Step 1: Create a project\nOpen 'Project Manager' → tap '+' → enter name → 'Create'.\n## Step 2: Create a script\nIn project hub open 'Structure' → '+' → 'Script' → name it 'Main'.\n## Step 3: Add an event\nOpen script → '+' → 'Events' section → 'On start'.\n## Step 4: Add an action\nInside the event tap '+' → 'Objects' → 'Create object'. An orange rectangle will appear.\n[code]\nEvent: ready\n→ Action: CreateObject\nname: obj1\ntype: rect\nx: 200, y: 400\nw: 80, h: 80\ncolor: #ff8800\n[/code]\n## Step 5: Add a jump\nAdd event 'Screen tap' → action 'Impulse' with Y = -700. Don't forget to make the object solid: action 'Solid object' = true.\n> Tip: Tap ▶ at the bottom to run the game. The '■' button in the top right corner stops the test.\n[link=events]See also: Events[/link]"
+		},
+		{
+		  "id": "interface",
+		  "title_key": "doc_interface",
+		  "tags": [
+			"интерфейс",
+            "экраны"
+		  ],
+		  "content": "# Интерфейс\nGyro Engine состоит из нескольких экранов. Каждый отвечает за свою задачу.\n## Домашний экран\nТочка входа. Три кнопки: Менеджер, Документация, Настройки.\n## Менеджер проектов\nСписок всех ваших проектов. Здесь можно создать, открыть, переименовать, дублировать, удалить проект.\n## Хаб проекта\nЦентр управления открытым проектом. Кнопки: Структура, Ресурсы, Настройки, Бэкапы, Экспорт, Играть.\n## Структура\nДерево папок и скриптов. Каждый скрипт — набор правил (событий). Двойной тап по скрипту открывает редактор блоков.\n## Ресурсы\nСпрайты, звуки, шрифты, видео. Организованы по категориям. Перетаскивайте файлы между папками.\n## Редактор блоков\nСердце Gyro Engine. Здесь вы собираете логику из событий, условий и действий. Перетаскивайте блоки, сворачивайте, копируйте.\n> Заметка: Все изменения сохраняются автоматически. Бэкапы создаются по расписанию (настраивается в Настройках приложения).",
+		  "content_en": "# Interface\nGyro Engine consists of several screens. Each handles its own task.\n## Home screen\nEntry point. Three buttons: Manager, Documentation, Settings.\n## Project manager\nList of all your projects. Here you can create, open, rename, duplicate, delete a project.\n## Project hub\nControl center of the opened project. Buttons: Structure, Resources, Settings, Backups, Export, Play.\n## Structure\nTree of folders and scripts. Each script is a set of rules (events). Double-tap a script to open the block editor.\n## Resources\nSprites, sounds, fonts, videos. Organized by category. Drag files between folders.\n## Block editor\nThe heart of Gyro Engine. Here you assemble logic from events, conditions, and actions. Drag blocks, collapse, copy.\n> Note: All changes are saved automatically. Backups are created on schedule (configurable in App Settings)."
+		},
+		{
+		  "id": "layout_mode",
+		  "title_key": "doc_layout_mode",
+		  "tags": [
+			"выравнивание",
+            "режим"
+		  ],
+		  "content": "# Режим выравнивания\nВизуальный редактор для точного позиционирования объектов на экране.\n## Как использовать\nЗапустите тест ▶ → нажмите иконку сетки вверху справа.\n* Перетаскивайте объекты пальцем.\n* Объекты прилипают к центру и краям экрана.\n* Нажмите на точку (●) вокруг объекта — применится якорь.\n> Внимание: В режиме выравнивания игра на паузе. Движение блоков «Двигать ноду» / «Плавно переместить» в событиях сбрасывает якоря.",
+		  "content_en": "# Layout Mode\nVisual editor for precise object positioning on screen.\n## How to use\nRun test ▶ → tap the grid icon top-right.\n* Drag objects with your finger.\n* Objects snap to screen center and edges.\n* Tap a dot (●) around an object — anchor applies.\n* Aspect button — switches frame (16:9, 4:3, 1:1).\n## Aspect frames\nShows how the game looks on screens with different aspect ratios. Objects outside the frame will be cropped.\n> Warning: Game is paused in layout mode. MoveNode/Tween blocks in events reset anchors."
+		}
+	  ]
+	},
+	{
+	  "id": "logic",
+	  "title_key": "doc_cat_logic",
+	  "sections": [
+		{
+		  "id": "events",
+		  "title_key": "doc_events",
+		  "tags": [
+			"события",
+            "триггер"
+		  ],
+		  "content": "# События\nСобытие — это триггер. Когда оно происходит, выполняются все действия внутри правила.\n> Аналогия: Событие — как дверной звонок. Когда кто-то нажимает (событие), вы открываете дверь (действия). Без звонка — дверь закрыта.\n## События жизненного цикла\n### При старте\nСрабатывает один раз при загрузке сцены.\n[code]\nСобытие: При старте\n→ Задать переменную: счёт = 0\n→ Создать объект: игрок\n[/code]\n### Каждый кадр\nСрабатывает ~60 раз в секунду. Используйте для плавного движения.\n> Осторожно: тяжёлая логика здесь замедляет игру.\n## События ввода\n### Касание экрана\nСрабатывает при касании экрана. В данных события приходят координаты.\n### Ввод (клавиатура/мышь/тач)\nДетальное событие ввода. В данных: тип, код клавиши, кнопка, x, y, текст.\n### Касание объекта / Отпускание объекта\nСрабатывает при касании конкретного объекта (не экрана!). Нужен объект с физическим телом («Твёрдый объект» или «Режим датчика»).\n### Перетаскивание пальцем\nСрабатывает при движении пальца. В данных: x, y, смещение по x, смещение по y.\n## Физические события\n### Столкновение / Конец столкновения\nСтолкновение — начало столкновения. Конец столкновения — конец.\nВ данных события: а, б — имена объектов.\n[code]\nСобытие: Столкновение\nУсловие: Данные события равны а = игрок\n→ Прибавить к переменной: счёт прибавить: 10\n→ Проиграть звук: монета\n[/code]\n## События времени\n### Таймер\nСрабатывает, когда истекает таймер. В данных: имя таймера. Таймеры создаются действием «Запустить таймер».\n## Системные события\n### Кнопка «Назад» / Приложение свёрнуто / Приложение возвращено\nКнопка «Назад» — нажатие кнопки «Назад» на телефоне. Приложение свёрнуто — приложение свернули. Приложение возвращено — возврат в приложение.\n## Пользовательские события\n### Своё событие / Создать функцию\nСвоё событие — произвольное событие, вызывается через «Вызвать событие». Создать функцию — тоже вызывается через «Вызвать событие».\n[code]\nСкрипт А:\nВызвать событие: конец_игры\nСкрипт Б:\nСобытие: Своё событие (имя: конец_игры)\n→ Вывести текст: Игра окончена!\n[/code]\n## События данных\n### Переменная изменилась / Виджет изменился / HTTP-ответ пришёл\nПеременная изменилась — переменная изменилась. Виджет изменился — виджет изменил значение. HTTP-ответ пришёл — пришёл ответ от сервера (в данных: статус, тело ответа).\n[link=actions]См. также: Действия[/link]",
+		  "content_en": "# Events\nAn event is a trigger. When it happens, all actions inside the rule are executed.\n> Analogy: An event is like a doorbell. When someone rings (event), you open the door (actions). Without the ring — the door stays closed.\n## Lifecycle events\n### ready — On start\nFires once when the scene is loaded.\n[code]\nEvent: ready\n→ SetVariable: score = 0\n→ CreateObject: player\n[/code]\n### update — Every frame\nFires ~60 times per second. Use for smooth movement.\n> Caution: heavy logic here slows down the game.\n## Input events\n### tap — Screen tap\nFires on screen touch. Coordinates come in payload.\n### input — Input (keyboard/mouse/touch)\nDetailed input event. In payload: type, keycode, button, x, y, text.\n### obj_touch_begin / obj_touch_end\nFires when touching a specific object (not the screen!). Requires an object with a physics body (SetSolid or SetSensor).\n### drag\nFires when finger/mouse moves. In payload: x, y, dx, dy.\n## Physics events\n### collide / collide_end\ncollide — start of collision. collide_end — end.\nIn payload: a, b — object names.\n[code]\nEvent: collide\nCondition: PayloadEquals a = player\n→ AddToVariable: score += 10\n→ PlaySound: coin\n[/code]\n## Time events\n### timer\nFires when a timer expires. In payload: name. Timers are created with StartTimer action.\n## System events\n### back / app_paused / app_resumed\nback — 'Back' button. app_paused — app minimized. app_resumed — returning to app.\n## Custom events\n### custom / func\ncustom — any event you call via EmitEvent. func — creating a function (also called via EmitEvent).\n[code]\nScript A:\nEmitEvent: game_over\nScript B:\nEvent: custom (name: game_over)\n→ Print: Game Over!\n[/code]\n## Data events\n### var_changed / widget_changed / http_done\nvar_changed — variable changed. widget_changed — widget value changed. http_done — HTTP response arrived (payload: status, body).\n[link=actions]See also: Actions[/link]"
+		},
+		{
+		  "id": "actions",
+		  "title_key": "doc_actions",
+		  "tags": [
+			"действия",
+            "команды"
+		  ],
+		  "content": "# Действия\nДействие — это команда. Они выполняются по порядку сверху вниз внутри события.\n## Объекты\n* «Создать объект» — создаёт прямоугольник, текст, спрайт, круг, линию.\n* «Удалить объект» — удаляет объект по имени.\n* «Двигать ноду», «Размер объекта», «Изменить текст», «Цвет объекта».\n* «Показать / скрыть», «Непрозрачность», «Вращение», «Масштаб».\n* «Текстура объекта», «Скругление углов», «Градиент», «Обводка».\n## Логика\n* «Вывести текст» / «Всплывашка».\n* «Вызвать событие» — вызывает своё событие с данными.\n* «Пауза» — пауза перед следующими действиями.\n* «Если условие» / «Повторить N раз» — ветвление и циклы (с вложенными блоками внутри).\n* «Создать объект из сцены» — создаёт объект из сцены.\n## Звук\n* «Проиграть звук» / «Остановить звук» / «Громкость звука».\n[code]\nПроиграть звук: монета, громкость: 0.8, зациклить: нет\nОстановить звук: монета\nГромкость звука: музыка, громкость: 50\n[/code]\n## Камера\n* «Позиция камеры» / «Камера за объектом» / «Слой параллакса».\n## Плавные анимации (Твины)\n* «Плавно переместить», «Плавно масштабировать», «Плавно повернуть», «Плавно прозрачность», «Остановить плавное».\n[code]\nПлавно переместить: игрок → x: 400, y: 300, время: 1.0, плавность: торможение в конце\nПлавно прозрачность: затухание → значение: 0, время: 0.5\nПлавно масштабировать: прыжок → процент: 150, время: 0.3\n[/code]\n## Системные действия\n* «Ориентация», «Цвет фона», «Буфер обмена», «Открыть ссылку», «Закрыть программу», «Сид для рандома».\n> Заметка: Полный список действий доступен в палитре редактора (кнопка «+»). Каждое действие имеет подсказки по полям.\n[link=conditions]См. также: Условия[/link]",
+		  "content_en": "# Actions\nAn action is a command. They execute in order from top to bottom inside an event.\n## Objects\n* 'Create object' — creates rectangle, text, sprite, circle, line.\n* 'Delete object' — deletes object by name.\n* 'Move node', 'Object size', 'Set text', 'Object color'.\n* 'Show / hide', 'Opacity', 'Rotation', 'Scale'.\n* 'Object texture', 'Corner radius', 'Gradient', 'Border'.\n## Logic\n* 'Print text' / 'Toast'.\n* 'Emit event' — calls your own event with data.\n* 'Wait' — pause before next actions.\n* 'If condition' / 'Repeat N times' — branching and loops (with nested blocks inside).\n* 'Spawn from scene' — creates object from scene.\n## Sound\n* 'Play sound' / 'Stop sound' / 'Sound volume'.\n[code]\nPlaySound: coin_sound, volume: 0.8, loop: false\nStopSound: coin_sound\nSetSoundVolume: music, volume: 50\n[/code]\n## Camera\n* 'Camera position' / 'Camera follow' / 'Parallax layer'.\n## Smooth animations (Tweens)\n* 'Tween position', 'Tween scale', 'Tween rotation', 'Tween opacity', 'Stop tween'.\n[code]\nTweenPosition: player → x: 400, y: 300, time: 1.0, ease: out\nTweenOpacity: fade_out → value: 0, time: 0.5\nTweenScale: bounce → percent: 150, time: 0.3\n[/code]\n## System actions\n* 'Orientation', 'Background color', 'Clipboard', 'Open URL', 'Quit', 'Random seed'.\n> Note: Full list of actions is available in the editor palette ('+' button). Each action has field hints.\n[link=conditions]See also: Conditions[/link]"
+		},
+		{
+		  "id": "conditions",
+		  "title_key": "doc_conditions",
+		  "tags": [
+			"условия",
+            "логика"
+		  ],
+		  "content": "# Условия и логика\nУсловия фильтруют события. Правило сработает только если ВСЕ условия истинны.\n> Аналогия: Условие — как охранник у двери. Он проверяет пропуск и пропускает только тех, у кого всё в порядке.\n## Всегда истина (Всегда)\nВсегда истинно. Используйте, когда нужно просто сгруппировать действия.\n## Переменная равна / Переменная больше\n«Переменная равна» — переменная равна значению. «Переменная больше» — больше.\n[code]\nСобытие: Каждый кадр\nУсловие: Переменная больше здоровье > 0\n→ Показать / скрыть: игрок, показать: да\nУсловие: Переменная равна здоровье = 0\n→ Вызвать событие: конец_игры\n[/code]\n## Данные события равны / Данные события больше\nПроверяет данные события. Например, в событии «Столкновение» в данных есть а и б — имена столкнувшихся объектов.\n[code]\nСобытие: Столкновение\nУсловие: Данные события равны а = игрок\n→ Прибавить к переменной: счёт прибавить: 10\n[/code]\n> Совет: Можно комбинировать несколько условий — они все работают как логическое И (И).\n## Логические блоки\nБлоки «Если условие истинно» и «Повторить N раз» позволяют ветвить и зацикливать логику. Внутри них можно размещать любые другие блоки.\n[code]\n«Если условие истинно»: условие: $var.здоровье > 0\n  «Показать / скрыть»: игрок, показать: да\n  «Вывести текст»: \"Жив!\"\n«Повторить N раз»: N: 5\n  «Создать объект»: пуля\n  «Двигать ноду»: пуля, x: 10, y: 0\n[/code]\n> Внимание: Вложенные «Если» и «Повторить» работают, но не злоупотребляйте — это тяжёлое решение.\n[link=vars]См. также: Переменные[/link]",
+		  "content_en": "# Conditions & Logic\nConditions filter events. A rule fires only if ALL conditions are true.\n> Analogy: A condition is like a guard at the door. He checks the pass and only lets through those who are OK.\n## Always\nAlways true. Use when you just need to group actions.\n## VariableEquals / VariableGreaterThan\nVariableEquals — variable equals value. VariableGreaterThan — greater.\n[code]\nEvent: update\nCondition: VariableGreaterThan hp > 0\n→ SetVisible: player, on: true\nCondition: VariableEquals hp = 0\n→ EmitEvent: game_over\n[/code]\n## PayloadEquals / PayloadGreaterThan\nChecks event data. For example, in collide payload contains a and b — names of collided objects.\n[code]\nEvent: collide\nCondition: PayloadEquals a = player\n→ AddToVariable: score += 10\n[/code]\n> Tip: You can combine multiple conditions — they all work as logical AND.\n## Logic blocks\nBlocks 'If condition true' and 'Repeat N times' allow branching and looping. You can place any other blocks inside.\n[code]\n'If condition true': condition: $var.hp > 0\n  'Show / hide': player, on: true\n  'Print text': \"Alive!\"\n'Repeat N times': N: 5\n  'Create object': bullet\n  'Move node': bullet, x: 10, y: 0\n[/code]\n> Warning: Nested 'If' and 'Repeat' work, but don't overuse — it's a heavy solution.\n[link=vars]See also: Variables[/link]"
+		},
+		{
+		  "id": "vars",
+		  "title_key": "doc_vars",
+		  "tags": [
+			"переменные",
+            "данные"
+		  ],
+		  "content": "# Переменные и таблицы\nПеременные хранят данные между событиями. Доступны во всех скриптах проекта.\n## Типы переменных\n* число — число (целое или дробное).\n* текст — текстовая строка.\n* да/нет — истина или ложь.\n* таблица — словарь (ключ → значение) или массив.\n## Синтаксис обращения\nВ полях действий и условий используйте $пер.имя для чтения переменной, $данные.ключ для данных события:\n[code]\n$var.счёт\n$var.имя_игрока\n$данные.x\n[/code]\n## Выражения\nВ полях значений можно писать формулы:\n[code]\nсчёт + 10\n$var.здоровье - $данные.урон\nмин($var.x, 100)\nранд(0, 100)\n$var.имя + \" здоровье\"\n[/code]\n## Встроенные функции\n* мин(а, б), макс(а, б), абс(х)\n* округлить(х), округлить_вниз(х), округлить_вверх(х), ограничить(х, а, б)\n* ранд(а, б), длина(х), число(х), текст(х)\n> Внимание: Имена переменных: только латиница, цифры и _, до 32 символов. Нельзя начинать с цифры.\n## Таблицы и массивы\nПеременные типа таблица — это словари (ключ → значение) или массивы (индекс → значение).\n### Словари (по ключу)\nХранение данных по именам ключей:\n[code]\n«Значение в таблицу»: инвентарь.меч = 1\n«Взять из таблицы»: количество = инвентарь.меч\n[/code]\n### Массивы (по индексу)\nХранение данных по числовым индексам:\n[code]\n«Вставить по индексу»: предметы[0] = \"яблоко\"\n«Удалить по индексу»: предметы[0]\n[/code]\n### Циклы по таблицам (Цикл от-до)\n«Для каждого в таблице» — пройди по всем элементам таблицы. «Цикл от-до» — цикл от Н до М с шагом.\n### JSON (Джейсон)\nМожно загрузить таблицу из строки формата Джейсон:\n[code]\n«Перезаписать таблицу»: {\"здоровье\": 100, \"имя\": \"Герой\"}\n[/code]\n[link=conditions]См. также: Условия[/link]",
+		  "content_en": "# Variables & Tables\nVariables store data between events. Available in all project scripts.\n## Variable types\n* number — number (integer or float).\n* text — text string.\n* bool — true or false.\n* table — dictionary (key → value) or array.\n## Access syntax\nIn action and condition fields use $var.name to read a variable, $payload.key for event data:\n[code]\n$var.score\n$var.player_name\n$payload.x\n[/code]\n## Expressions\nYou can write formulas in value fields:\n[code]\nscore + 10\n$var.hp - $payload.damage\nmin($var.x, 100)\nrand(0, 100)\n$var.name + \" HP\"\n[/code]\n## Built-in functions\n* min(a, b), max(a, b), abs(x)\n* round(x), floor(x), ceil(x), clamp(x, a, b)\n* rand(a, b), len(x), num(x), text(x)\n> Warning: Variable names: only Latin, digits and _, up to 32 chars. Cannot start with a digit.\n## Tables and arrays\nVariables of type table are dictionaries (key → value) or arrays (index → value).\n### Dictionaries (by key)\nStore data by key names:\n[code]\n'Set table value': inventory.sword = 1\n'Get table value': count = inventory.sword\n[/code]\n### Arrays (by index)\nStore data by numeric indexes:\n[code]\n'Insert by index': items[0] = \"apple\"\n'Remove by index': items[0]\n[/code]\n### Loops over tables (Loop from-to)\n'For each in table' — iterate through all table elements. 'Loop from-to' — loop from N to M with step.\n### JSON\nYou can load a table from a JSON string:\n[code]\n'Overwrite table': {\"hp\": 100, \"name\": \"Hero\"}\n[/code]\n[link=conditions]See also: Conditions[/link]"
+		},
+		{
+		  "id": "expressions",
+		  "title_key": "doc_expressions",
+		  "tags": [
+			"выражения",
+            "формулы"
+		  ],
+		  "content": "# Выражения и формулы\nВ полях значений можно писать формулы. Тап по полю открывает редактор выражений.\n## Синтаксис обращения\nИспользуйте $пер.имя для чтения переменных и $данные.ключ для данных события:\n[code]\n$var.здоровье + 10\n$var.счёт * 2\n$данные.x + 50\nмин($var.здоровье, 100)\n[/code]\n## Операторы\n### Арифметика\n+, -, *, /, % (остаток)\n### Сравнение\n==, !=, <, <=, >, >=\n### Логические\nи, или, не, !\n## Встроенные функции\n* мин(а, б), макс(а, б), абс(х)\n* округлить(х), округлить_вниз(х), округлить_вверх(х), ограничить(х, а, б)\n* ранд(а, б) — случайное число.\n* длина(х) — длина строки.\n* число(х), текст(х) — преобразование типов.\n## Примеры\n[code]\n# Случайное число от 0 до 100\nранд(0, 100)\n# Ограничить значение от 0 до 100\nограничить($var.здоровье, 0, 100)\n# Округление до десятков\nокруглить($var.счёт / 10) * 10\n# Длина строки\nдлина($var.имя)\n[/code]",
+		  "content_en": "# Expressions & Formulas\nYou can write formulas in value fields. Tap a field to open the expression editor.\n## Access syntax\nUse $var.name to read variables and $payload.key for event data:\n[code]\n$var.hp + 10\n$var.score * 2\n$payload.x + 50\nmin($var.hp, 100)\n[/code]\n## Operators\n### Arithmetic\n+, -, *, /, % (remainder)\n### Comparison\n==, !=, <, <=, >, >=\n### Logical\nand (&&), or (||), not (!)\n## Built-in functions\n* min(a, b), max(a, b), abs(x)\n* round(x), floor(x), ceil(x), clamp(x, a, b)\n* rand(a, b) — random number.\n* len(x) — string length.\n* num(x), text(x) — type conversion.\n## Examples\n[code]\n# Random 0 to 100\nrand(0, 100)\n# Clamp value from 0 to 100\nclamp($var.hp, 0, 100)\n# Round to tens\nround($var.score / 10) * 10\n# String length\nlen($var.name)\n[/code]"
+		},
+		{
+		  "id": "custom_events",
+		  "title_key": "doc_custom_events",
+		  "tags": [
+			"события",
+            "пользовательские"
+		  ],
+		  "content": "# Пользовательские события\nСоздавайте свои события для связи между скриптами.\n## Вызвать событие\nВызывает событие с данными.\n[code]\nВызвать событие: конец_игры\nВызвать событие: урон, данные: {\"количество\": 10, \"источник\": \"враг\"}\n[/code]\n## Данные события\nДанные события — это объект с данными события. Читается через $данные.ключ.\n[code]\n# Скрипт А:\nВызвать событие: урон, данные: {\"количество\": 25}\n# Скрипт Б:\nСобытие: Своё событие (имя: урон)\nПрибавить к переменной: здоровье, количество: -$данные.количество\n[/code]\n## Создать функцию\n«Создать функцию» — это пользовательское событие, которое вызывается через «Вызвать событие». Отличается от «Своё событие» только семантически.\n> Внимание: Если два скрипта имеют событие с одинаковым именем — сработают оба. Используйте уникальные имена.",
+		  "content_en": "# Custom Events\nCreate your own events to communicate between scripts.\n## EmitEvent\nFires an event with data (payload).\n[code]\nEmitEvent: game_over\nEmitEvent: damage, payload: {\"amount\": 10, \"source\": \"enemy\"}\n[/code]\n## Payload (data)\nPayload is a JSON object with event data. Read via $payload.key.\n[code]\n# Script A:\nEmitEvent: damage, payload: {\"amount\": 25}\n# Script B:\nEvent: custom (name: damage)\nAddToVariable: hp, amount: -$payload.amount\n[/code]\n## Functions (func)\n'Create function' is a custom event called via EmitEvent. Differs from 'custom' only semantically.\n> Warning: If two scripts have an event with the same name — both fire. Use unique names."
+		},
+		{
+		  "id": "system_actions",
+		  "title_key": "doc_system_actions",
+		  "tags": [
+            "системные"
+		  ],
+		  "content": "# Системные действия\nДействия для работы с системой: уведомления, ссылки, буфер обмена.\n## Всплывашка\nПоказывает всплывающее уведомление на 2 секунды.\n[code]\nВсплывашка: \"Игра сохранена!\"\n[/code]\n## Открыть ссылку\nОткрывает ссылку в браузере.\n[code]\nОткрыть ссылку: https://godotengine.org\n[/code]\n## Буфер обмена\nЧитает или записывает буфер обмена.\n[code]\nБуфер обмена: режим: записать, текст: \"Скопировано!\"\nБуфер обмена: режим: взять, переменная: буфер_текст\n[/code]\n## Закрыть программу\nЗакрывает приложение.\n## Сид для рандома\nУстанавливает сид для случайных чисел. Одинаковый сид = одинаковая последовательность.\n## Цвет фона\nМеняет цвет фона сцены.\n## Ориентация\nМеняет ориентацию экрана: авто / портрет / ландшафт.",
+		  "content_en": "# System Actions\nActions for system integration: notifications, links, clipboard.\n## Toast\nShows a popup notification for 2 seconds.\n[code]\nToast: \"Game saved!\"\n[/code]\n## Open URL\nOpens a link in the browser.\n[code]\nOpenURL: https://godotengine.org\n[/code]\n## Clipboard\nReads or writes the clipboard.\n[code]\nClipboard: mode: set, text: \"Copied!\"\nClipboard: mode: get, variable: clipboard_text\n[/code]\n## Quit\nCloses the app.\n## Random seed\nSets seed for random numbers. Same seed = same sequence.\n## Background color\nChanges the scene background color.\n## Orientation\nChanges screen orientation: auto / portrait / landscape."
+		}
+	  ]
+	},
+	{
+	  "id": "objects",
+	  "title_key": "doc_cat_objects",
+	  "sections": [
+		{
+		  "id": "objects",
+		  "title_key": "doc_objects",
+		  "tags": [
+			"объекты",
+            "нода"
+		  ],
+		  "content": "# Объекты\nОбъекты — это видимые сущности на сцене. Каждый имеет имя, позицию, размер и свойства.\n## Типы объектов\n* прямоугольник — прямоугольник (можно скруглить через «Скругление углов»)\n* текст — текстовая метка\n* спрайт — изображение из ресурсов\n* круг — круг с обводкой\n* линия — линия между двумя точками\n* группа — контейнер для других объектов\n* спрайт_анимация — анимация из спрайт-листа\n## Свойства объектов\nЧерез «Задать свойство ноды» можно менять любые свойства напрямую:\n[code]\nпозиция, размер, видимость, цвет\nслой, вращение, масштаб\nтекст, цвет, фильтровать_мышь\n[/code]\n## Иерархия объектов\nОбъекты можно вкладывать в группы («Создать группу» + «Добавить в группу»). Позиция дочернего объекта считается относительно родителя.\n> Аналогия: Как папки на компьютере. Файл внутри папки имеет путь папка/файл. Так же объект внутри группы наследует её координаты.\n> Совет: Имя объекта — уникальное. Если создаёте объект с существующим именем, старый удалится.\n[link=physics]См. также: Физика[/link]",
+		  "content_en": "# Objects\nObjects are visible entities on the scene. Each has a name, position, size, and properties.\n## Object types\n* rect — rectangle (can be rounded via 'Corner radius')\n* label — text label\n* sprite — image from resources\n* circle — circle with border\n* line — line between two points\n* group — container for other objects\n* sprite_anim — animation from spritesheet\n## Object properties\nVia 'Set node property' you can change any properties directly:\n[code]\nposition, size, visible, modulate\nz_index, rotation, scale\ntext, color, mouse_filter\n[/code]\n## Object hierarchy\nObjects can be nested in groups ('Create group' + 'Add to group'). Child position is relative to parent.\n> Analogy: Like folders on a computer. A file inside a folder has the path folder/file. Similarly, an object inside a group inherits its coordinates.\n> Tip: Object name is unique. If you create an object with an existing name, the old one will be deleted.\n[link=physics]See also: Physics[/link]"
+		},
+		{
+		  "id": "physics",
+		  "title_key": "doc_physics",
+		  "tags": [
+			"физика",
+            "столкновения"
+		  ],
+		  "content": "# Физика\nGyro Engine использует физику Godot под капотом. Вы управляете ей визуально.\n## Типы тел\n* «Твёрдый объект» (да) — неподвижное тело (стена, пол).\n* «Твёрдый объект» (нет) — убирает физическое тело.\n* «Режим датчика» (да) — датчик: регистрирует столкновения, но не отталкивает.\n## Движение и гравитация\n* «Задать скорость» — задаёт скорость (постоянную).\n* «Импульс» — добавляет импульс (толчок).\n* «Задать гравитацию» — гравитация конкретного объекта.\n* «Общая гравитация» — глобальная гравитация для всех объектов.\n* «Пауза физики» — замораживает все тела.\n* «Сид для рандома» — сид для случайных чисел.\n[code]\n# Прыжок игрока\nСобытие: Касание экрана\nУсловие: Данные события равны а = игрок\n→ Импульс: игрок, y: -700\n# Гравитация при старте\nПри старте → Задать гравитацию: игрок, значение: 1500\n[/code]\n## Столкновения\nЧтобы ловить столкновения, оба объекта должны иметь физическое тело. События «Столкновение» / «Конец столкновения» приходят с данными {а, б}.\n[code]\nСобытие: Столкновение\nУсловие: Данные события равны а = игрок\n→ Проиграть звук: удар\n→ Прибавить к переменной: здоровье -= 10\n[/code]\n## Перетаскивание пальцем\nСделайте объект перетаскиваемым: «Перетаскивание пальцем»: игрок, вкл: да. Объект будет следовать за пальцем.\n> Внимание: Физика работает только для объектов с физическим телом. Объекты без тела не участвуют в столкновениях.\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Physics\nGyro Engine uses Godot physics under the hood. You control it visually.\n## Body types\n* 'Solid object' (yes) — static body (wall, floor).\n* 'Solid object' (no) — removes physics body.\n* 'Sensor mode' (yes) — sensor: registers collisions but doesn't push.\n## Motion and gravity\n* 'Set velocity' — sets velocity (constant).\n* 'Impulse' — adds impulse (push).\n* 'Set gravity' — gravity of specific object.\n* 'Global gravity' — global gravity for all objects.\n* 'Pause physics' — freezes all bodies.\n* 'Random seed' — seed for random numbers.\n[code]\n# Player jump\nEvent: tap\nCondition: PayloadEquals a = player\n→ Impulse: player, y: -700\n# Gravity on start\nready → SetGravity: player, value: 1500\n[/code]\n## Collisions\nTo catch collisions, both objects must have physics bodies. Events 'collide' / 'collide_end' come with payload {a, b}.\n[code]\nEvent: collide\nCondition: PayloadEquals a = player\n→ PlaySound: hit\n→ AddToVariable: hp -= 10\n[/code]\n## Dragging\nMake an object draggable: 'SetDraggable': player, on: true. The object will follow the finger.\n> Warning: Physics works only for objects with physics bodies. Objects without body don't participate in collisions.\n[link=objects]See also: Objects[/link]"
+		},
+		{
+		  "id": "tags",
+		  "title_key": "doc_tags",
+		  "tags": [
+			"теги",
+            "метки"
+		  ],
+		  "content": "# Теги и группы\nТеги — это метки на объектах. Помечайте объекты, чтобы действовать на них сразу группой.\n> Аналогия: Как цветные наклейки на коробках. «Красное» — хрупкое, «Синее» — стекло. Вы можете взять все «красные» коробки разом.\n## Операции с тегами\n* «Прикрепить тег» — повесить тег на объект.\n* «Удалить все с тегом» — удалить все объекты с тегом.\n* «Показать / скрыть с тегом», «Позиция с тегом», «Вращение с тегом».\n* «Непрозрачность с тегом», «Масштаб с тегом», «Слой с тегом».\n[code]\n# Пометить всех врагов\nПри старте → Прикрепить тег: враг1, тег: враг\nПри старте → Прикрепить тег: враг2, тег: враг\n# Убить всех врагов\nСобытие: Своё событие (бомба_взорвалась)\n→ Удалить все с тегом: враг\n[/code]\n> Совет: Теги сохраняются между событиями. Если объект удалён, его теги очищаются автоматически.\n[link=groups]См. также: Группы[/link]\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Tags & Groups\nTags are labels on objects. Mark objects to act on them as a group.\n> Analogy: Like colored stickers on boxes. 'Red' — fragile, 'blue' — glass. You can grab all 'red' boxes at once.\n## Tag operations\n* 'Add tag' — attach tag to object.\n* 'Delete all by tag' — delete all objects with tag.\n* 'Show / hide by tag', 'Position by tag', 'Rotation by tag'.\n* 'Opacity by tag', 'Scale by tag', 'Layer by tag'.\n[code]\n# Mark all enemies\nready → AddTag: enemy1, tag: enemy\nready → AddTag: enemy2, tag: enemy\n# Kill all enemies\nEvent: custom (bomb_exploded)\n→ DeleteByTag: enemy\n[/code]\n> Tip: Tags persist between events. If an object is deleted, its tags are cleared automatically.\n[link=groups]See also: Groups[/link]\n[link=objects]See also: Objects[/link]"
+		},
+		{
+		  "id": "widgets",
+		  "title_key": "doc_widgets",
+		  "tags": [
+			"виджеты",
+            "интерфейс"
+		  ],
+		  "content": "# Виджеты\nВиджеты — это интерактивные элементы интерфейса: поле ввода, слайдер, переключатель.\n## Текстовое поле\nСоздаёт текстовое поле. Поддерживает многострочный режим и режим пароля.\n[code]\nТекстовое поле: имя_поле\nx: 100, y: 200, ширина: 240\nтекст: \"Ваше имя\"\nмногострочное: нет\nпароль: нет\n[/code]\n## Слайдер\nСоздаёт слайдер (горизонтальный или вертикальный). Значение от 0 до 100.\n## Переключатель\nСоздаёт переключатель (чекбокс). Состояние да/нет.\n## События виджетов\nПри изменении значения виджета срабатывает событие «Виджет изменился». В данных приходят имя и значение.\n[code]\nВиджет изменился → $данные.имя, $данные.значение\n[/code]\n> Заметка: Виджеты живут на слое интерфейса поверх сцены. Они не участвуют в физике.\n[link=events]См. также: События[/link]",
+		  "content_en": "# Widgets\nWidgets are interactive UI elements: input field, slider, toggle.\n## Text input\nCreates a text field. Supports multiline and password modes.\n[code]\nCreateInput: name_field\nx: 100, y: 200, w: 240\ntext: \"Your name\"\nmultiline: false\nsecret: false\n[/code]\n## Slider\nCreates a slider (horizontal or vertical). Value from 0 to 100.\n## Toggle\nCreates a toggle (checkbox). State is true/false.\n## Widget events\nWhen a widget value changes, widget_changed event fires. In payload come name and value.\n[code]\nwidget_changed → $payload.name, $payload.value\n[/code]\n> Note: Widgets live on the UI layer above the scene. They don't participate in physics.\n[link=events]See also: Events[/link]"
+		},
+		{
+		  "id": "groups",
+		  "title_key": "doc_groups",
+		  "tags": [
+			"группы",
+            "контейнер"
+		  ],
+		  "content": "# Группы объектов\nГруппа — это контейнер для других объектов. Все дети двигаются вместе с группой.\n> Аналогия: Как папка на компьютере. Переместите папку — все файлы внутри переместятся вместе с ней.\n## Создать группу\nСоздаёт пустой групповой контейнер.\n[code]\nСоздать группу: слой_интерфейса, x: 0, y: 0, ширина: 480, высота: 720\n[/code]\n## Добавить в группу\nПомещает объект внутрь группы. Координаты объекта становятся относительными.\n[code]\nСоздать группу: слой_интерфейса\nСоздать объект: кнопка, x: 100, y: 100\nДобавить в группу: кнопка, группа: слой_интерфейса\n# Теперь кнопка внутри слой_интерфейса и двигается вместе с ним\n[/code]\n## Относительные координаты\nПосле «Добавить в группу» позиция объекта считается относительно группы. Группа в (100, 50), объект в (10, 10) → глобально (110, 60).\n> Внимание: Группа — это не теги! Группа — это физическая иерархия (контейнер), теги — это логические метки.\n[link=tags]См. также: Теги[/link]\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Object Groups\nA group is a container for other objects. All children move together with the group.\n> Analogy: Like a folder on a computer. Move the folder — all files inside move with it.\n## Create group\nCreates an empty group container.\n[code]\nCreateGroup: ui_layer, x: 0, y: 0, w: 480, h: 720\n[/code]\n## Add to group\nPuts an object inside a group. Object coordinates become relative.\n[code]\nCreateGroup: ui_layer\nCreateObject: button, x: 100, y: 100\nAddToGroup: button, group: ui_layer\n# Now button is inside ui_layer and moves with it\n[/code]\n## Relative coordinates\nAfter 'Add to group', object position is relative to group. Group at (100, 50), object at (10, 10) → global (110, 60).\n> Warning: Groups are not tags! Groups are physical hierarchy (container), tags are logical labels.\n[link=tags]See also: Tags[/link]\n[link=objects]See also: Objects[/link]"
+		},
+		{
+		  "id": "anchors",
+		  "title_key": "doc_anchors",
+		  "tags": [
+			"якорь",
+            "привязка"
+		  ],
+		  "content": "# Якоря и привязка к экрану\nЯкоря привязывают объект к точке экрана. При изменении размера экрана объект остаётся на своём месте.\n> Аналогия: Как кнопки в мобильном приложении: «Назад» всегда слева внизу, «Меню» — справа вверху. Они не едут при повороте экрана.\n## Якорь объекта\nПривязывает объект к точке экрана. Координаты x, y задают смещение от точки привязки.\n[code]\nЯкорь объекта: игрок, якорь: нижний_левый\nДвигать ноду: игрок, x: 20, y: -20\n# Игрок в 20пикс от нижнего левого угла\n[/code]\n## Точки привязки\n* верхний_левый — верхний левый угол\n* верхний_центр — верхний центр\n* верхний_правый — верхний правый угол\n* средний_левый — средний левый край\n* центр — центр экрана\n* средний_правый — средний правый край\n* нижний_левый — нижний левый угол\n* нижний_центр — нижний центр\n* нижний_правый — нижний правый угол\n* свободно — свободное положение (отвязка, по умолчанию)\n## Смещение от точки привязки\nПосле «Якорь объекта» используйте «Двигать ноду» для смещения. Смещение сохраняется при изменении размера экрана.\n[code]\nЯкорь объекта: метка_счёт, якорь: верхний_правый\nДвигать ноду: метка_счёт, x: -10, y: 10\n# Счёт в верхнем правом углу с отступом\n[/code]\n> Внимание: Если изменить позицию через «Задать свойство ноды» — якорь сбросится. Используйте «Двигать ноду».\n[link=layout_mode]См. также: Режим выравнивания[/link]",
+		  "content_en": "# Anchors\nAnchors attach an object to a screen point. When the screen resizes, the object stays in place.\n> Analogy: Like buttons in a mobile app: 'Back' is always bottom-left, 'Menu' — top-right. They don't move when you rotate the screen.\n## Object anchor\nAttaches an object to a screen point. Coordinates x, y set the offset from anchor point.\n[code]\nSetAnchor: player, anchor: bl\nMoveNode: player, x: 20, y: -20\n# Player 20px from bottom-left corner\n[/code]\n## Anchor points\n* tl — top-left corner\n* tc — top-center\n* tr — top-right corner\n* ml — middle-left\n* c — screen center\n* mr — middle-right\n* bl — bottom-left corner\n* bc — bottom-center\n* br — bottom-right corner\n* free — free position (detach, default)\n## Offset from anchor point\nAfter 'SetAnchor' use 'MoveNode' for offset. Offset is preserved on screen resize.\n[code]\nSetAnchor: score_label, anchor: tr\nMoveNode: score_label, x: -10, y: 10\n# Score in top-right with padding\n[/code]\n> Warning: If you change position via 'Set node property' — anchor resets. Use 'MoveNode'.\n[link=layout_mode]See also: Layout Mode[/link]"
+		},
+		{
+		  "id": "shapes",
+		  "title_key": "doc_shapes",
+		  "tags": [
+			"примитивы",
+            "фигуры"
+		  ],
+		  "content": "# Примитивы\nКруг и линия — базовые графические примитивы.\n## Создать круг\nСоздаёт круг с заливкой и обводкой.\n[code]\nСоздать круг: монета\nрадиус: 25\nцвет: #ffcc00\nобводка: 3\nцвет_обводки: #aa8800\nx: 200, y: 300\n[/code]\n## Создать линию\nСоздаёт линию между двумя точками.\n[code]\nСоздать линию: лазер\nx: 100, y: 100\nx2: 400, y2: 300\nцвет: #ff0000\nширина: 4\n[/code]\n## Физика примитивов\nКруги и линии автоматически получают физическое тело. Круг — круглая форма, линия — капсула. Можно применять «Твёрдый объект» / «Режим датчика».\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Primitives\nCircle and Line — basic graphic primitives.\n## Create circle\nCreates a circle with fill and border.\n[code]\nCreateCircle: coin\nradius: 25\ncolor: #ffcc00\nborder_w: 3\nborder_color: #aa8800\nx: 200, y: 300\n[/code]\n## Create line\nCreates a line between two points.\n[code]\nCreateLine: laser\nx: 100, y: 100\nx2: 400, y2: 300\ncolor: #ff0000\nwidth: 4\n[/code]\n## Primitive physics\nCircles and lines automatically get physics bodies. Circle — circular shape, line — capsule. You can use 'Solid object' / 'Sensor mode'.\n[link=objects]See also: Objects[/link]"
+		},
+		{
+		  "id": "styles",
+		  "title_key": "doc_styles",
+		  "tags": [
+			"стили",
+            "оформление"
+		  ],
+		  "content": "# Стили\nГрадиенты, обводки и скругление углов для визуального оформления.\n## Градиент\nЗаливает объект градиентом из двух цветов.\n[code]\nГрадиент: панель\nрежим: горизонтальный\nцвет1: #ff8800\nцвет2: #000000\n[/code]\n### Режимы градиента\n* горизонтальный — слева направо\n* вертикальный — сверху вниз\n* круговой — от центра\n## Обводка\nДобавляет обводку вокруг объекта.\n[code]\nОбводка: панель\nцвет: #ffffff\nширина: 4\n[/code]\n## Скругление углов\nСкругляет углы прямоугольника.\n[code]\nСоздать объект: кнопка, тип: прямоугольник, ширина: 200, высота: 60\nСкругление углов: кнопка, радиус: 15\n[/code]\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Styles\nGradients, borders, and corner radius for visual design.\n## Gradient\nFills an object with a two-color gradient.\n[code]\nSetGradient: panel\nmode: linear\ncolor1: #ff8800\ncolor2: #000000\n[/code]\n### Gradient modes\n* linear — left to right\n* vertical — top to bottom\n* radial — from center\n## Border\nAdds a border around an object.\n[code]\nSetBorder: panel\ncolor: #ffffff\nwidth: 4\n[/code]\n## Corner radius\nRounds rectangle corners.\n[code]\nCreateObject: btn, type: rect, w: 200, h: 60\nSetCornerRadius: btn, radius: 15\n[/code]\n[link=objects]See also: Objects[/link]"
+		},
+		{
+		  "id": "transforms",
+		  "title_key": "doc_transforms",
+		  "tags": [
+			"трансформации",
+            "перемещение"
+		  ],
+		  "content": "# Трансформации\nТочка привязки, поворот к объекту, пользовательские данные.\n## Точка привязки\nМеняет точку вращения объекта. По умолчанию — центр. (0,0) — верхний левый угол, (100,100) — правый нижний.\n[code]\nТочка привязки: дверь, x: 0, y: 50\n# Дверь вращается вокруг левого края (как настоящая дверь на петлях)\n[/code]\n## Повернуть к объекту\nПоворачивает объект лицом к цели.\n[code]\nПовернуть к объекту: враг, цель: игрок\n[/code]\n## Переменная объекта\nСохраняет пользовательские данные в объекте. Можно читать через «Переменная объекта» / использовать в условиях.\n[code]\nПеременная объекта: сундук, ключ: золото, значение: 100\nПеременная объекта: сундук, ключ: открыт, значение: нет\n[/code]\n> Заметка: Пользовательские данные живут только пока объект существует. При удалении — теряются навсегда.\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Transforms\nPivot point, face object, custom metadata.\n## Pivot point\nChanges the rotation pivot. Default is center. (0,0) — top-left, (100,100) — bottom-right.\n[code]\nSetPivot: door, x: 0, y: 50\n# Door rotates around left edge (like a real door on hinges)\n[/code]\n## Face object\nRotates object to face the target.\n[code]\nFaceObject: enemy, target: player\n[/code]\n## Object variable\nStores custom data on an object. Read via 'Object variable' / use in conditions.\n[code]\nSetObjectMeta: chest, key: gold, value: 100\nSetObjectMeta: chest, key: opened, value: false\n[/code]\n> Note: Custom data lives only while the object exists. Lost on deletion.\n[link=objects]See also: Objects[/link]"
+		},
+		{
+		  "id": "sprite_anim",
+		  "title_key": "doc_sprite_anim",
+		  "tags": [
+			"спрайт",
+            "анимация"
+		  ],
+		  "content": "# Спрайтовые анимации\nАнимация из спрайт-листа — это одно изображение с несколькими кадрами.\n## Объект из спрайтов\nСоздаёт анимированный объект из спрайт-листа.\n[code]\nОбъект из спрайтов: герой\nспрайт: герой_ходьба\nширина_кадра: 32, высота_кадра: 32\nколичество: 8, кадров_в_секунду: 12\nанимация: ходьба\nx: 100, y: 200\n[/code]\n## Параметры спрайтовой анимации\n* спрайт — имя ресурса спрайт-листа\n* ширина_кадра / высота_кадра — размер одного кадра в пикселях\n* количество — количество кадров\n* кадров_в_секунду — кадров в секунду (скорость анимации)\n* анимация — имя анимации (можно создать несколько)\n## Управление анимацией\nУправление воспроизведением: переключение кадров, запуск и остановка.\n[code]\nУстановить фрейм: герой, фрейм: 3\nПроиграть анимацию: герой, анимация: атака\nОстановить анимацию: герой\n[/code]\n> Совет: Кадры в спрайт-листе идут слева направо, сверху вниз. 8 кадров 32×32 в листе 256×32 — все в одной строке.\n[link=resources]См. также: Ресурсы[/link]",
+		  "content_en": "# Sprite Animations\nAnimation from a spritesheet — a single image with multiple frames.\n## Sprite object\nCreates an animated object from a spritesheet.\n[code]\nCreateSpriteAnim: hero\nsprite: hero_walk\nframe_w: 32, frame_h: 32\ncount: 8, fps: 12\nanim: walk\nx: 100, y: 200\n[/code]\n## Sprite animation parameters\n* sprite — spritesheet resource name\n* frame_w / frame_h — size of one frame in pixels\n* count — number of frames\n* fps — frames per second (animation speed)\n* anim — animation name (you can create several)\n## Animation control\nControl playback: switch frames, start and stop.\n[code]\nSetFrame: hero, frame: 3\nPlayAnimation: hero, animation: attack\nStopAnimation: hero\n[/code]\n> Tip: Frames in spritesheets go left-to-right, top-to-bottom. 8 frames 32×32 in 256×32 sheet — all in one row.\n[link=resources]See also: Resources[/link]"
+		},
+		{
+		  "id": "draggable",
+		  "title_key": "doc_draggable",
+		  "tags": [
+			"перетаскивание",
+            "драг"
+		  ],
+		  "content": "# Перетаскивание объектов\nОбъекты можно перетаскивать пальцем/мышью.\n## Перетаскивание пальцем\nВключает режим перетаскивания для объекта.\n[code]\nПеретаскивание пальцем: пазл, вкл: да\n[/code]\n## Событие перетаскивания\nСобытие перетаскивания срабатывает при движении пальца. В данных: x, y, смещение по x, смещение по y.\n[code]\nСобытие: Перетаскивание пальцем\nВывести текст: \"Палец в \" + $данные.x + \", \" + $данные.y\n[/code]\n> Заметка: Перетаскивание работает только для объектов с физическим телом («Твёрдый объект» или «Режим датчика»).\n[link=physics]См. также: Физика[/link]\n[link=events]См. также: События[/link]",
+		  "content_en": "# Dragging objects\nObjects can be dragged by finger/mouse.\n## SetDraggable\nEnables dragging mode for an object.\n[code]\nSetDraggable: puzzle_piece, on: true\n[/code]\n## Drag event\nDrag event fires when finger moves. In payload: x, y, dx, dy.\n[code]\nEvent: drag\nPrint: \"Finger at \" + $payload.x + \", \" + $payload.y\n[/code]\n> Note: Dragging works only for objects with physics body ('Solid object' or 'Sensor mode').\n[link=physics]See also: Physics[/link]\n[link=events]See also: Events[/link]"
+		},
+		{
+		  "id": "spawn",
+		  "title_key": "doc_spawn",
+		  "tags": [
+			"спавн",
+            "сцена"
+		  ],
+		  "content": "# Создание из сцены\n«Создать объект из сцены» создаёт объект из готовой сцены.\n## Создать объект из сцены\nСоздаёт объект из сцены в игре.\n[code]\nСоздать объект из сцены: сцена_враг\nродитель: группа_врагов\nx: 300, y: 100\nпеременная: последний_враг\n[/code]\n## Параметры создания из сцены\n* сцена — путь к сцене (из ресурсов)\n* родитель — родительская группа (необязательно)\n* x, y — позиция создания\n* переменная — переменная для ссылки на созданный объект\n> Внимание: Сцена должна быть импортирована в ресурсы как «другое». Путь указывается как имя ресурса.\n[link=resources]См. также: Ресурсы[/link]",
+		  "content_en": "# Spawn from scene\n'Spawn from scene' creates an object from a ready scene.\n## Spawn from scene\nCreates an object from a scene in the game.\n[code]\nSpawn: enemy_scene\nparent: enemies_group\nx: 300, y: 100\nvariable: last_enemy\n[/code]\n## Spawn parameters\n* scene — path to scene (from resources)\n* parent — parent group (optional)\n* x, y — spawn position\n* variable — variable to reference the created object\n> Warning: Scene must be imported to resources as 'other'. Path is specified as resource name.\n[link=resources]See also: Resources[/link]"
+		},
+		{
+		  "id": "tweens",
+		  "title_key": "doc_tweens",
+		  "tags": [
+			"плавное",
+            "анимация"
+		  ],
+		  "content": "# Плавные анимации (Твины)\nТвин — это плавное изменение свойства за заданное время.\n> Аналогия: Как лифт: вы задаёте этаж (цель) и скорость (время). Он едет плавно, а не телепортируется.\n## Плавно переместить\nПлавно перемещает объект в точку за время.\n[code]\nПлавно переместить: игрок\nx: 400, y: 300\nвремя: 1.0\nплавность: торможение в конце\n[/code]\n## Другие твины\nМасштаб, вращение и прозрачность по тем же правилам.\n[code]\nПлавно масштабировать: иконка, процент: 150, время: 0.3\nПлавно повернуть: стрелка, угол: 360, время: 2.0\nПлавно прозрачность: затухание, значение: 0, время: 0.5\n[/code]\n## Остановить плавное\nОстанавливает все твины объекта.\n## Типы плавности\n* линейно — равномерно\n* разгон — разгон в начале\n* торможение — торможение в конце\n> Совет: Новый твин на тот же объект прерывает предыдущий. Используйте «Остановить плавное» перед новым, если нужен контроль.\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Smooth Animations (Tweens)\nTween is a smooth property change over a given time.\n> Analogy: Like an elevator: you set the floor (target) and speed (time). It moves smoothly, not teleports.\n## Tween position\nSmoothly moves object to a point over time.\n[code]\nTweenPosition: player\nx: 400, y: 300\ntime: 1.0\nease: out\n[/code]\n## Other tweens\nScale, rotation and opacity follow the same rules.\n[code]\nTweenScale: icon, percent: 150, time: 0.3\nTweenRotation: arrow, angle: 360, time: 2.0\nTweenOpacity: fade, value: 0, time: 0.5\n[/code]\n## Stop tween\nStops all tweens of an object.\n## Ease types\n* linear — uniform\n* in — acceleration at start\n* out — deceleration at end\n> Tip: A new tween on the same object kills the previous one. Use 'Stop tween' before a new one if you need control.\n[link=objects]See also: Objects[/link]"
+		}
+	  ]
+	},
+	{
+	  "id": "media",
+	  "title_key": "doc_cat_media",
+	  "sections": [
+		{
+		  "id": "resources",
+		  "title_key": "doc_resources",
+		  "tags": [
+			"ресурсы",
+            "ассеты"
+		  ],
+		  "content": "# Ресурсы\nРесурсы — это файлы, которые вы импортируете в проект: изображения, звуки, шрифты.\n## Категории ресурсов\n* спрайт — PNG, JPG, WebP, SVG\n* звук — MP3, OGG, WAV\n* шрифт — TTF, OTF, WOFF2\n* видео — MP4, WebM\n* другое — любые другие файлы\n## Папки ресурсов\nРесурсы можно организовать в папки внутри каждой категории. Например: спрайт/персонажи/герой.png.\n## Использование в действиях\nВ действиях («Создать объект», «Проиграть звук») выбирайте ресурс из выпадающего списка. Движок найдёт его по имени или идентификатору.\n[code]\nСоздать объект: герой\nтип: спрайт\nтекстура: герой_ходьба\n[/code]\n> Заметка: SVG не поддерживается как иконка APK — только PNG/JPG/WebP. Для спрайтов SVG работает.\n[link=sound]См. также: Звук[/link]",
+		  "content_en": "# Resources\nResources are files you import into the project: images, sounds, fonts.\n## Resource categories\n* sprite — PNG, JPG, WebP, SVG (images)\n* sound — MP3, OGG, WAV (audio)\n* font — TTF, OTF, WOFF2 (fonts)\n* video — MP4, WebM (video)\n* other — any other files\n## Resource folders\nResources can be organized in folders inside each category. For example: sprite/characters/hero.png.\n## Usage in actions\nIn actions ('Create object', 'Play sound') choose a resource from the dropdown. Engine will find it by name or ID.\n[code]\nCreateObject: hero\ntype: sprite\ntexture: hero_walk\n[/code]\n> Note: SVG is not supported as APK icon — only PNG/JPG/WebP. For sprites SVG works.\n[link=sound]See also: Sound[/link]"
+		},
+		{
+		  "id": "sound",
+		  "title_key": "doc_sound",
+		  "tags": [
+			"звук",
+            "аудио"
+		  ],
+		  "content": "# Звук\nGyro Engine поддерживает MP3, OGG и WAV. Звуки загружаются через меню Ресурсы и используются блоком «Проиграть звук».\n## Форматы звука\n* MP3 — сжатый, маленький размер, подходит для музыки\n* OGG — открытый формат, хорошее качество, идеален для звуков\n* WAV — без сжатия, большой размер, для коротких эффектов\n## Зацикливание\nПараметр «зациклить: да» делает звук бесконечным. Подходит для фоновой музыки. Остановить можно блоком «Остановить звук».\n[code]\nПроиграть звук: фоновая_музыка, громкость: 0.7, зациклить: да\n# Музыка играет бесконечно\nОстановить звук: фоновая_музыка\n[/code]\n## Громкость звука\nГромкость от 0 до 1 (или 0-100 в «Громкость звука»). Можно менять в реальном времени.\n[code]\nГромкость звука: фоновая_музыка, громкость: 50\n# Громкость 50%\n[/code]\n## Несколько звуков одновременно\nКаждый звук играет в своём плеере. Можно одновременно играть музыку и эффекты. Используйте разные имена для разных звуков.\n[code]\nПроиграть звук: музыка, громкость: 0.5, зациклить: да\nПроиграть звук: прыжок, громкость: 1.0, зациклить: нет\n# Оба звука играют одновременно\n[/code]\n> Совет: Используйте OGG для коротких звуковых эффектов (быстрая загрузка) и MP3 для музыки (малый размер файла).\n[link=resources]См. также: Ресурсы[/link]",
+		  "content_en": "# Sound\nGyro Engine supports MP3, OGG and WAV. Sounds are loaded via Resources menu and used with 'Play sound' block.\n## Sound formats\n* MP3 — compressed, small size, good for music\n* OGG — open format, good quality, ideal for sounds\n* WAV — uncompressed, large size, for short effects\n## Looping\nParameter 'loop: true' makes sound infinite. Good for background music. Stop it with 'Stop sound' block.\n[code]\nPlaySound: background_music, volume: 0.7, loop: true\n# Music plays infinitely\nStopSound: background_music\n[/code]\n## Sound volume\nVolume from 0 to 1 (or 0-100 in 'Sound volume'). Can be changed in real time.\n[code]\nSetSoundVolume: background_music, volume: 50\n# Volume 50%\n[/code]\n## Multiple sounds simultaneously\nEach sound plays in its own player. You can play music and effects simultaneously. Use different names for different sounds.\n[code]\nPlaySound: music, volume: 0.5, loop: true\nPlaySound: jump, volume: 1.0, loop: false\n# Both sounds play simultaneously\n[/code]\n> Tip: Use OGG for short sound effects (fast loading) and MP3 for music (small file size).\n[link=resources]See also: Resources[/link]"
+		},
+		{
+		  "id": "camera",
+		  "title_key": "doc_camera",
+		  "tags": [
+			"камера",
+            "параллакс"
+		  ],
+		  "content": "# Камера\nКамера следует за объектами и создаёт эффект параллакса.\n## Позиция камеры\nЖёстко устанавливает позицию камеры в координатах x, y.\n## Камера за объектом\nКамера плавно следует за объектом. «плавность» — скорость слежения (больше = резче).\n[code]\nКамера за объектом: игрок, плавность: 5\n# Камера будет плавно догонять игрока\n[/code]\n## Слой параллакса\nСлой с параллаксом двигается медленнее камеры, создавая иллюзию глубины.\n> Аналогия: Как в поезде: ближние столбы мелькают быстро, дальние горы — медленно. x=100 — как фон, далеко; x=0 — приклеен к камере.\n[code]\nСлой параллакса: фон, x: 50, y: 50\n[/code]\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Camera\nCamera follows objects and creates parallax effect.\n## Camera position\nHard-sets camera position at x, y coordinates.\n## Camera follow\nCamera smoothly follows an object. 'smooth' — follow speed (more = sharper).\n[code]\nCameraFollow: player, smooth: 5\n# Camera will smoothly chase the player\n[/code]\n## Parallax layer\nA parallax layer moves slower than the camera, creating a depth illusion.\n> Analogy: Like in a train: nearby posts flash fast, distant mountains — slowly. x=100 — like background, far away; x=0 — glued to camera.\n[code]\nSetParallax: background, x: 50, y: 50\n[/code]\n[link=objects]See also: Objects[/link]"
+		},
+		{
+		  "id": "particles",
+		  "title_key": "doc_particles",
+		  "tags": [
+			"частицы",
+            "эффекты"
+		  ],
+		  "content": "# Частицы\nСистема частиц для визуальных эффектов: снег, дождь, огонь, искры, конфетти.\n## Пресеты частиц\n* снег — снег\n* дождь — дождь\n* огонь — огонь\n* искры — искры\n* конфетти — конфетти\n## Создание частиц\n[code]\nЧастицы: снег_эффект\nпресет: снег\nx: 240, y: 0\n[/code]\n## Настраиваемые параметры частиц\n* скорость — скорость частиц\n* гравитация — гравитация частиц\n* размер — размер частиц\n* количество — количество частиц\n* пресет — снег / дождь / огонь / искры / конфетти\n## Удалить частицы\nУдаляет все частицы объекта.\n[link=objects]См. также: Объекты[/link]",
+		  "content_en": "# Particles\nParticle systems for visual effects: snow, rain, fire, sparks, confetti.\n## Particle presets\n* snow — snow\n* rain — rain\n* fire — fire\n* sparks — sparks\n* confetti — confetti\n## Create particles\n[code]\nCreateParticles: snow_fx\npreset: snow\nx: 240, y: 0\n[/code]\n## Customizable particle parameters\n* speed — particle speed\n* gravity — particle gravity\n* size — particle size\n* amount — particle count\n* preset — snow / rain / fire / sparks / confetti\n## Delete particles\nDeletes all particles of an object.\n[link=objects]See also: Objects[/link]"
+		}
+	  ]
+	},
+	{
+	  "id": "advanced",
+	  "title_key": "doc_cat_advanced",
+	  "sections": [
+		{
+		  "id": "files",
+		  "title_key": "doc_files",
+		  "tags": [
+			"файлы",
+            "сохранение"
+		  ],
+		  "content": "# Файлы и сеть\nСохраняйте данные локально и работайте с сетью через сеть.\n## Локальные файлы\n* «Прочитать файл» — прочитать файл в переменную\n* «Записать файл» — записать значение в файл\n* «Файловая операция» — удалить / создать папку / скопировать / переместить\n* «Сохранить значение» / «Загрузить значение» — простое сохранение по ключу (автоматически в формате данных)\n[code]\nФайловая операция: операция: создать_папку, путь1: пользователь://сохранения\nФайловая операция: операция: скопировать, путь1: пользователь://а.текст, путь2: пользователь://б.текст\nФайловая операция: операция: удалить, путь1: пользователь://старый.текст\n[/code]\n## Сетевой запрос\nОтправляет сетевой запрос. Результат — в переменной или событии «Сетевой ответ пришёл».\n[code]\nСетевой запрос:\nадрес: https://api.example.com/data\nметод: ПОЛУЧИТЬ\nпеременная: ответ\n# Или ловите событие:\nСобытие: Сетевой ответ пришёл\nВывести текст: \"Статус: \" + $данные.статус\n[/code]\n## Сохранить значение / Загрузить значение\nПростое сохранение значений по ключу. Данные хранятся в формате данных внутри проекта.\n[code]\nСохранить значение: ключ: рекорд, значение: $var.счёт\nЗагрузить значение: ключ: рекорд, переменная: рекорд\n[/code]\n> Совет: «Сохранить значение» / «Загрузить значение» — для простых сохранений. Для сложных данных используйте «Прочитать файл» / «Записать файл» с форматом данных.\n[link=vars]См. также: Переменные[/link]",
+		  "content_en": "# Files & Network\nSave data locally and work with the network via network.\n## Local files\n* 'Read file' — read file into variable\n* 'Write file' — write value to file\n* 'File operation' — delete / create folder / copy / move\n* 'Save value' / 'Load value' — simple save by key (automatically in data format)\n[code]\nFileOp: op: mkdir, path1: user://saves\nFileOp: op: copy, path1: user://a.txt, path2: user://b.txt\nFileOp: op: delete, path1: user://old.txt\n[/code]\n## Network request\nSends a network request. Result — in variable or event 'Network response arrived'.\n[code]\nHttpRequest:\nurl: https://api.example.com/data\nmethod: GET\nvariable: response\n# Or catch event:\nEvent: http_done\nPrint: \"Status: \" + $payload.status\n[/code]\n## Save value / Load value\nSimple key-value save. Data stored in data format inside the project.\n[code]\nSaveValue: key: high_score, value: $var.score\nLoadValue: key: high_score, variable: best\n[/code]\n> Tip: 'Save value' / 'Load value' — for simple saves. For complex data use 'Read file' / 'Write file' with data format.\n[link=vars]See also: Variables[/link]"
+		},
+		{
+		  "id": "build",
+		  "title_key": "doc_build",
+		  "tags": [
+			"сборка",
+            "апп"
+		  ],
+		  "content": "# Сборка APK\nGyro Engine может собрать готовый APK прямо на телефоне. Для этого нужны настройки проекта и ключ подписи.\n## Настройки проекта\n* имя_приложения — имя приложения, которое видит пользователь\n* имя_пакета — уникальный идентификатор (например, ком.пример.игра)\n* имя_версии / код_версии — версия приложения\n* ориентация — авто / портрет / ландшафт\n* иконка — иконка приложения (только PNG/JPG/WebP, SVG не поддерживается)\n* разрешения — разрешения на телефоне\n## Ключ подписи\nКлюч подписи — файл цифрового ключа для подписи APK. Без него телефон не установит приложение.\n> Внимание: Ключ подписи необходим для подписи APK. Создайте его через утилиту ключей или импортируйте существующий.\n### Создание ключа подписи через утилиту ключей:\n[code]\nkeytool -genkey -v -keystore my-release-key.p12 \\\n-storetype PKCS12 -keyalg RSA -keysize 2048 \\\n-validity 10000 -alias my-key\n[/code]\nИли используйте онлайн-генератор ключа подписи. Затем импортируйте файл ключа в настройках проекта.\n## Процесс сборки\nШаги сборки APK:\n1. Настройте проект (имя, пакет, иконка)\n2. Создайте или импортируйте ключ подписи\n3. Нажмите «Собрать APK»\n4. Выберите место сохранения\n> Совет: Используйте один и тот же ключ подписи для всех версий приложения, иначе обновления не установятся.\n[link=android]См. также: Телефон и оптимизация[/link]",
+		  "content_en": "# Build APK\nGyro Engine can build a ready APK right on the phone. You need project settings and a signing key.\n## Project settings\n* app_name — app name visible to the user\n* package_name — unique identifier (e.g., com.example.game)\n* version_name / version_code — app version\n* orientation — auto / portrait / landscape\n* icon — app icon (only PNG/JPG/WebP, SVG not supported)\n* permissions — permissions on phone\n## Signing key\nSigning key is a digital key file for signing APK. Without it, phone won't install the app.\n> Warning: Signing key is required for APK signing. Create it via key utility or import existing.\n### Creating signing key via key utility:\n[code]\nkeytool -genkey -v -keystore my-release-key.p12 \\\n-storetype PKCS12 -keyalg RSA -keysize 2048 \\\n-validity 10000 -alias my-key\n[/code]\nOr use an online signing key generator. Then import the key file in project settings.\n## Build process\nBuild steps:\n1. Configure project (name, package, icon)\n2. Create or import signing key\n3. Tap 'Build APK'\n4. Choose save location\n> Tip: Use the same signing key for all app versions, otherwise updates won't install.\n[link=android]See also: Phone & Optimization[/link]"
+		},
+		{
+		  "id": "debug",
+		  "title_key": "doc_debug",
+		  "tags": [
+			"отладка",
+            "вопросы"
+		  ],
+		  "content": "# Отладка и частые вопросы\nИнструменты для поиска ошибок и ответы на частые вопросы.\n## Блок «Вывести текст»\nГлавный инструмент отладки. Выводит текст в лог внизу экрана при запуске игры. Используйте для проверки значений переменных и порядка выполнения блоков.\n## Лог в настройках\nВключите «Лог при тесте» в настройках приложения, чтобы видеть вывод. Выключите перед релизом — это экономит ресурсы.\n## Проверка потока\nЕсли блоки не выполняются: 1) Проверьте имя события. 2) Проверьте условия — все ли истинны. 3) Добавьте «Вывести текст» перед каждым блоком.\n## Проверка производительности\nЕсли игра тормозит: 1) Уберите лишние блоки в «Каждый кадр». 2) Используйте теги вместо перебора объектов. 3) Ограничьте количество частиц.\n## Частые вопросы\n### Почему SVG не работает как иконка APK?\nТелефон не поддерживает SVG как иконку. Используйте PNG, JPG или WebP. SVG работает только для спрайтов.\n### Почему APK не устанавливается?\n1) Проверьте ключ подписи — имя и пароль. 2) Убедитесь, что имя пакета уникально (например, ком.ваше.имя). 3) Проверьте, что не установлена старая версия с другим ключом.\n### Почему объекты проходят сквозь стены?\n1) Оба объекта должны быть «Твёрдый объект» = да. 2) Проверьте размеры. 3) Убедитесь, что скорость не слишком высокая.\n### Почему звук не играет?\n1) Проверьте, что звук добавлен в ресурсы. 2) Имя в блоке должно совпадать с именем ресурса. 3) Проверьте громкость (не 0).\n### Сколько объектов можно создать?\nНа телефоне комфортно до 200-300 активных объектов. Используйте теги для массовых операций и избегайте тяжёлой логики в «Каждый кадр».\n[link=actions]См. также: Действия[/link]",
+		  "content_en": "# Debug & FAQ\nTools for finding bugs and answers to common questions.\n## Block 'Print text'\nMain debugging tool. Outputs text to the log at the bottom of the screen when running the game. Use to check variable values and block execution order.\n## Log in settings\nEnable 'Test log' in app settings to see output. Disable before release — it saves resources.\n## Flow check\nIf blocks don't execute: 1) Check event name. 2) Check conditions — are all true. 3) Add 'Print text' before each block.\n## Performance check\nIf game lags: 1) Remove extra blocks in 'Every frame'. 2) Use tags instead of iterating objects. 3) Limit particles.\n## FAQ\n### Why SVG doesn't work as APK icon?\nPhone doesn't support SVG as icon. Use PNG, JPG or WebP. SVG works only for sprites.\n### Why APK doesn't install?\n1) Check signing key — name and password. 2) Make sure package name is unique (e.g., com.your.name). 3) Check if old version with different key is installed.\n### Why objects pass through walls?\n1) Both objects must be 'Solid object' = yes. 2) Check sizes. 3) Make sure velocity isn't too high.\n### Why sound doesn't play?\n1) Check resource is added to resources. 2) Name in block must match resource name. 3) Check volume (not 0).\n### How many objects can be created?\nOn phone, 200-300 active objects is comfortable. Use tags for mass operations and avoid heavy logic in 'Every frame'.\n[link=actions]See also: Actions[/link]"
+		},
+		{
+		  "id": "android",
+		  "title_key": "doc_android",
+		  "tags": [
+			"телефон",
+            "оптимизация"
+		  ],
+		  "content": "# Телефон и оптимизация\nСпецифика телефона, производительность и мультитач.\n## Разрешения\nТелефон требует явные разрешения для файлов, камеры, микрофона. Добавляйте их в настройках проекта. Разрешения на чтение медиа нужны для импорта ресурсов.\n## Хранилище (Ограниченное хранилище)\nНа телефоне прямой доступ к файлам ограничен. Приложение использует системный диалог выбора файлов. Проекты хранятся в приватной папке приложения.\n## Ориентация экрана\n* авто — сенсор решает (авто)\n* портрет — только вертикально (портрет)\n* ландшафт — только горизонтально (ландшафт)\nМеняется блоком «Ориентация» или в настройках проекта.\n## Кнопка «Назад»\nКнопка «Назад» на телефоне генерирует событие «Кнопка «Назад»». Обработайте его, чтобы показать меню паузы или сохранить игру. По умолчанию — выход из приложения.\n## Производительность и ограничения\n### Лимиты производительности\nНа телефоне комфортно до 200-300 объектов, 50-100 частиц, 10-20 звуков одновременно. Больше — возможно падение кадров в секунду.\n### Советы по оптимизации\n1) Избегайте тяжёлой логики в «Каждый кадр» — используйте таймеры.\n2) Используйте теги для массовых операций вместо перебора объектов.\n3) Удаляйте ненужные объекты.\n4) Ограничьте количество частиц.\n5) Используйте спрайты вместо сложных полигонов.\n### Как измерить производительность\nИспользуйте «Вывести текст» с временными метками для измерения времени выполнения блоков. Если блок выполняется больше 16 миллисекунд — он слишком тяжёлый (цель — 60 кадров в секунду = 16 миллисекунд на кадр).\n## Мультитач\nПриложение обрабатывает одно касание за раз (первое). Для мультитача используйте событие «Ввод» с типом «тач» — там есть индекс касания. Но большинство игр используют одно касание.\n[link=build]См. также: Сборка APK[/link]",
+		  "content_en": "# Phone & Optimization\nPhone specifics, performance and multitouch.\n## Permissions\nPhone requires explicit permissions for files, camera, microphone. Add them in project settings. Media read permissions needed for importing resources.\n## Storage (Limited storage)\nOn phone, direct file access is limited. App uses system file picker dialog. Projects are stored in app's private folder.\n## Screen orientation\n* auto — sensor decides\n* portrait — vertical only\n* landscape — horizontal only\nChanged by 'Orientation' block or in project settings.\n## 'Back' button\nPhone 'Back' button generates 'Back button' event. Handle it to show pause menu or save game. By default — exit app.\n## Performance & limits\n### Performance limits\nOn phone, 200-300 objects, 50-100 particles, 10-20 sounds simultaneously is comfortable. More — possible frames per second drop.\n### Optimization tips\n1) Avoid heavy logic in 'Every frame' — use timers.\n2) Use tags for mass operations instead of iterating objects.\n3) Delete unused objects.\n4) Limit particles.\n5) Use sprites instead of complex polygons.\n### How to measure performance\nUse 'Print text' with timestamps to measure block execution time. If block takes more than 16 milliseconds — it's too heavy (target — 60 frames per second = 16 milliseconds per frame).\n## Multitouch\nApp handles one touch at a time (first). For multitouch use 'Input' event with type 'touch' — there's touch index. But most games use single touch.\n[link=build]See also: Build APK[/link]"
+		},
+		{
+		  "id": "import",
+		  "title_key": "doc_import",
+		  "tags": [
+			"импорт",
+            "экспорт"
+		  ],
+		  "content": "# Импорт и экспорт\nКак сохранить, перенести и восстановить проекты.\n## Форматы файлов\n* .tres — нативный формат движка. Хранит проект как ресурс.\n* .gyroproj — архив движка, содержит проект + все ресурсы (спрайты, звуки). Идеален для передачи.\n## Экспорт\nВ хабе проекта нажмите «Экспорт» → выберите место сохранения. Файл формата_проекта_двигателя содержит всё необходимое для открытия на другом устройстве.\n## Импорт\nВ менеджере проектов нажмите кнопку импорта (стрелка вниз) → выберите файл .gyroproj или .tres. Проект появится в списке.\n## Бэкапы\nДвижок автоматически создаёт бэкапы проектов (настраивается в настройках приложения: выкл / 1-60 минут). Хранятся в папке бэкапов рядом с проектом. Максимум 3 бэкапа. Восстановить можно через кнопку «Бэкапы» в хабе проекта.\n> Внимание: При удалении проекта бэкапы тоже удаляются. Экспортируйте важные проекты в .gyroproj!\n[link=build]См. также: Сборка APK[/link]",
+		  "content_en": "# Import & Export\nHow to save, transfer and restore projects.\n## File formats\n* project_format — native engine format. Stores project as resource.\n* engine_project_format — engine archive, contains project + all resources (sprites, sounds). Ideal for sharing.\n## Export\nIn project hub tap 'Export' → choose save location. Engine project format file contains everything needed to open on another device.\n## Import\nIn project manager tap import button (down arrow) → choose engine project format or project format file. Project will appear in list.\n## Backups\nEngine automatically creates project backups (configurable in app settings: off / 1-60 minutes). Stored in backups folder next to project. Maximum 3 backups. Restore via 'Backups' button in project hub.\n> Warning: When deleting project, backups are also deleted. Export important projects to engine project format!\n[link=build]See also: Build APK[/link]"
+		},
+		{
+		  "id": "backups",
+		  "title_key": "doc_backups",
+		  "tags": [
+			"бэкапы",
+            "резервные"
+		  ],
+		  "content": "# Резервные копии\nДвижок автоматически создаёт резервные копии проектов.\n## Автоматические бэкапы\nНастраиваются в настройках приложения: выкл / 1 / 5 / 15 / 30 / 60 минут. Хранятся в папке бэкапов рядом с проектом. Максимум 3 копии.\n## Ручной бэкап\nВ хабе проекта нажмите «Бэкапы» → «Создать бэкап». Копия создаётся немедленно.\n## Восстановление\nВ том же меню выберите копию по дате → проект восстановится из неё.\n> Внимание: При удалении проекта бэкапы тоже удаляются. Экспортируйте важные проекты в .gyroproj!\n[link=import]См. также: Импорт и экспорт[/link]",
+		  "content_en": "# Backups\nEngine automatically creates project backups.\n## Automatic backups\nConfigured in app settings: off / 1 / 5 / 15 / 30 / 60 minutes. Stored in backups folder next to project. Maximum 3 copies.\n## Manual backup\nIn project hub tap 'Backups' → 'Create backup'. Copy is made immediately.\n## Restore\nIn the same menu pick a copy by date → project restores from it.\n> Warning: When deleting project, backups are also deleted. Export important projects to engine project format!\n[link=import]See also: Import & Export[/link]"
+		}
+	  ]
+	}
+  ]
+}

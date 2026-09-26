@@ -1,0 +1,291 @@
+[gd_scene format=3 uid="uid://chsh2lqittpj2"]
+
+[ext_resource type="Script" uid="uid://c5mc526rtpiwt" path="res://ui/screens/project_resources.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://erauwd71dk3l" path="res://ui/components/gyro_input_dialog.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://doj6t5u8lnnfh" path="res://ui/components/gyro_dialog.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="4"]
+[ext_resource type="Texture2D" uid="uid://b5ecq7jdrdtj" path="res://ui/icons/gear.svg" id="5"]
+[ext_resource type="Texture2D" uid="uid://b4v3vdbw8quiv" path="res://ui/icons/plus.svg" id="6"]
+
+[node name="ProjectResources" type="Control" unique_id=833446023]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=736426505]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.13, 0.14, 0.16, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=1884813237]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=2142359664]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=557826684]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("4")
+flat = true
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=54488969]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GearButton" type="Button" parent="Root/Header" unique_id=568989781]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("5")
+flat = true
+icon_alignment = 2
+
+[node name="Scroll" type="ScrollContainer" parent="Root" unique_id=222551313]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ListVBox" type="VBoxContainer" parent="Root/Scroll" unique_id=1031033915]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="PlusButton" type="Button" parent="Root" unique_id=1446903246]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+icon = ExtResource("6")
+icon_alignment = 1
+expand_icon = true
+
+[node name="AddMenuOverlay" type="ColorRect" parent="." unique_id=1232380705]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="AddMenuPanel" type="PanelContainer" parent="." unique_id=917404137]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AddMenuVBox" type="VBoxContainer" parent="AddMenuPanel" unique_id=1882007821]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AddMenuFolderButton" type="Button" parent="AddMenuPanel/AddMenuVBox" unique_id=1669283015]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="AddMenuFileButton" type="Button" parent="AddMenuPanel/AddMenuVBox" unique_id=161056285]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="EmptyState" type="Control" parent="." unique_id=1072920105]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="EmptyState" unique_id=520624306]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Box" type="VBoxContainer" parent="EmptyState/Center" unique_id=1104352071]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="EmptyTitle" type="Label" parent="EmptyState/Center/Box" unique_id=1427950528]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="EmptyHint" type="Label" parent="EmptyState/Center/Box" unique_id=588480026]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="AddPanelOverlay" type="ColorRect" parent="." unique_id=1164152630]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="AddPanel" type="PanelContainer" parent="." unique_id=104599093]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AddVBox" type="VBoxContainer" parent="AddPanel" unique_id=58615247]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="KindOption" type="OptionButton" parent="AddPanel/AddVBox" unique_id=1264989462]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PickButton" type="Button" parent="AddPanel/AddVBox" unique_id=789818771]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="NameEdit" type="LineEdit" parent="AddPanel/AddVBox" unique_id=2091140328]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="AddRow" type="HBoxContainer" parent="AddPanel/AddVBox" unique_id=148324651]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AddButton" type="Button" parent="AddPanel/AddVBox/AddRow" unique_id=322758141]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CancelAddButton" type="Button" parent="AddPanel/AddVBox/AddRow" unique_id=186277215]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GearPanelOverlay" type="ColorRect" parent="." unique_id=444258692]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="GearPanel" type="PanelContainer" parent="." unique_id=1488111762]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GearVBox" type="VBoxContainer" parent="GearPanel" unique_id=214879199]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GearTitle" type="Label" parent="GearPanel/GearVBox" unique_id=1368434894]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="GearRenameButton" type="Button" parent="GearPanel/GearVBox" unique_id=2101887259]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="GearDeleteButton" type="Button" parent="GearPanel/GearVBox" unique_id=424620330]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="ImportOverlay" type="ColorRect" parent="." unique_id=62433037]
+unique_name_in_owner = true
+visible = false
+z_index = 45
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="ImportPanel" type="PanelContainer" parent="." unique_id=1731240909]
+unique_name_in_owner = true
+visible = false
+z_index = 46
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ImportVBox" type="VBoxContainer" parent="ImportPanel" unique_id=435713358]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ImportLabel" type="Label" parent="ImportPanel/ImportVBox" unique_id=2000481770]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ImportProgress" type="ProgressBar" parent="ImportPanel/ImportVBox" unique_id=1916181276]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+
+[node name="NameDialog" parent="." unique_id=1595552969 instance=ExtResource("2")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConfirmDialog" parent="." unique_id=1642496883 instance=ExtResource("3")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+grow_horizontal = 2
+grow_vertical = 2

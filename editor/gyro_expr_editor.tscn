@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://cdre5xoao1i4w"]
+
+[ext_resource type="Script" uid="uid://cbcsvmrjmsjfx" path="res://editor/gyro_expr_editor.gd" id="1"]
+
+[node name="ExprEditor" type="Control" unique_id=867449764]
+visible = false
+z_index = 60
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1409302511]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.11, 0.13, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=982480981]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=442507437]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=280702305]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OkButton" type="Button" parent="Root/Header" unique_id=867761943]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 56)
+layout_mode = 2
+text = "ОК"
+
+[node name="CloseButton" type="Button" parent="Root/Header" unique_id=625186757]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+text = "×"
+
+[node name="ExprEdit" type="LineEdit" parent="Root" unique_id=507183088]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+
+[node name="Body" type="HBoxContainer" parent="Root" unique_id=1635885345]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Chips" type="VBoxContainer" parent="Root/Body" unique_id=225007118]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ChipFuncs" type="Button" parent="Root/Body/Chips" unique_id=1807849976]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="ChipVars" type="Button" parent="Root/Body/Chips" unique_id=448299404]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="ChipCompare" type="Button" parent="Root/Body/Chips" unique_id=1539721640]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="ChipLogic" type="Button" parent="Root/Body/Chips" unique_id=751399907]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="ExtraScroll" type="ScrollContainer" parent="Root/Body" unique_id=1482929598]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ExtraList" type="VBoxContainer" parent="Root/Body/ExtraScroll" unique_id=2069574066]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8

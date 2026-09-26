@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://erauwd71dk3l"]
+
+[ext_resource type="Script" uid="uid://cwkntlch1rke0" path="res://ui/components/gyro_input_dialog.gd" id="1"]
+
+[node name="GyroInputDialog" type="Control" unique_id=108131721]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1129015847]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=993340412]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel" unique_id=1596235538]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="Panel/VBox" unique_id=115075570]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Input" type="LineEdit" parent="Panel/VBox" unique_id=939749168]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Row" type="HBoxContainer" parent="Panel/VBox" unique_id=693850118]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="OkButton" type="Button" parent="Panel/VBox/Row" unique_id=106096525]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CancelButton" type="Button" parent="Panel/VBox/Row" unique_id=1694033121]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3

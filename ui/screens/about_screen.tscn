@@ -1,0 +1,160 @@
+[gd_scene format=3 uid="uid://c5as32y5cl46j"]
+
+[ext_resource type="Script" uid="uid://bbuwt7o1firig" path="res://ui/screens/about_screen.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="2"]
+[ext_resource type="Texture2D" uid="uid://bce1fy7wliowh" path="res://ui/icons/telegramicon.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://cq2kydpv8c8tj" path="res://roundedicon.png" id="3_4hr76"]
+
+[node name="AboutScreen" type="Control" unique_id=554207199]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1569652796]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07, 0.08, 0.1, 1)
+
+[node name="Header" type="HBoxContainer" parent="." unique_id=347169942]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 68.0
+grow_horizontal = 2
+theme_override_constants/separation = 12
+
+[node name="BackButton" type="Button" parent="Header" unique_id=1143710947]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_constants/icon_max_width = 24
+icon = ExtResource("2")
+flat = true
+
+[node name="HeaderTitle" type="Label" parent="Header" unique_id=1919071641]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "О приложении"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=281257389]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 76.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Content" type="VBoxContainer" parent="ScrollContainer" unique_id=105892285]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 24
+
+[node name="HeroSection" type="VBoxContainer" parent="ScrollContainer/Content" unique_id=1639946963]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Content/HeroSection" unique_id=1192865608]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("3_4hr76")
+expand_mode = 1
+
+[node name="AppName" type="Label" parent="ScrollContainer/Content/HeroSection" unique_id=739034785]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "Gyro Engine"
+horizontal_alignment = 1
+
+[node name="VersionLabel" type="Label" parent="ScrollContainer/Content/HeroSection" unique_id=449010938]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.58, 0.63, 1)
+theme_override_font_sizes/font_size = 14
+text = "Версия 1.0.0"
+horizontal_alignment = 1
+
+[node name="Separator1" type="HSeparator" parent="ScrollContainer/Content" unique_id=344987012]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="DescriptionLabel" type="Label" parent="ScrollContainer/Content" unique_id=638525132]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.72, 0.76, 1)
+theme_override_font_sizes/font_size = 15
+text = "Визуальный движок для создания игр и приложений без кода."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="LinksSection" type="VBoxContainer" parent="ScrollContainer/Content" unique_id=1580560533]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LinksTitle" type="Label" parent="ScrollContainer/Content/LinksSection" unique_id=514078097]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.52, 0.56, 1)
+theme_override_font_sizes/font_size = 13
+text = "Ссылки"
+
+[node name="TelegramButton" type="Button" parent="ScrollContainer/Content/LinksSection" unique_id=1031797988]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_constants/icon_max_width = 28
+text = "Сообщество в Telegram"
+icon = ExtResource("3")
+alignment = 0
+
+[node name="DocsButton" type="Button" parent="ScrollContainer/Content/LinksSection" unique_id=39731276]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+text = "Документация"
+alignment = 0
+
+[node name="Separator2" type="HSeparator" parent="ScrollContainer/Content" unique_id=2092442934]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="LicenseSection" type="VBoxContainer" parent="ScrollContainer/Content" unique_id=773459361]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LicenseTitle" type="Label" parent="ScrollContainer/Content/LicenseSection" unique_id=1978725616]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.52, 0.56, 1)
+theme_override_font_sizes/font_size = 13
+text = "Лицензия"
+
+[node name="LicenseText" type="Label" parent="ScrollContainer/Content/LicenseSection" unique_id=1556948537]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.62, 0.66, 1)
+theme_override_font_sizes/font_size = 13
+text = "© 2026 Gyro Engine. Все права защищены."
+autowrap_mode = 2
+
+[node name="Spacer" type="Control" parent="ScrollContainer/Content" unique_id=83633044]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2

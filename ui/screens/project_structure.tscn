@@ -1,0 +1,204 @@
+[gd_scene format=3 uid="uid://du3xdeiuyhduu"]
+
+[ext_resource type="Script" uid="uid://d056mvq2b5uww" path="res://ui/screens/project_structure.gd" id="1"]
+[ext_resource type="PackedScene" path="res://ui/components/gyro_input_dialog.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://ui/components/gyro_dialog.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="4"]
+[ext_resource type="Texture2D" uid="uid://b5ecq7jdrdtj" path="res://ui/icons/gear.svg" id="5"]
+[ext_resource type="Texture2D" uid="uid://b4v3vdbw8quiv" path="res://ui/icons/plus.svg" id="6"]
+
+[node name="ProjectStructure" type="Control" unique_id=1824960340]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=457845460]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.13, 0.14, 0.16, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=370334300]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=2100022650]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=1943241263]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("4")
+flat = true
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=48604632]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GearButton" type="Button" parent="Root/Header" unique_id=1541415031]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("5")
+flat = true
+icon_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Root" unique_id=752676485]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ListVBox" type="VBoxContainer" parent="Root/Scroll" unique_id=1586867196]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="PlusButton" type="Button" parent="Root" unique_id=781407104]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+icon = ExtResource("6")
+icon_alignment = 1
+expand_icon = true
+
+[node name="EmptyState" type="Control" parent="." unique_id=168743292]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="EmptyState" unique_id=1670282434]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Box" type="VBoxContainer" parent="EmptyState/Center" unique_id=1274668831]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="EmptyTitle" type="Label" parent="EmptyState/Center/Box" unique_id=533884740]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="EmptyHint" type="Label" parent="EmptyState/Center/Box" unique_id=1796258106]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="AddPanelOverlay" type="ColorRect" parent="." unique_id=2145385039]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="AddPanel" type="PanelContainer" parent="." unique_id=545196239]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AddVBox" type="VBoxContainer" parent="AddPanel" unique_id=600312526]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AddFolderButton" type="Button" parent="AddPanel/AddVBox" unique_id=1548543774]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="AddScriptButton" type="Button" parent="AddPanel/AddVBox" unique_id=851369842]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="GearPanelOverlay" type="ColorRect" parent="." unique_id=773289102]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="GearPanel" type="PanelContainer" parent="." unique_id=1134415483]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GearVBox" type="VBoxContainer" parent="GearPanel" unique_id=2048485988]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GearTitle" type="Label" parent="GearPanel/GearVBox"]
+unique_name_in_owner = true
+autowrap_mode = 3
+
+[node name="GearRenameButton" type="Button" parent="GearPanel/GearVBox" unique_id=1088046208]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="GearDeleteButton" type="Button" parent="GearPanel/GearVBox" unique_id=1967619344]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="NameDialog" parent="." unique_id=1164948254 instance=ExtResource("2")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConfirmDialog" parent="." unique_id=15258228 instance=ExtResource("3")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+grow_horizontal = 2
+grow_vertical = 2

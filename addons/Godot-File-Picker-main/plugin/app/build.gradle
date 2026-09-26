@@ -1,0 +1,30 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace "com.pattlebass.godotfilepicker"
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 19
+        targetSdk 34
+        resConfigs "ru", "en"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            consumerProguardFiles "proguard-rules.pro"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compileOnly "org.godotengine:godot:4.2.2.stable"
+}

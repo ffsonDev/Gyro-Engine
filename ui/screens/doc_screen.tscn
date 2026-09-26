@@ -1,0 +1,134 @@
+[gd_scene format=3 uid="uid://c8x4m2kqavwq1"]
+
+[ext_resource type="Script" uid="uid://bbpt1y0t4gg82" path="res://ui/screens/doc_screen.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="2"]
+
+[node name="DocScreen" type="Control" unique_id=2111734416]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1191206086]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13, 0.14, 0.16, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=462936682]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=2071051858]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=520920764]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("2")
+flat = true
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=149158606]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MenuButton" type="Button" parent="Root/Header" unique_id=634803163]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+flat = true
+
+[node name="Body" type="HBoxContainer" parent="Root" unique_id=554293966]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ContentArea" type="VBoxContainer" parent="Root/Body" unique_id=1410905407]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Breadcrumbs" type="HBoxContainer" parent="Root/Body/ContentArea" unique_id=2023971289]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ContentScroll" type="ScrollContainer" parent="Root/Body/ContentArea" unique_id=723281805]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="ContentVBox" type="VBoxContainer" parent="Root/Body/ContentArea/ContentScroll" unique_id=220784668]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="SidebarLayer" type="Control" parent="." unique_id=2144767607]
+unique_name_in_owner = true
+visible = false
+z_index = 25
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="SidebarLayer" unique_id=1948498899]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="Sidebar" type="PanelContainer" parent="SidebarLayer" unique_id=469028636]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 288.0
+offset_bottom = -8.0
+grow_vertical = 2
+
+[node name="SidebarScroll" type="ScrollContainer" parent="SidebarLayer/Sidebar" unique_id=1540633238]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="SidebarVBox" type="VBoxContainer" parent="SidebarLayer/Sidebar/SidebarScroll" unique_id=46774953]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4

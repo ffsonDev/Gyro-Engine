@@ -1,0 +1,196 @@
+[gd_scene format=3 uid="uid://br06eblmpwdbc"]
+
+[ext_resource type="Script" uid="uid://3cnnekepk6qf" path="res://ui/screens/project_settings.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="2"]
+
+[node name="ProjectSettings" type="Control" unique_id=70183138]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1528460615]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.13, 0.14, 0.16, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=1864711973]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=1306793889]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=388488391]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("2")
+flat = true
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=302910821]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AppNameRow" type="HBoxContainer" parent="Root" unique_id=41521926]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AppNameLabel" type="Label" parent="Root/AppNameRow" unique_id=912447541]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="AppNameEdit" type="LineEdit" parent="Root/AppNameRow" unique_id=1753488289]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PackageRow" type="HBoxContainer" parent="Root" unique_id=358224858]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PackageLabel" type="Label" parent="Root/PackageRow" unique_id=137173813]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="PackageEdit" type="LineEdit" parent="Root/PackageRow" unique_id=1754964352]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VersionRow" type="HBoxContainer" parent="Root" unique_id=310000001]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="VersionLabel" type="Label" parent="Root/VersionRow" unique_id=310000002]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="VersionEdit" type="LineEdit" parent="Root/VersionRow" unique_id=310000003]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VersionCodeRow" type="HBoxContainer" parent="Root" unique_id=310000004]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="VersionCodeLabel" type="Label" parent="Root/VersionCodeRow" unique_id=310000005]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="VersionCodeEdit" type="LineEdit" parent="Root/VersionCodeRow" unique_id=310000006]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PermsRow" type="HBoxContainer" parent="Root" unique_id=310000007]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PermsLabel" type="Label" parent="Root/PermsRow" unique_id=310000008]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="PermsButton" type="Button" parent="Root/PermsRow" unique_id=310000009]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="IconRow" type="HBoxContainer" parent="Root" unique_id=1421772823]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="IconLabel" type="Label" parent="Root/IconRow" unique_id=1148859018]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="IconEdit" type="LineEdit" parent="Root/IconRow" unique_id=1253329036]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="IconPickButton" type="Button" parent="Root/IconRow" unique_id=1153427455]
+unique_name_in_owner = true
+layout_mode = 2
+text = "..."
+
+[node name="OrientRow" type="HBoxContainer" parent="Root" unique_id=2064304954]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="OrientLabel" type="Label" parent="Root/OrientRow" unique_id=762308906]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="OrientationOption" type="OptionButton" parent="Root/OrientRow" unique_id=1255345570]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="KeystoreRow" type="HBoxContainer" parent="Root" unique_id=767756919]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="KeystoreLabel" type="Label" parent="Root/KeystoreRow" unique_id=2086230767]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="KeystoreEdit" type="LineEdit" parent="Root/KeystoreRow" unique_id=1634813400]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="KeystorePickButton" type="Button" parent="Root/KeystoreRow" unique_id=785220059]
+unique_name_in_owner = true
+layout_mode = 2
+text = "..."
+
+[node name="AliasRow" type="HBoxContainer" parent="Root" unique_id=1677655274]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AliasLabel" type="Label" parent="Root/AliasRow" unique_id=2144853782]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="AliasEdit" type="LineEdit" parent="Root/AliasRow" unique_id=12469429]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PasswordRow" type="HBoxContainer" parent="Root" unique_id=1077120271]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PasswordLabel" type="Label" parent="Root/PasswordRow" unique_id=963551908]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="PasswordEdit" type="LineEdit" parent="Root/PasswordRow" unique_id=443782472]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+secret = true

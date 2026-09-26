@@ -1,0 +1,39 @@
+# Godot 4
+.godot/
+export_credentials.cfg
+*.translation
+
+#  Compiled 
+*.gdc
+*.ctex
+*.res
+*.tres
+*.import
+
+#  Android / Gradle 
+.gradle/
+**/build/
+local.properties
+*.apk
+*.aab
+*.p12
+*.jks
+*.keystore
+
+#  IDE 
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+#  OS 
+.DS_Store
+Thumbs.db
+desktop.ini
+
+#  Temporary 
+*.tmp
+*.bak
+/backups/
+*.log

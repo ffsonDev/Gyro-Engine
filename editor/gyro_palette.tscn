@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://d2udib0rxvic6"]
+
+[ext_resource type="Script" uid="uid://wrbn4pivuycs" path="res://editor/gyro_palette.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="2"]
+
+[node name="GyroPalette" type="Control" unique_id=1816316645]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1193854098]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.11, 0.13, 0.98)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=181865420]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=677227303]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SearchEdit" type="LineEdit" parent="Root/Header" unique_id=1389788004]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=1783303991]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("2")
+flat = true
+
+[node name="Scroll" type="ScrollContainer" parent="Root" unique_id=505757184]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ListVBox" type="VBoxContainer" parent="Root/Scroll" unique_id=715907302]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
