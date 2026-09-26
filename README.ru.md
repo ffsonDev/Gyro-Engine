@@ -6,7 +6,7 @@
 [English](README.md) | [Русский](README.ru.md)
 
 <p align="center">
-  <img src="roundedicon.png" alt="Gyro Engine" width="100">
+  <img src="roundedicon.png" alt="Gyro Engine" width="200">
 </p>
 
 Gyro Engine — визуальный игровой движок, построенный на базе [Godot 4.7](https://godotengine.org), который позволяет создавать 2D-игры без написания кода. Собирайте игровую логику из цветных блоков, как конструктор, и собирайте APK прямо на телефоне.
