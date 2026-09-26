@@ -3,11 +3,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godot-engine&logoColor=white)](https://godotengine.org)
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://www.android.com)
+[English](README.md) | [Русский](README.ru.md)
 
 Gyro Engine is a visual game engine built on top of [Godot 4.7](https://godotengine.org) that lets you create 2D games without writing code. Assemble game logic from colorful blocks, like a constructor, and build APKs directly on your phone.
 
 <p align="center">
-  <img src="docs/images/screenshot.png" alt="Gyro Engine" width="300">
+  <img src="roundedicon.png" alt="Gyro Engine" width="300">
 </p>
 
 ## Features
@@ -105,17 +106,6 @@ Access it via the Documentation button on the home screen.
 
 - Godot Engine 4.7+
 - Android device (for APK building)
-
-## Contributing
-
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-### How to Contribute
-1. Fork the repository
-2. Create a feature branch (git checkout -b feature/my-feature)
-3. Commit your changes (git commit -m 'Add amazing feature')
-4. Push to the branch (git push origin feature/my-feature)
-5. Open a Pull Request
 
 ## License
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
