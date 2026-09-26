@@ -1,15 +1,15 @@
-# 🎮 Gyro Engine
+# Gyro Engine
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godot-engine&logoColor=white)](https://godotengine.org)
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://www.android.com)
 [English](README.md) | [Русский](README.ru.md)
 
-Gyro Engine — визуальный игровой движок, построенный на базе [Godot 4.7](https://godotengine.org), который позволяет создавать 2D-игры без написания кода. Собирайте игровую логику из цветных блоков, как конструктор, и собирайте APK прямо на телефоне.
-
 <p align="center">
-  <img src="roundedicon.png" alt="Gyro Engine" width="300">
+  <img src="roundedicon.png" alt="Gyro Engine" width="100">
 </p>
+
+Gyro Engine — визуальный игровой движок, построенный на базе [Godot 4.7](https://godotengine.org), который позволяет создавать 2D-игры без написания кода. Собирайте игровую логику из цветных блоков, как конструктор, и собирайте APK прямо на телефоне.
 
 ## Возможности
 
