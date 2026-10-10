@@ -20,7 +20,8 @@ var _stage_ui: Control
 var _stage: Node2D
 
 var physics_process_callback := true
-const DESIGN_SIZE := Vector2(480, 720)
+var design_size := Vector2(480, 720)
+var current_orientation := "portrait"
 var world_offset := Vector2.ZERO
 var _anchors := {}
 var _anchor_offsets := {}
@@ -68,7 +69,7 @@ func _reapply_anchors(size: Vector2) -> void:
 			node = get_node_or_null(NodePath("StageUI/" + str(name)))
 		if node == null:
 			continue
-		node.position = anchor_point_local(size, _anchors[name]) + _anchor_offsets.get(name, Vector2.ZERO)
+		node.position = anchor_point_local(size, _anchors.get(name, "c")) + _anchor_offsets.get(name, Vector2.ZERO)
 
 func set_layout_mode(on: bool) -> void:
 	_layout_active = on
@@ -153,6 +154,15 @@ func _on_vp_size_changed() -> void:
 	if _last_vp_size == new_size:
 		return
 	_last_vp_size = new_size
+	
+	if new_size.x > new_size.y:
+		design_size = Vector2(720, 480)
+		current_orientation = "landscape"
+	else:
+		design_size = Vector2(480, 720)
+		current_orientation = "portrait"
+
+	_update_layout()
 	_reapply_anchors(new_size)
 
 func refresh_layout() -> void:
@@ -160,24 +170,37 @@ func refresh_layout() -> void:
 
 func _update_layout() -> void:
 	var vs := get_viewport_rect().size
-
 	position = Vector2.ZERO
 	size = vs
-
 	var bg := get_node_or_null(NodePath("GyroBackground")) as ColorRect
 	if bg != null:
 		bg.position = Vector2.ZERO
 		bg.size = vs
-
-	world_offset = (vs - DESIGN_SIZE) * 0.5
+	world_offset = (vs - design_size) * 0.5
 	if _stage != null:
 		_stage.position = world_offset
-		var cam := _stage.get_node_or_null(NodePath("GameCamera")) as Camera2D
-		if cam != null:
-			cam.position = DESIGN_SIZE * 0.5
+	var cam := _stage.get_node_or_null(NodePath("GameCamera")) as Camera2D
+	if cam != null:
+		cam.position = design_size * 0.5
 	if _stage_ui != null:
 		_stage_ui.position = world_offset
 		_stage_ui.size = vs
+
+func set_orientation(mode: String) -> void:
+	current_orientation = mode
+	match mode:
+		"landscape":
+			design_size = Vector2(720, 480)
+		"portrait":
+			design_size = Vector2(480, 720)
+		_:
+			var vs := get_viewport_rect().size
+			if vs.x > vs.y:
+				design_size = Vector2(720, 480)
+			else:
+				design_size = Vector2(480, 720)
+	_update_layout()
+	_reapply_anchors(get_viewport_rect().size)
 
 func screen_to_design(pos: Vector2) -> Vector2:
 	return pos - world_offset

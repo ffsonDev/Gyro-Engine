@@ -1,47 +1,221 @@
 [gd_scene format=3 uid="uid://b1l1g50m5ywrp"]
 
 [ext_resource type="Script" uid="uid://ddgdpairx553g" path="res://ui/screens/home_screen.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://b5ecq7jdrdtj" path="res://ui/icons/gear.svg" id="2"]
+[ext_resource type="Texture2D" uid="uid://n0dys7h8i66o" path="res://ui/icons/documentation.svg" id="2_fjhsr"]
+[ext_resource type="Texture2D" uid="uid://b4v3vdbw8quiv" path="res://ui/icons/plus.svg" id="4"]
+[ext_resource type="Texture2D" uid="uid://dbm4i2bhb6ksl" path="res://ui/icons/import.svg" id="5"]
+[ext_resource type="PackedScene" uid="uid://erauwd71dk3l" path="res://ui/components/gyro_input_dialog.tscn" id="7"]
+[ext_resource type="PackedScene" uid="uid://doj6t5u8lnnfh" path="res://ui/components/gyro_dialog.tscn" id="8"]
 
 [node name="HomeScreen" type="Control" unique_id=1449474252]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1452797897]
+[node name="Background" type="ColorRect" parent="." unique_id=766886410]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.12941177, 0.14117648, 0.16078432, 1)
 
-[node name="Center" type="CenterContainer" parent="." unique_id=1810723609]
+[node name="Root" type="VBoxContainer" parent="." unique_id=635708080]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
 
-[node name="Column" type="VBoxContainer" parent="Center" unique_id=1110913635]
-custom_minimum_size = Vector2(320, 0)
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=1702066865]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 10
 
-[node name="Title" type="Label" parent="Center/Column" unique_id=1923038947]
+[node name="Title" type="Label" parent="Root/Header" unique_id=797509759]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 36
 text = "Gyro Engine"
+
+[node name="Spacer" type="Control" parent="Root/Header" unique_id=1475436945]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DocButton" type="Button" parent="Root/Header" unique_id=114020099]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 30
+icon = ExtResource("2_fjhsr")
+flat = true
+icon_alignment = 1
+
+[node name="SettingsButton" type="Button" parent="Root/Header" unique_id=895437997]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 30
+icon = ExtResource("2")
+flat = true
+icon_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Root" unique_id=11370914]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="ListVBox" type="VBoxContainer" parent="Root/Scroll" unique_id=892272534]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Bottom" type="HBoxContainer" parent="Root" unique_id=883840430]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlusButton" type="Button" parent="Root/Bottom" unique_id=472339288]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("4")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ImportButton" type="Button" parent="Root/Bottom" unique_id=1442017813]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("5")
+icon_alignment = 1
+expand_icon = true
+
+[node name="EmptyState" type="Control" parent="." unique_id=1992980159]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="EmptyState" unique_id=1588623529]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Box" type="VBoxContainer" parent="EmptyState/Center" unique_id=105601586]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="EmptyTitle" type="Label" parent="EmptyState/Center/Box" unique_id=902114988]
+unique_name_in_owner = true
+layout_mode = 2
 horizontal_alignment = 1
 
-[node name="ManagerButton" type="Button" parent="Center/Column" unique_id=1949816372]
+[node name="EmptyHint" type="Label" parent="EmptyState/Center/Box" unique_id=1589674518]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ProjectPanelOverlay" type="ColorRect" parent="." unique_id=1460764153]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="ProjectPanel" type="PanelContainer" parent="." unique_id=2081807559]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+custom_minimum_size = Vector2(320, 0)
+custom_maximum_size = Vector2(400, -1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -139.5
+offset_right = 240.0
+offset_bottom = 139.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="ProjectPanel" unique_id=602774028]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PanelTitle" type="Label" parent="ProjectPanel/VBox" unique_id=1794971010]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="OpenButton" type="Button" parent="ProjectPanel/VBox" unique_id=29759665]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 
-[node name="DocButton" type="Button" parent="Center/Column"]
+[node name="RenameButton" type="Button" parent="ProjectPanel/VBox" unique_id=69623686]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 
-[node name="SettingsButton" type="Button" parent="Center/Column" unique_id=557071489]
+[node name="DuplicateButton" type="Button" parent="ProjectPanel/VBox" unique_id=499037271]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
+
+[node name="DeleteButton" type="Button" parent="ProjectPanel/VBox" unique_id=1140144101]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="CreateDialog" parent="." unique_id=1512513870 instance=ExtResource("7")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+
+[node name="RenameDialog" parent="." unique_id=771646701 instance=ExtResource("7")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+
+[node name="ConfirmDialog" parent="." unique_id=748246308 instance=ExtResource("8")]
+unique_name_in_owner = true
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2

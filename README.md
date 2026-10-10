@@ -14,7 +14,7 @@ Gyro Engine is a visual game engine built on top of [Godot 4.7](https://godoteng
 ## Features
 
 ### Visual Programming
-- Assemble logic from blocks: Events → Conditions → Actions
+- Assemble logic from blocks: Events › Conditions › Actions
 - Drag & drop block editor
 - Undo / Redo support
 - Collapsible blocks for clean organization
@@ -84,10 +84,10 @@ Gyro Engine is a visual game engine built on top of [Godot 4.7](https://godoteng
 4. Choose save location
 
 ### Creating Your First Game
-1. Tap + in Project Manager → enter name → Create
-2. Open project hub → Structure → + → Script → name it "Main"
-3. Open the script → + → Events → On start
-4. Inside the event → + → Objects → Create object
+1. Tap + in Project Manager › enter name › Create
+2. Open project hub › Structure › + › Script › name it "Main"
+3. Open the script › + › Events › On start
+4. Inside the event › + › Objects › Create object
 5. Tap ▶ to play!
 
 ## Documentation

@@ -96,7 +96,12 @@ func emit_event(event_name: String, payload: Dictionary) -> void:
 func execute_action(action: GyroAction, payload: Dictionary) -> void:
 	match action.type:
 		"If":
-			if _to_bool(_resolve_value(action.data.get("condition", "true"), payload)):
+			var cond_text := str(_resolve_value(action.data.get("condition", "true"), payload))
+			var cond_out: Array = []
+			if GyroExpression.try_eval(cond_text, variables, payload, Callable(), cond_out):
+				if _to_bool(cond_out[0]):
+					event_system._execute_flow_blocks(action, payload)
+			elif _to_bool(cond_text):
 				event_system._execute_flow_blocks(action, payload)
 		"Repeat":
 			var count := int(_to_float(_resolve_value(action.data.get("count", 1), payload)))
@@ -109,7 +114,7 @@ func execute_action(action: GyroAction, payload: Dictionary) -> void:
 		"ForEachTable", "LoopRange":
 			variable_system.execute(action, payload)
 			_var_cache_dirty = true
-		"MoveNode", "SetNodeProperty", "SetSize", "SetText", "CreateObject", \
+		"MoveNode", "SetNodeProperty", "SetSize", "SetText", "CreateObject", "CreateSprite", "CreateText", \
 		"DeleteObject", "SetVisible", "SetOpacity", "SetRotation", "SetScale", \
 		"ChangeLayer", "SetFontSize", "SetColor", "SetTextAlign", "SetTexture", \
 		"SetCornerRadius", "SetPivot", "SetObjectMeta", "FaceObject", \
@@ -162,20 +167,18 @@ func _action_set_anchor(action: GyroAction, payload: Dictionary) -> void:
 		return
 	var node_2d := target as Node2D
 	var anchor := str(_resolve_value(action.data.get("anchor", "free"), payload))
-	
 	if anchor == "" or anchor == "free":
 		node_2d.set_meta("gyro_anchor", "")
 		node_2d.set_meta("gyro_anchor_offset", Vector2.ZERO)
 		host.unregister_anchor(node_2d.name)
 		return
-	
 	var vp_size: Vector2 = host.get_viewport_rect().size
 	var anchor_pt: Vector2 = host.anchor_point(vp_size, anchor) - host.world_offset
-	
-	var offset: Vector2 = node_2d.position - anchor_pt
 	node_2d.set_meta("gyro_anchor", anchor)
-	node_2d.set_meta("gyro_anchor_offset", offset)
+	node_2d.set_meta("gyro_anchor_offset", Vector2.ZERO)
 	host.register_anchor(node_2d.name, anchor)
+	host.set_anchor_offset(node_2d.name, Vector2.ZERO)
+	node_2d.position = anchor_pt
 
 func step_physics(delta: float) -> void:
 	physics_system.step(delta)
@@ -287,17 +290,14 @@ func _resolve_value(value: Variant, payload: Dictionary) -> Variant:
 func _interpolate(text: String, payload: Dictionary) -> String:
 	if _var_cache_dirty:
 		_rebuild_var_cache()
-
 	var result := text
 	for key in _var_cache.keys():
 		if result.contains(key):
 			result = result.replace(key, _var_cache[key])
-
 	var payload_keys := payload.keys()
 	payload_keys.sort_custom(func(a, b): return str(a).length() > str(b).length())
 	for key in payload_keys:
 		result = result.replace("$payload." + str(key), str(payload[key]))
-
 	return result
 
 func _to_float(value: Variant) -> float:
@@ -348,6 +348,28 @@ func _load_texture_ref(texture_ref: String) -> Texture2D:
 	if resolved == "":
 		return null
 	return GyroMedia.load_texture(resolved)
+
+func _load_font_ref(font_ref: String) -> Font:
+	var stored_path := font_ref
+	var project := _get_project()
+	if project != null:
+		for v in project.assets:
+			var a := v as GyroAsset
+			if a != null and a.kind == "font" and (a.id == font_ref or a.asset_name == font_ref):
+				stored_path = a.path
+				break
+	var resolved := GyroAssetPaths.resolve_asset_path(stored_path, _project_path())
+	if resolved == "":
+		return null
+	if ResourceLoader.exists(resolved):
+		var loaded := load(resolved)
+		if loaded is Font:
+			return loaded
+	if FileAccess.file_exists(resolved):
+		var ff := FontFile.new()
+		if ff.load_dynamic_font(resolved) == OK:
+			return ff
+	return null
 
 func _debug(text: String) -> void:
 	if print_handler.is_valid():

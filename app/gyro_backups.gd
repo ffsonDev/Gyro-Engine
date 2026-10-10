@@ -3,7 +3,6 @@ extends RefCounted
 
 const MAX_BACKUPS := 3
 
-
 static func make_backup(project_path: String) -> void:
 	if project_path == "":
 		return
@@ -12,70 +11,108 @@ static func make_backup(project_path: String) -> void:
 		return
 	if settings.backup_interval_minutes == 0:
 		return
-
+	var last_time := _get_last_backup_time(project_path)
+	var now := Time.get_unix_time_from_system()
+	var interval_sec := float(settings.backup_interval_minutes) * 60.0
+	if now - last_time < interval_sec:
+		return
 	if not FileAccess.file_exists(project_path):
 		return
-
 	var base := project_path.get_basename()
 	var backup_dir := base + ".backups"
 	DirAccess.make_dir_recursive_absolute(backup_dir)
-
 	var stamp := Time.get_datetime_string_from_system()
 	stamp = stamp.replace(":", "-").replace("T", "_").split(".")[0]
-
 	var dst := backup_dir + "/" + stamp + ".tres"
 	if FileAccess.file_exists(dst):
 		dst = backup_dir + "/" + stamp + "_" + str(Time.get_ticks_msec()) + ".tres"
-
 	DirAccess.copy_absolute(project_path, dst)
-
 	var files_dir := base + ".files"
 	if DirAccess.dir_exists_absolute(files_dir):
 		_copy_dir(files_dir, dst.get_basename() + ".files")
-
+	_set_last_backup_time(project_path, now)
 	_prune(backup_dir)
 
+static func make_backup_async(project_path: String) -> void:
+	var settings := GyroAppSettings.load_settings()
+	if not settings.backups_enabled:
+		return
+	if settings.backup_interval_minutes == 0:
+		return
+	var last_time := _get_last_backup_time(project_path)
+	var now := Time.get_unix_time_from_system()
+	var interval_sec := float(settings.backup_interval_minutes) * 60.0
+	if now - last_time < interval_sec:
+		return
+	if not FileAccess.file_exists(project_path):
+		return
+	var base := project_path.get_basename()
+	var backup_dir := base + ".backups"
+	DirAccess.make_dir_recursive_absolute(backup_dir)
+	var stamp := Time.get_datetime_string_from_system()
+	stamp = stamp.replace(":", "-").replace("T", "_").split(".")[0]
+	var dst := backup_dir + "/" + stamp + ".tres"
+	if FileAccess.file_exists(dst):
+		dst = backup_dir + "/" + stamp + "_" + str(Time.get_ticks_msec()) + ".tres"
+	DirAccess.copy_absolute(project_path, dst)
+	var files_dir := base + ".files"
+	if DirAccess.dir_exists_absolute(files_dir):
+		_copy_dir(files_dir, dst.get_basename() + ".files")
+	_set_last_backup_time(project_path, now)
+	_prune(backup_dir)
+
+static func _get_last_backup_time(project_path: String) -> float:
+	var base := project_path.get_basename()
+	var meta_file := base + ".backups/.last_backup_time"
+	var f := FileAccess.open(meta_file, FileAccess.READ)
+	if f == null:
+		return 0.0
+	var text := f.get_as_text().strip_edges()
+	f.close()
+	if text == "":
+		return 0.0
+	return float(text)
+
+static func _set_last_backup_time(project_path: String, time: float) -> void:
+	var base := project_path.get_basename()
+	var backup_dir := base + ".backups"
+	DirAccess.make_dir_recursive_absolute(backup_dir)
+	var meta_file := backup_dir + "/.last_backup_time"
+	var f := FileAccess.open(meta_file, FileAccess.WRITE)
+	if f != null:
+		f.store_string(str(time))
+		f.close()
 
 static func _prune(backup_dir: String) -> void:
 	var dir := DirAccess.open(backup_dir)
 	if dir == null:
 		return
-
 	var files := Array(dir.get_files())
 	files.sort()
-
 	while files.size() > MAX_BACKUPS:
 		var old := str(files.pop_front())
 		var old_path := backup_dir + "/" + old
 		_remove_dir(old_path.get_basename() + ".files")
 		DirAccess.remove_absolute(old_path)
 
-
 static func _copy_dir(src_abs: String, dst_abs: String) -> void:
 	DirAccess.make_dir_recursive_absolute(dst_abs)
-
 	var dir := DirAccess.open(src_abs)
 	if dir == null:
 		return
-
 	for f in dir.get_files():
 		DirAccess.copy_absolute(src_abs + "/" + f, dst_abs + "/" + f)
-
 	for d in dir.get_directories():
 		_copy_dir(src_abs + "/" + d, dst_abs + "/" + d)
-
 
 static func _remove_dir(abs_path: String) -> void:
 	var dir := DirAccess.open(abs_path)
 	if dir == null:
 		return
-
 	for f in dir.get_files():
 		DirAccess.remove_absolute(abs_path + "/" + f)
-
 	for d in dir.get_directories():
 		_remove_dir(abs_path + "/" + d)
-
 	DirAccess.remove_absolute(abs_path)
 
 static func list_backups(project_path: String) -> Array:
@@ -122,29 +159,3 @@ static func _copy_dir_recursive(src_abs: String, dst_abs: String) -> void:
 		DirAccess.copy_absolute(src_abs + "/" + str(f), dst_abs + "/" + str(f))
 	for d in dir.get_directories():
 		_copy_dir_recursive(src_abs + "/" + str(d), dst_abs + "/" + str(d))
-
-static func make_backup_async(project_path: String) -> void:
-	var settings := GyroAppSettings.load_settings()
-	if not settings.backups_enabled:
-		return
-	if settings.backup_interval_minutes == 0:
-		return
-	if not FileAccess.file_exists(project_path):
-		return
-	var thread := Thread.new()
-	thread.start(_backup_thread.bind(project_path))
-
-static func _backup_thread(project_path: String) -> void:
-	var base := project_path.get_basename()
-	var backup_dir := base + ".backups"
-	DirAccess.make_dir_recursive_absolute(backup_dir)
-	var stamp := Time.get_datetime_string_from_system()
-	stamp = stamp.replace(":", "-").replace("T", "_").split(".")[0]
-	var dst := backup_dir + "/" + stamp + ".tres"
-	if FileAccess.file_exists(dst):
-		dst = backup_dir + "/" + stamp + "_" + str(Time.get_ticks_msec()) + ".tres"
-	DirAccess.copy_absolute(project_path, dst)
-	var files_dir := base + ".files"
-	if DirAccess.dir_exists_absolute(files_dir):
-		_copy_dir(files_dir, dst.get_basename() + ".files")
-	_prune(backup_dir)

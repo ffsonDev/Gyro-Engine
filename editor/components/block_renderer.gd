@@ -147,7 +147,6 @@ func build_event_block(parent: Control, rule: GyroEventRule, collapsed: bool) ->
 	return wrapper
 
 func _build_rule_body(body: VBoxContainer, rule: GyroEventRule) -> void:
-	# === Заметка ===
 	var note_row := HBoxContainer.new()
 	body.add_child(note_row)
 	var note_label := Label.new()

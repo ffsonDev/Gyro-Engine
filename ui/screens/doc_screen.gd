@@ -208,18 +208,56 @@ func _find_category(category_id: String) -> Dictionary:
 			return cat
 	return {}
 
+func _render_section(section: Dictionary) -> String:
+	var md := ""
+	var keys: Array = section.get("content_keys", [])
+	for item in keys:
+		var type: String = item.get("type", "paragraph")
+		match type:
+			"paragraph":
+				md += GyroLang.t(item.get("key", "")) + "\n\n"
+			"heading":
+				var level: int = item.get("level", 2)
+				var prefix := "#".repeat(level) + " "
+				md += prefix + GyroLang.t(item.get("key", "")) + "\n\n"
+			"quote":
+				var label_key: String = item.get("label_key", "")
+				var label := ""
+				if label_key != "":
+					label = GyroLang.t(label_key) + ": "
+				md += "> " + label + GyroLang.t(item.get("key", "")) + "\n\n"
+			"list":
+				var items: Array = item.get("items", [])
+				for list_key in items:
+					md += "* " + GyroLang.t(list_key) + "\n"
+				md += "\n"
+			"code":
+				md += "```\n" + GyroLang.t(item.get("key", "")) + "\n```\n\n"
+			"link":
+				var target_id: String = item.get("target", "")
+				var text_key: String = item.get("text_key", "doc_see_also")
+				var link_text := GyroLang.t(text_key)
+				
+				var target_section := _find_section(target_id)
+				if not target_section.is_empty():
+					var target_title := GyroLang.t(target_section.get("title_key", target_id))
+					if link_text != "":
+						link_text += " " + target_title
+					else:
+						link_text = target_title
+				
+				md += "[link=" + target_id + "]" + link_text + "[/link]\n\n"
+	return md
+
 func _render_content(section_data: Dictionary) -> void:
 	GyroUI.clear_children(content_vbox)
 	_code_buttons.clear()
 	
-	var lang := GyroLang.lang
-	var content_key := "content_" + lang
-	var content := ""
-	if section_data.has(content_key):
-		content = str(section_data.get(content_key, ""))
-	elif section_data.has("content"):
-		content = str(section_data.get("content", ""))
+	var content := _render_section(section_data)
 	
+	if content == "" and section_data.has("content"):
+		content = str(section_data.get("content", ""))
+		
 	if content == "":
 		return
 	
@@ -230,21 +268,20 @@ func _render_content(section_data: Dictionary) -> void:
 	var code_lang := ""
 	
 	for line in lines:
-		if line.strip_edges() == "[code]":
-			in_code = true
-			code_text = ""
-			if current_paragraph != "":
-				_add_paragraph(current_paragraph)
-				current_paragraph = ""
+		if line.strip_edges() == "```":
+			if in_code:
+				in_code = false
+				_add_code_block(code_text, code_lang)
+				code_text = ""
+				code_lang = ""
+			else:
+				in_code = true
+				code_text = ""
+				if current_paragraph != "":
+					_add_paragraph(current_paragraph)
+					current_paragraph = ""
 			continue
-		
-		if line.strip_edges() == "[/code]":
-			in_code = false
-			_add_code_block(code_text, code_lang)
-			code_text = ""
-			code_lang = ""
-			continue
-		
+			
 		if in_code:
 			if code_text != "":
 				code_text += "\n"
@@ -400,9 +437,9 @@ func _add_code_block(code: String, lang: String) -> void:
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.08, 0.09, 0.11)
 	style.set_corner_radius_all(8)
-	style.content_margin_left = 12
+	style.content_margin_left = 8
 	style.content_margin_right = 12
-	style.content_margin_top = 8
+	style.content_margin_top = 4
 	style.content_margin_bottom = 8
 	panel.add_theme_stylebox_override("panel", style)
 	
@@ -418,18 +455,31 @@ func _add_code_block(code: String, lang: String) -> void:
 	label.add_theme_color_override("font_color", Color(0.85, 0.95, 0.75))
 	row.add_child(label)
 	
-	# Кнопка копирования
-	var copy_btn := GyroUI.icon_button("res://ui/icons/copy.svg", GyroUI.fs(20), 4)
+	var copy_btn := Button.new()
+	copy_btn.flat = true
+	copy_btn.icon = load("res://ui/icons/copy.svg")
+	copy_btn.add_theme_constant_override("icon_max_width", 20)
+	copy_btn.custom_minimum_size = Vector2(36, 36)
+	
+	var gray_color := Color(0.5, 0.5, 0.5)
+	var white_color := Color(1.0, 1.0, 1.0)
+	copy_btn.add_theme_color_override("icon_normal_color", gray_color)
+	copy_btn.add_theme_color_override("icon_hover_color", white_color)
+	copy_btn.add_theme_color_override("icon_pressed_color", white_color)
+	copy_btn.tooltip_text = "Копировать код"
+	
 	copy_btn.pressed.connect(func():
 		DisplayServer.clipboard_set(code)
-		var orig_text := copy_btn.tooltip_text
+		copy_btn.add_theme_color_override("icon_normal_color", white_color)
+		copy_btn.add_theme_color_override("icon_hover_color", white_color)
 		copy_btn.tooltip_text = "Скопировано!"
 		await get_tree().create_timer(1.5).timeout
-		copy_btn.tooltip_text = orig_text
+		copy_btn.add_theme_color_override("icon_normal_color", gray_color)
+		copy_btn.add_theme_color_override("icon_hover_color", white_color)
+		copy_btn.tooltip_text = "Копировать код"
 	)
-	copy_btn.tooltip_text = "Копировать код"
-	row.add_child(copy_btn)
 	
+	row.add_child(copy_btn)
 	_code_buttons.append(copy_btn)
 	content_vbox.add_child(panel)
 	_spacer(6)
@@ -445,7 +495,7 @@ func _add_link(text: String) -> void:
 	var link_text := match.get_string(2)
 	
 	var btn := Button.new()
-	btn.text = "→ " + link_text
+	btn.text = "› " + link_text
 	btn.flat = true
 	btn.add_theme_color_override("font_color", Color(0.4, 0.7, 0.95))
 	btn.add_theme_font_size_override("font_size", GyroUI.fs(14))

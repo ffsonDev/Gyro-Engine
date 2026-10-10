@@ -9,6 +9,7 @@ export_credentials.cfg
 *.res
 *.tres
 *.import
+*.uid
 
 #  Android / Gradle 
 .gradle/

@@ -27,11 +27,13 @@ func step(delta: float) -> void:
 			var parts := str(key).split("|")
 			if parts.size() == 2:
 				runtime.emit_event("collide_end", {"a": parts[0], "b": parts[1]})
+	for event_payload in _pending_collide_events:
+		var key := _contact_key(str(event_payload.get("a", "")), str(event_payload.get("b", "")))
+		if _contacts_now.has(key):
+			runtime.emit_event("collide", event_payload)
+	_pending_collide_events.clear()
 	_contacts = _contacts_now.duplicate()
 	_contacts_now = {}
-	for event_payload in _pending_collide_events:
-		runtime.emit_event("collide", event_payload)
-	_pending_collide_events.clear()
 
 func set_paused(on: bool) -> void:
 	if physics_paused == on:
@@ -72,7 +74,6 @@ func _ensure_physics_body(root: Node2D, mode: String) -> Node:
 		current_mode = "none"
 	if current_mode == mode:
 		return body
-
 	var pivot: Node2D = null
 	var direct_pivot := root.get_node_or_null(NodePath("Pivot"))
 	if direct_pivot is Node2D:
@@ -81,24 +82,20 @@ func _ensure_physics_body(root: Node2D, mode: String) -> Node:
 		var body_pivot := body.get_node_or_null(NodePath("Pivot"))
 		if body_pivot is Node2D:
 			pivot = body_pivot
-
 	var children: Array = []
 	if body != null:
 		for child in body.get_children():
 			if child != pivot:
 				children.append(child)
-		_disconnect_signals(body, root.name)
-
+	_disconnect_signals(body, root.name)
 	if body != null:
 		for child in body.get_children():
 			if child.get_parent() == body:
 				body.remove_child(child)
 		root.remove_child(body)
 		body.queue_free()
-
 	if pivot != null and pivot.get_parent() == root:
 		root.remove_child(pivot)
-
 	var st := _get_state(root.name)
 	var new_body: Node
 	match mode:
@@ -125,16 +122,13 @@ func _ensure_physics_body(root: Node2D, mode: String) -> Node:
 	new_body.position = Vector2.ZERO
 	new_body.set_meta(META_OBJECT_NAME, root.name)
 	root.add_child(new_body)
-
 	if pivot != null:
 		new_body.add_child(pivot)
-
 	for child in children:
 		if child is CollisionShape2D and mode == "none":
 			child.queue_free()
 		else:
 			new_body.add_child(child)
-
 	if mode != "none":
 		var has_shape := false
 		for child in new_body.get_children():
@@ -145,7 +139,6 @@ func _ensure_physics_body(root: Node2D, mode: String) -> Node:
 			var shape := _create_collision_shape(root)
 			if shape != null:
 				new_body.add_child(shape)
-
 	if new_body is RigidBody2D:
 		(new_body as RigidBody2D).body_entered.connect(_on_body_entered.bind(root.name))
 		(new_body as RigidBody2D).body_exited.connect(_on_body_exited.bind(root.name))
@@ -157,9 +150,14 @@ func _ensure_physics_body(root: Node2D, mode: String) -> Node:
 	return new_body
 
 func _create_collision_shape(root: Node2D) -> CollisionShape2D:
-	var pivot := root.get_node_or_null(NodePath("Pivot"))
+	var body := root.get_node_or_null(NodePath("PhysicsBody"))
+	if body == null:
+		return null
+
+	var pivot := body.get_node_or_null(NodePath("Pivot"))
 	if pivot == null:
 		return null
+
 	var visual: Node = null
 	for child in pivot.get_children():
 		if child is CanvasItem:
@@ -167,39 +165,26 @@ func _create_collision_shape(root: Node2D) -> CollisionShape2D:
 			break
 	if visual == null:
 		return null
+
 	var shape_node := CollisionShape2D.new()
-	if visual is Sprite2D:
-		var sp := visual as Sprite2D
-		var tex_size := Vector2(100, 100)
-		if sp.texture != null:
-			tex_size = sp.texture.get_size()
-		var size := tex_size * sp.scale
-		var center_offset := Vector2.ZERO if sp.centered else size * 0.5
-		var is_circle := root.has_meta(META_SHAPE) and str(root.get_meta(META_SHAPE)) == "circle"
-		if is_circle:
-			var circle := CircleShape2D.new()
-			circle.radius = maxf(1.0, minf(size.x, size.y) * 0.5)
-			shape_node.shape = circle
-		else:
-			var rect := RectangleShape2D.new()
-			rect.size = size
-			shape_node.shape = rect
-		shape_node.position = center_offset
-	elif visual is Label:
-		var lb := visual as Label
-		var size := lb.size
-		shape_node.position = size * 0.5
-		var rect := RectangleShape2D.new()
-		rect.size = size
-		shape_node.shape = rect
-	elif visual is Polygon2D:
-		var pg := visual as Polygon2D
-		var rect := ObjectSystem._polygon_rect(pg.polygon)
-		shape_node.position = rect.position + rect.size * 0.5
-		var r := RectangleShape2D.new()
-		r.size = rect.size
-		shape_node.shape = r
-	elif visual is Line2D:
+
+	var bounds := runtime.object_system._get_visual_bounds(visual)
+	var size = bounds.size
+	var origin = bounds.origin
+
+	if size.x <= 0 or size.y <= 0:
+		return null
+
+	shape_node.position = pivot.position + visual.position
+
+	var is_circle := root.has_meta(META_SHAPE) and str(root.get_meta(META_SHAPE)) == "circle"
+	if is_circle:
+		var circle := CircleShape2D.new()
+		circle.radius = maxf(1.0, minf(size.x, size.y)) * 0.5
+		shape_node.shape = circle
+		return shape_node
+
+	if visual is Line2D:
 		var ln := visual as Line2D
 		var points := ln.points
 		if points.size() >= 2:
@@ -207,31 +192,31 @@ func _create_collision_shape(root: Node2D) -> CollisionShape2D:
 			var p2: Vector2 = points[1]
 			var length := p1.distance_to(p2)
 			var center := (p1 + p2) * 0.5
-			shape_node.position = center
+			shape_node.position = pivot.position + center
 			shape_node.rotation = (p2 - p1).angle()
 			var cap := CapsuleShape2D.new()
 			cap.height = length
 			cap.radius = ln.width * 0.5
 			shape_node.shape = cap
+			return shape_node
+
+	var rect := RectangleShape2D.new()
+	rect.size = size
+	shape_node.shape = rect
+
 	return shape_node
 
-func _disconnect_signals(body: Node, object_name: String) -> void:
+func _disconnect_signals(body: Node, _object_name: String) -> void:
 	if body is RigidBody2D:
 		var rb := body as RigidBody2D
-		if rb.body_entered.is_connected(_on_body_entered.bind(object_name)):
-			rb.body_entered.disconnect(_on_body_entered.bind(object_name))
-		if rb.body_exited.is_connected(_on_body_exited.bind(object_name)):
-			rb.body_exited.disconnect(_on_body_exited.bind(object_name))
-	if body is Area2D:
-		var area := body as Area2D
-		if area.body_entered.is_connected(_on_body_entered.bind(object_name)):
-			area.body_entered.disconnect(_on_body_entered.bind(object_name))
-		if area.body_exited.is_connected(_on_body_exited.bind(object_name)):
-			area.body_exited.disconnect(_on_body_exited.bind(object_name))
-		if area.area_entered.is_connected(_on_area_entered.bind(object_name)):
-			area.area_entered.disconnect(_on_area_entered.bind(object_name))
-		if area.area_exited.is_connected(_on_area_exited.bind(object_name)):
-			area.area_exited.disconnect(_on_area_exited.bind(object_name))
+		for connection in rb.body_entered.get_connections():
+			var callable: Callable = connection.get("callable")
+			if callable.is_valid() and callable.get_object() == self and callable.get_method() == "_on_body_entered":
+				rb.body_entered.disconnect(callable)
+		for connection in rb.body_exited.get_connections():
+			var callable: Callable = connection.get("callable")
+			if callable.is_valid() and callable.get_object() == self and callable.get_method() == "_on_body_exited":
+				rb.body_exited.disconnect(callable)
 
 func _on_body_entered(other_body: Node, self_name: String) -> void:
 	var other_name := _get_object_name(other_body)

@@ -45,6 +45,19 @@ theme_override_constants/icon_max_width = 35
 icon = ExtResource("2")
 flat = true
 
+[node name="QuickNavScroll" type="ScrollContainer" parent="Root" unique_id=990000001]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 0
+
+[node name="QuickNavHBox" type="HBoxContainer" parent="Root/QuickNavScroll" unique_id=990000002]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
 [node name="Scroll" type="ScrollContainer" parent="Root" unique_id=505757184]
 unique_name_in_owner = true
 layout_mode = 2
@@ -52,6 +65,13 @@ size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
 [node name="ListVBox" type="VBoxContainer" parent="Root/Scroll" unique_id=715907302]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="ListVBox2" type="VBoxContainer" parent="Root/Scroll" unique_id=461226422]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

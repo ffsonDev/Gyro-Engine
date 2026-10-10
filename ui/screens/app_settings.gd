@@ -12,7 +12,7 @@ var friction_option: OptionButton
 var friction_label: Label
 var about_button: Button
 
-const APP_VERSION := "1.0.0"
+const APP_VERSION := "1.1.0"
 
 const ABOUT_SCENE := preload("res://ui/screens/about_screen.tscn")
 var about_screen: AboutScreen

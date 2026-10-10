@@ -28,7 +28,41 @@ func _ready() -> void:
 		var touch_scroll := GyroTouchScroll.new()
 		add_child(touch_scroll)
 		touch_scroll.setup(scroll)
+	
+	var quick_nav_scroll = get_node_or_null("%QuickNavScroll") as ScrollContainer
+	var quick_nav_hbox = get_node_or_null("%QuickNavHBox") as HBoxContainer
+	
+	if quick_nav_hbox == null and quick_nav_scroll != null:
+		for child in quick_nav_scroll.get_children():
+			if child is HBoxContainer:
+				quick_nav_hbox = child
+				break
+
+	if quick_nav_scroll != null:
+		quick_nav_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+		quick_nav_scroll.get_h_scroll_bar().hide()
+
+	if quick_nav_hbox != null:
+		for section in GyroBlocks.palette_sections():
+			var btn := Button.new()
+			btn.text = str(section.title)
+			btn.custom_minimum_size = Vector2(0, GyroUI.sz(40))
+			btn.flat = true
+			btn.pressed.connect(func(): _scroll_to_section(str(section.title)))
+			quick_nav_hbox.add_child(btn)
+	
 	apply_lang()
+
+func _scroll_to_section(title: String) -> void:
+	var scroll = get_node_or_null("%Scroll") as ScrollContainer
+	if scroll == null:
+		scroll = get_node_or_null("Scroll") as ScrollContainer
+	if scroll == null or list_vbox == null:
+		return
+	for child in list_vbox.get_children():
+		if child is Label and child.text == title:
+			scroll.scroll_vertical = child.position.y
+			return
 
 func close() -> void:
 	visible = false

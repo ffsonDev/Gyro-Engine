@@ -9,7 +9,6 @@ const MAX_STEPS := 50
 var undo_stack: Array = []
 var redo_stack: Array = []
 var pending_snapshot: Dictionary = {}
-
 var _capture: Callable
 var _apply: Callable
 
@@ -29,6 +28,9 @@ func mark_field_focus() -> void:
 func commit_pending() -> void:
 	if pending_snapshot.is_empty():
 		return
+	if _snapshots_equal(pending_snapshot, _capture.call()):
+		pending_snapshot = {}
+		return
 	undo_stack.append(pending_snapshot)
 	_trim()
 	redo_stack.clear()
@@ -40,7 +42,7 @@ func push_undo() -> void:
 		return
 	if _capture.is_valid():
 		undo_stack.append(_capture.call())
-		_trim()
+	_trim()
 	redo_stack.clear()
 
 func undo() -> void:
@@ -59,7 +61,7 @@ func redo() -> void:
 		return
 	if _capture.is_valid():
 		undo_stack.append(_capture.call())
-		_trim()
+	_trim()
 	var snapshot: Dictionary = redo_stack.pop_back()
 	if _apply.is_valid():
 		_apply.call(snapshot)
@@ -67,3 +69,9 @@ func redo() -> void:
 func _trim() -> void:
 	while undo_stack.size() > MAX_STEPS:
 		undo_stack.pop_front()
+
+func _snapshots_equal(a: Dictionary, b: Dictionary) -> bool:
+	var json := JSON.new()
+	var sa := json.stringify(a)
+	var sb := json.stringify(b)
+	return sa == sb

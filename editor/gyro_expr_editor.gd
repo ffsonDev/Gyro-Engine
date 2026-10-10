@@ -1,8 +1,6 @@
 class_name GyroExprEditor
 extends Control
-
 signal accepted(text: String)
-
 var _var_names: Array = []
 var _current_chip := ""
 
@@ -10,22 +8,20 @@ func _ready() -> void:
 	%Title.add_theme_font_size_override("font_size", GyroUI.fs(26))
 	%Title.add_theme_color_override("font_color", Color.WHITE)
 	%ExprEdit.add_theme_font_size_override("font_size", GyroUI.fs(24))
-
 	%CloseButton.pressed.connect(func(): visible = false)
 	%OkButton.pressed.connect(func():
 		visible = false
 		accepted.emit(%ExprEdit.text)
 	)
-
 	%ChipFuncs.pressed.connect(func(): _toggle("funcs"))
 	%ChipVars.pressed.connect(func(): _toggle("vars"))
 	%ChipCompare.pressed.connect(func(): _toggle("compare"))
 	%ChipLogic.pressed.connect(func(): _toggle("logic"))
-
+	
 	var ts := GyroTouchScroll.new()
 	add_child(ts)
 	ts.setup(%ExtraScroll)
-
+	
 	apply_lang()
 
 func apply_lang() -> void:
@@ -47,13 +43,11 @@ func _toggle(which: String) -> void:
 		_current_chip = ""
 		GyroUI.clear_children(%ExtraList)
 		return
-
 	_current_chip = which
 	GyroUI.clear_children(%ExtraList)
-
 	match which:
 		"funcs":
-			for f in ["min(", "max(", "abs(", "round(", "floor(", "ceil(", "rand(", "clamp(", "len(", "text(", "time", "screen_w", "screen_h"]:
+			for f in ["min(", "max(", "abs(", "round(", "floor(", "ceil(", "rand(", "clamp(", "len(", "text("]:
 				_add_extra(f)
 		"compare":
 			for c in ["==", "!=", "<", "<=", ">", ">="]:

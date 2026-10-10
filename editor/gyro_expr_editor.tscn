@@ -48,7 +48,7 @@ text = "ОК"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
-text = "×"
+text = "✕"
 
 [node name="ExprEdit" type="LineEdit" parent="Root" unique_id=507183088]
 unique_name_in_owner = true

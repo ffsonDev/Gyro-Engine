@@ -7,6 +7,12 @@ const DIALOG_SCENE := preload("res://ui/components/gyro_dialog.tscn")
 const DOC_SCENE := preload("res://ui/screens/doc_screen.tscn")
 const COLOR_EVENT := Color(0.11, 0.55, 0.62)
 
+const OBJECT_CREATING_ACTIONS := [
+	"CreateObject", "CreateSprite", "CreateText", "CreateCircle",
+	"CreateLine", "CreateGroup", "CreateSpriteAnim",
+	"CreateParticles", "CreateInput", "CreateSlider", "CreateToggle",
+]
+
 signal back_pressed
 
 var doc_screen: DocScreen
@@ -544,11 +550,11 @@ func _is_event_name_taken(name: String, exclude: GyroEventRule) -> bool:
 			if s == null or s.blueprint == null:
 				continue
 			for r in s.blueprint.rules:
-				if r != null and r != exclude and r.is_named() and r.event_name == name:
+				if r != null and r != exclude and not r.disabled and r.is_named() and r.event_name == name:
 					return true
 		return false
 	for r in blueprint.rules:
-		if r != null and r != exclude and r.is_named() and r.event_name == name:
+		if r != null and r != exclude and not r.disabled and r.is_named() and r.event_name == name:
 			return true
 	return false
 
@@ -999,7 +1005,6 @@ func _on_palette_item(item: Dictionary) -> void:
 	var kind: String = item.kind
 	var rule := _last_rule_or_create()
 	last_pointer = get_global_mouse_position()
-	
 	if kind == "event":
 		var new_rule := GyroEventRule.new()
 		new_rule.event_type = item.type
@@ -1013,7 +1018,6 @@ func _on_palette_item(item: Dictionary) -> void:
 		_mark_dirty()
 		_schedule_rebuild()
 		return
-	
 	var new_resource: Variant = null
 	if kind == "action":
 		var action := GyroAction.new()
@@ -1021,7 +1025,11 @@ func _on_palette_item(item: Dictionary) -> void:
 		var defaults: Dictionary = _default_data(item.type)
 		for key in defaults.keys():
 			action.data[key] = defaults[key]
-		rule.actions.append(action)
+		var insert_index := rule.actions.size()
+		var selected_block: Variant = drag_drop.drag_resource
+		if selected_block is GyroAction and rule.actions.has(selected_block):
+			insert_index = rule.actions.find(selected_block) + 1
+		rule.actions.insert(insert_index, action)
 		new_resource = action
 		if item.type == "CreateObject":
 			last_object_name = str(action.data.get("name", ""))
@@ -1031,12 +1039,14 @@ func _on_palette_item(item: Dictionary) -> void:
 		var defaults: Dictionary = _default_data(item.type)
 		for key in defaults.keys():
 			condition.data[key] = defaults[key]
-		rule.conditions.append(condition)
+		var insert_index := rule.conditions.size()
+		var selected_block: Variant = drag_drop.drag_resource
+		if selected_block is GyroCondition and rule.conditions.has(selected_block):
+			insert_index = rule.conditions.find(selected_block) + 1
+		rule.conditions.insert(insert_index, condition)
 		new_resource = condition
-	
 	_mark_dirty()
 	_rebuild_rule_only(rule)
-	
 	var panel = renderer.get_block_panel(new_resource)
 	if panel != null and is_instance_valid(panel):
 		drag_drop.start_drag(kind, new_resource, rule, panel)
@@ -1370,7 +1380,7 @@ func _object_names() -> Array:
 			var a := a_value as GyroAction
 			if a == null:
 				continue
-			if a.type == "CreateObject" or a.type == "CreateInput" or a.type == "CreateSlider" or a.type == "CreateToggle" or a.type == "CreateGroup" or a.type == "CreateSpriteAnim" or a.type == "CreateParticles" or a.type == "CreateCircle":
+			if OBJECT_CREATING_ACTIONS.has(a.type):
 				var n := str(a.data.get("name", ""))
 				if n != "" and not names.has(n):
 					names.append(n)
@@ -1438,6 +1448,12 @@ func _default_data(block_type: String) -> Dictionary:
 		"CreateObject":
 			object_counter += 1
 			return {"name": "obj" + str(object_counter), "type": "rect", "x": 100, "y": 100, "w": 80, "h": 80, "color": "#ffffff", "radius": 0, "text": "", "texture": "", "font": 24, "variable": ""}
+		"CreateSprite":
+			object_counter += 1
+			return {"name": "sprite" + str(object_counter), "x": 100, "y": 100, "w": 100, "h": 100, "texture": ""}
+		"CreateText":
+			object_counter += 1
+			return {"name": "text" + str(object_counter), "x": 100, "y": 100, "w": 200, "h": 60, "text": "Текст", "font": "", "size": 24}
 		"DeleteObject":
 			return {"node": last_object_name}
 		"MoveNode":

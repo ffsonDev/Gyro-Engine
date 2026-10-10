@@ -30,16 +30,22 @@ func _action_create_input(action: GyroAction, payload: Dictionary) -> void:
 	if runtime._to_bool(runtime._resolve_value(action.data.get("multiline", false), payload)):
 		var text_edit := TextEdit.new()
 		text_edit.text = str(runtime._resolve_value(action.data.get("text", ""), payload))
+		var weak_ref: Variant = weakref(text_edit)
 		text_edit.text_changed.connect(func():
-			runtime.emit_event("widget_changed", {"name": widget_name, "value": text_edit.text})
+			var te = weak_ref.get_ref()
+			if te != null:
+				runtime.emit_event("widget_changed", {"name": widget_name, "value": te.text})
 		)
 		node = text_edit
 	else:
 		var line_edit := LineEdit.new()
 		line_edit.text = str(runtime._resolve_value(action.data.get("text", ""), payload))
 		line_edit.secret = runtime._to_bool(runtime._resolve_value(action.data.get("secret", false), payload))
+		var weak_ref: Variant = weakref(line_edit)
 		line_edit.text_changed.connect(func(_t: String):
-			runtime.emit_event("widget_changed", {"name": widget_name, "value": line_edit.text})
+			var le = weak_ref.get_ref()
+			if le != null:
+				runtime.emit_event("widget_changed", {"name": widget_name, "value": le.text})
 		)
 		node = line_edit
 	node.name = widget_name
@@ -48,7 +54,7 @@ func _action_create_input(action: GyroAction, payload: Dictionary) -> void:
 	node.position = runtime.apply_anchor(node, widget_name, str(action.data.get("anchor", "free")), pos)
 	stage.add_child(node)
 	runtime.object_system.last_object_name = widget_name
-
+	
 func _action_create_slider(action: GyroAction, payload: Dictionary) -> void:
 	var stage: Control = runtime._get_stage_ui()
 	if stage == null:
@@ -71,12 +77,15 @@ func _action_create_slider(action: GyroAction, payload: Dictionary) -> void:
 		runtime._to_float(runtime._resolve_value(action.data.get("x", 0), payload)),
 		runtime._to_float(runtime._resolve_value(action.data.get("y", 0), payload))
 	))
+	var weak_ref: Variant = weakref(slider)
 	slider.value_changed.connect(func(v: float):
-		runtime.emit_event("widget_changed", {"name": widget_name, "value": v})
+		var s = weak_ref.get_ref()
+		if s != null:
+			runtime.emit_event("widget_changed", {"name": widget_name, "value": v})
 	)
 	stage.add_child(slider)
 	runtime.object_system.last_object_name = widget_name
-
+	
 func _action_create_toggle(action: GyroAction, payload: Dictionary) -> void:
 	var stage := runtime._get_stage_ui()
 	if stage == null:
@@ -96,8 +105,11 @@ func _action_create_toggle(action: GyroAction, payload: Dictionary) -> void:
 		runtime._to_float(runtime._resolve_value(action.data.get("x", 0), payload)),
 		runtime._to_float(runtime._resolve_value(action.data.get("y", 0), payload))
 	)
+	var weak_ref: Variant = weakref(check)
 	check.toggled.connect(func(v: bool):
-		runtime.emit_event("widget_changed", {"name": widget_name, "value": v})
+		var c = weak_ref.get_ref()
+		if c != null:
+			runtime.emit_event("widget_changed", {"name": widget_name, "value": v})
 	)
 	stage.add_child(check)
 	runtime.object_system.last_object_name = widget_name

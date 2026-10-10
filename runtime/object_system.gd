@@ -32,6 +32,8 @@ func execute(action: GyroAction, payload: Dictionary) -> void:
 		"SetSize": _action_set_size(action, payload)
 		"SetText": _action_set_text(action, payload)
 		"CreateObject": _action_create_object(action, payload)
+		"CreateSprite": _create_typed_object(action, payload, "sprite", ["name", "x", "y", "w", "h", "texture"])
+		"CreateText": _create_typed_object(action, payload, "label", ["name", "x", "y", "w", "h", "text"])
 		"DeleteObject": _action_delete_object(action, payload)
 		"SetVisible": _action_set_visible(action, payload)
 		"SetOpacity": _action_set_opacity(action, payload)
@@ -92,24 +94,20 @@ func _get_body(node: Node) -> CollisionObject2D:
 func _get_aabb(node: Node) -> Rect2:
 	if node == null:
 		return Rect2()
-
 	var pivot := node.get_node_or_null(NodePath("Pivot"))
 	if pivot == null:
 		var body := node.get_node_or_null(NodePath("PhysicsBody"))
 		if body != null:
 			pivot = body.get_node_or_null(NodePath("Pivot"))
-		if pivot == null:
-			return Rect2(node.global_position, Vector2.ZERO)
-
+	if pivot == null:
+		return Rect2(node.global_position, Vector2.ZERO)
 	var visual: Node = null
 	for child in pivot.get_children():
 		if child is CanvasItem:
 			visual = child
 			break
-
 	if visual == null:
 		return Rect2(node.global_position, Vector2.ZERO)
-
 	if visual is Sprite2D:
 		var sp := visual as Sprite2D
 		var tex_size := Vector2.ZERO
@@ -134,6 +132,31 @@ func _get_aabb(node: Node) -> Rect2:
 		return Rect2(node.global_position, rect.size * node.scale)
 	else:
 		return Rect2(node.global_position, Vector2.ZERO)
+
+func _update_aabb(node: Node) -> void:
+	if node == null:
+		return
+	var body := node.get_node_or_null(NodePath("PhysicsBody"))
+	if body is CollisionObject2D:
+		for child in body.get_children():
+			if child is CollisionShape2D:
+				var shape_node := child as CollisionShape2D
+				var visual := _get_visual(node)
+				if visual is Sprite2D:
+					var sp := visual as Sprite2D
+					var tex_size := sp.texture.get_size() if sp.texture else Vector2(100, 100)
+					var size := tex_size * sp.scale
+					if shape_node.shape is RectangleShape2D:
+						(shape_node.shape as RectangleShape2D).size = size
+				elif visual is Label:
+					var lb := visual as Label
+					if shape_node.shape is RectangleShape2D:
+						(shape_node.shape as RectangleShape2D).size = lb.size
+				elif visual is Polygon2D:
+					var pg := visual as Polygon2D
+					var rect := _polygon_rect(pg.polygon)
+					if shape_node.shape is RectangleShape2D:
+						(shape_node.shape as RectangleShape2D).size = rect.size
 
 # CreateObject
 
@@ -182,8 +205,14 @@ func _action_create_object(action: GyroAction, payload: Dictionary) -> void:
 			var lb := Label.new()
 			lb.text = str(runtime._resolve_value(action.data.get("text", ""), payload))
 			lb.add_theme_color_override("font_color", color)
-			var fs := int(runtime._to_float(runtime._resolve_value(action.data.get("font", 24), payload)))
-			lb.add_theme_font_size_override("font_size", fs)
+			var font_ref := str(runtime._resolve_value(action.data.get("font", ""), payload))
+			if font_ref != "":
+				var loaded_font := runtime._load_font_ref(font_ref)
+				if loaded_font != null:
+					lb.add_theme_font_override("font", loaded_font)
+			var fs := int(runtime._to_float(runtime._resolve_value(action.data.get("size", 24), payload)))
+			if fs > 0:
+				lb.add_theme_font_size_override("font_size", fs)
 			lb.custom_minimum_size = Vector2(w, h)
 			lb.size = Vector2(w, h)
 			lb.clip_contents = true
@@ -289,11 +318,12 @@ func _action_move_node(action: GyroAction, payload: Dictionary) -> void:
 		runtime.host.unregister_anchor(target.name)
 	else:
 		target.position = current + Vector2(new_x, new_y)
-		if target.has_meta("gyro_anchor") and str(target.get_meta("gyro_anchor")) != "":
-			var anchor := str(target.get_meta("gyro_anchor"))
-			var vp: Variant = runtime.host.get_viewport_rect().size
-			var anchor_pt: Variant = runtime.host.anchor_point(vp, anchor)
-			target.set_meta("gyro_anchor_offset", target.position - anchor_pt)
+	_update_aabb(target)
+	if target.has_meta("gyro_anchor") and str(target.get_meta("gyro_anchor")) != "":
+		var anchor := str(target.get_meta("gyro_anchor"))
+		var vp: Variant = runtime.host.get_viewport_rect().size
+		var anchor_pt: Variant = runtime.host.anchor_point(vp, anchor)
+		target.set_meta("gyro_anchor_offset", target.position - anchor_pt)
 
 func _action_set_node_property(action: GyroAction, payload: Dictionary) -> void:
 	var target := runtime._node_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
@@ -340,11 +370,21 @@ func _action_set_size(action: GyroAction, payload: Dictionary) -> void:
 	var target := runtime._node_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
 	if target == null:
 		return
+
 	var visual := _get_visual(target)
 	if visual == null:
 		return
+
 	var w_value: Variant = action.data.get("w", null)
 	var h_value: Variant = action.data.get("h", null)
+
+	# Сохраняем глобальную позицию pivot точки
+	var pivot_node := _get_pivot(target)
+	var pivot_in_root := Vector2.ZERO
+	if pivot_node != null:
+		pivot_in_root = pivot_node.position
+	var pivot_global = target.global_position + target.global_rotation * pivot_in_root
+
 	if visual is Sprite2D:
 		var sp := visual as Sprite2D
 		var current_size := Vector2.ZERO
@@ -384,6 +424,25 @@ func _action_set_size(action: GyroAction, payload: Dictionary) -> void:
 		for p in pg.polygon:
 			new_poly.append(p * Vector2(sx, sy))
 		pg.polygon = new_poly
+
+	# После изменения размера pivot точка в локальных координатах Visual изменилась
+	# Нужно пересчитать pivot_in_root и скорректировать позицию Root
+	if pivot_node != null:
+		var new_bounds := _get_visual_bounds(visual)
+		var new_origin = new_bounds.origin
+		var new_pivot_in_visual = new_origin + new_bounds.size * Vector2(0.5, 0.5)  # центр по умолчанию
+		# Но нам нужно сохранить процентное положение pivot!
+		# Для простоты: pivot остаётся в том же процентном положении
+		var px = (pivot_in_root.x - new_origin.x) / maxf(0.001, new_bounds.size.x)
+		var py = (pivot_in_root.y - new_origin.y) / maxf(0.001, new_bounds.size.y)
+		px = clampf(px, 0.0, 1.0)
+		py = clampf(py, 0.0, 1.0)
+		var new_pivot_in_root = new_origin + new_bounds.size * Vector2(px, py)
+		pivot_node.position = -new_pivot_in_root
+		
+		# Компенсируем позицию Root
+		target.position = pivot_global - target.global_rotation * new_pivot_in_root
+
 	runtime.physics_system.update_collision_shape(target)
 
 func _action_set_text(action: GyroAction, payload: Dictionary) -> void:
@@ -415,28 +474,63 @@ func _action_set_rotation(action: GyroAction, payload: Dictionary) -> void:
 	var target := runtime._node_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
 	if target == null or not (target is Node2D):
 		return
+
+	var root := target as Node2D
 	var angle := runtime._to_float(runtime._resolve_value(action.data.get("angle", 0), payload))
-	if str(action.data.get("mode", "set")) == "add":
-		angle += rad_to_deg(target.rotation)
-	target.rotation = deg_to_rad(angle)
+	var mode := str(action.data.get("mode", "set"))
+
+	var pivot_node := _get_pivot(root)
+	var pivot_in_root := Vector2.ZERO
+	if pivot_node != null:
+		pivot_in_root = pivot_node.position
+
+	if mode == "add":
+		angle += rad_to_deg(root.rotation)
+
+	var new_rotation := deg_to_rad(angle)
+	var pivot_global := root.to_global(pivot_in_root)
+	root.rotation = new_rotation
+
+	var new_pivot_global := root.to_global(pivot_in_root)
+	root.global_position += pivot_global - new_pivot_global
 
 func _action_set_scale(action: GyroAction, payload: Dictionary) -> void:
 	var target := runtime._node_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
 	if target == null or not (target is Node2D):
 		return
-	var s: Vector2 = target.scale
+
+	var root := target as Node2D
+	var visual := _get_visual(target)
+	if visual == null:
+		return
+
 	var percent = action.data.get("percent", null)
+	var xv = action.data.get("x", null)
+	var yv = action.data.get("y", null)
+
+	var pivot_node := _get_pivot(root)
+	var pivot_in_root := Vector2.ZERO
+	if pivot_node != null:
+		pivot_in_root = pivot_node.position
+
+	var new_scale = visual.scale
+
 	if percent != null and str(percent) != "":
 		var p := runtime._to_float(runtime._resolve_value(percent, payload)) / 100.0
-		s = Vector2(p, p)
+		new_scale = Vector2(p, p)
 	else:
-		var xv = action.data.get("x", null)
 		if xv != null and str(xv) != "":
-			s.x = runtime._to_float(runtime._resolve_value(xv, payload)) / 100.0
-		var yv = action.data.get("y", null)
+			new_scale.x = runtime._to_float(runtime._resolve_value(xv, payload)) / 100.0
 		if yv != null and str(yv) != "":
-			s.y = runtime._to_float(runtime._resolve_value(yv, payload)) / 100.0
-	target.scale = s
+			new_scale.y = runtime._to_float(runtime._resolve_value(yv, payload)) / 100.0
+
+	var pivot_global := root.to_global(pivot_in_root)
+	visual.scale = new_scale
+
+	var new_pivot_global := root.to_global(pivot_in_root)
+	root.global_position += pivot_global - new_pivot_global
+
+	runtime.physics_system.update_collision_shape(root)
 
 func _action_change_layer(action: GyroAction, payload: Dictionary) -> void:
 	var target := runtime._node_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
@@ -533,29 +627,58 @@ func _action_set_corner_radius(action: GyroAction, payload: Dictionary) -> void:
 
 func _action_set_pivot(action: GyroAction, payload: Dictionary) -> void:
 	var target := runtime._node_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
-	if target == null:
+	if target == null or not (target is Node2D):
 		return
-	var pivot := _get_pivot(target)
-	if pivot == null:
+
+	var root := target as Node2D
+	var body := root.get_node_or_null(NodePath("PhysicsBody"))
+	var pivot_node := _get_pivot(root)
+	var visual := _get_visual(root)
+
+	if pivot_node == null or visual == null:
 		return
-	var visual := _get_visual(target)
-	var w := 0.0
-	var h := 0.0
-	if visual is Sprite2D:
-		var sp := visual as Sprite2D
-		if sp.texture != null:
-			w = sp.texture.get_width() * sp.scale.x
-			h = sp.texture.get_height() * sp.scale.y
-	elif visual is Label:
-		w = (visual as Label).size.x
-		h = (visual as Label).size.y
-	elif visual is Polygon2D:
-		var rect: Rect2 = _polygon_rect((visual as Polygon2D).polygon)
-		w = rect.size.x
-		h = rect.size.y
+
+	var bounds := _get_visual_bounds(visual)
+	var w = bounds.size.x
+	var h = bounds.size.y
+	var origin = bounds.origin
+
+	if w <= 0.0 or h <= 0.0:
+		return
+
 	var px := runtime._to_float(runtime._resolve_value(action.data.get("x", 50), payload)) / 100.0
 	var py := runtime._to_float(runtime._resolve_value(action.data.get("y", 50), payload)) / 100.0
-	pivot.position = Vector2(-w * px, -h * py)
+
+	var pivot_in_visual = origin + Vector2(w * px, h * py)
+	var old_pivot_global = root.global_position + root.global_rotation * (pivot_node.position + pivot_in_visual)
+
+	pivot_node.position = -pivot_in_visual
+	visual.position = Vector2.ZERO
+
+	root.global_position = old_pivot_global
+
+	if body != null:
+		body.position = Vector2.ZERO
+		
+		var shape_node := _get_collision_shape(body)
+		if shape_node != null:
+			if shape_node.get_parent() != null:
+				shape_node.get_parent().remove_child(shape_node)
+			pivot_node.add_child(shape_node)
+			shape_node.position = origin + bounds.size * 0.5
+
+	runtime.physics_system.update_collision_shape(root)
+
+func _get_collision_shape(body: Node) -> CollisionShape2D:
+	for child in body.get_children():
+		if child is CollisionShape2D:
+			return child as CollisionShape2D
+	var pivot := body.get_node_or_null(NodePath("Pivot"))
+	if pivot != null:
+		for child in pivot.get_children():
+			if child is CollisionShape2D:
+				return child as CollisionShape2D
+	return null
 
 func _action_set_object_meta(action: GyroAction, payload: Dictionary) -> void:
 	var target := runtime._node_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
@@ -952,3 +1075,47 @@ func _action_set_anchor(action: GyroAction, payload: Dictionary) -> void:
 	node_2d.set_meta("gyro_anchor", anchor)
 	node_2d.set_meta("gyro_anchor_offset", offset)
 	host.register_anchor(node_2d.name, anchor)
+
+func _get_visual_bounds(visual: Node) -> Dictionary:
+	if visual is Sprite2D:
+		var sp := visual as Sprite2D
+		var size := Vector2.ZERO
+		if sp.texture != null:
+			size = sp.texture.get_size() * Vector2(absf(sp.scale.x), absf(sp.scale.y))
+		var origin := Vector2.ZERO if not sp.centered else -size * 0.5
+		return {"size": size, "origin": origin}
+	elif visual is AnimatedSprite2D:
+		var asp := visual as AnimatedSprite2D
+		var size := Vector2.ZERO
+		if asp.sprite_frames != null and asp.animation != "" and asp.sprite_frames.has_animation(asp.animation):
+			var tex := asp.sprite_frames.get_frame_texture(asp.animation, 0)
+			if tex != null:
+				size = tex.get_size() * Vector2(absf(asp.scale.x), absf(asp.scale.y))
+		var origin := Vector2.ZERO if not asp.centered else -size * 0.5
+		return {"size": size, "origin": origin}
+	elif visual is Label:
+		var lb := visual as Label
+		return {"size": lb.size, "origin": Vector2.ZERO}
+	elif visual is Polygon2D:
+		var pg := visual as Polygon2D
+		var rect := _polygon_rect(pg.polygon)
+		return {"size": rect.size, "origin": rect.position}
+	elif visual is Line2D:
+		var ln := visual as Line2D
+		var rect := _polygon_rect(ln.points)
+		return {"size": rect.size, "origin": rect.position}
+	return {"size": Vector2.ZERO, "origin": Vector2.ZERO}
+
+func _create_typed_object(action: GyroAction, payload: Dictionary, forced_type: String, allowed: Array) -> void:
+	var backup_data := action.data.duplicate(true)
+	var backup_type := action.type
+	var data := {}
+	for key in allowed:
+		if backup_data.has(key):
+			data[key] = backup_data[key]
+	data["type"] = forced_type
+	action.data = data
+	action.type = "CreateObject"
+	execute(action, payload)
+	action.type = backup_type
+	action.data = backup_data

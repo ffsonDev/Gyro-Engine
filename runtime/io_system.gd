@@ -98,6 +98,7 @@ func _action_http_request(action: GyroAction, payload: Dictionary) -> void:
 	var variable_name := str(action.data.get("variable", ""))
 	var request := HTTPRequest.new()
 	host.add_child(request)
+	host.tree_exiting.connect(func(): request.queue_free())
 	var method := HTTPClient.METHOD_GET
 	match method_name:
 		"POST":

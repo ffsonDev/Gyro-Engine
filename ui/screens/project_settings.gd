@@ -53,6 +53,19 @@ func _ready() -> void:
 	%PasswordEdit.text_changed.connect(func(t: String):
 		_change(func(): project.settings.keystore_password = t)
 	)
+	%BuildReleaseCheck.toggled.connect(func(on: bool):
+		_change(func(): project.settings.build_release_version = on)
+	)
+	%DebugKsPickButton.pressed.connect(_pick_debug_keystore)
+	%DebugKsEdit.text_changed.connect(func(t: String):
+		_change(func(): project.settings.debug_ks_path = t)
+	)
+	%DebugAliasEdit.text_changed.connect(func(t: String):
+		_change(func(): project.settings.debug_ks_alias = t)
+	)
+	%DebugPasswordEdit.text_changed.connect(func(t: String):
+		_change(func(): project.settings.debug_ks_password = t)
+	)
 	apply_lang()
 
 func apply_lang() -> void:
@@ -70,6 +83,10 @@ func apply_lang() -> void:
 	%KeystoreLabel.text = GyroLang.t("keystore")
 	%AliasLabel.text = GyroLang.t("alias")
 	%PasswordLabel.text = GyroLang.t("password")
+	%BuildReleaseLabel.text = GyroLang.t("build_release_version")
+	%DebugKsLabel.text = GyroLang.t("debug_keystore")
+	%DebugAliasLabel.text = GyroLang.t("debug_alias")
+	%DebugPasswordLabel.text = GyroLang.t("debug_password")
 
 func setup(proj: GyroProject, path: String) -> void:
 	project = proj
@@ -100,7 +117,28 @@ func _refresh_fields() -> void:
 	%KeystoreEdit.text = project.settings.keystore_path
 	%AliasEdit.text = project.settings.keystore_alias
 	%PasswordEdit.text = project.settings.keystore_password
+	%BuildReleaseCheck.set_pressed_no_signal(project.settings.build_release_version)
+	%DebugKsEdit.text = project.settings.debug_ks_path
+	%DebugAliasEdit.text = project.settings.debug_ks_alias
+	%DebugPasswordEdit.text = project.settings.debug_ks_password
 	updating = false
+
+func _pick_debug_keystore() -> void:
+	var on_selected := func(path: String):
+		DirAccess.make_dir_recursive_absolute("user://keystore/")
+		var dest := "user://keystore/debug.p12"
+		var err := DirAccess.copy_absolute(path, dest)
+		if err != OK or not FileAccess.file_exists(dest):
+			GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("keystore_copy_failed") % str(err))
+			return
+		if path.begins_with("user://imported_"):
+			DirAccess.remove_absolute(path)
+		%DebugKsEdit.text = dest
+		project.settings.debug_ks_path = dest
+		_save()
+	var on_failed := func(message: String):
+		GyroUI.alert(self, GyroLang.t("error"), message)
+	GyroFilePicker.pick_file("other", on_selected, on_failed)
 
 func _change(callback: Callable) -> void:
 	if updating:

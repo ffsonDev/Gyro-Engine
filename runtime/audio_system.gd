@@ -1,9 +1,8 @@
 class_name AudioSystem
 extends GyroSystem
-
 var sound_players := {}
 var stream_cache := {}
-
+const MAX_CACHE_SIZE := 100
 func execute(action: GyroAction, payload: Dictionary) -> void:
 	match action.type:
 		"PlaySound":
@@ -12,7 +11,6 @@ func execute(action: GyroAction, payload: Dictionary) -> void:
 			_action_stop_sound(action, payload)
 		"SetSoundVolume":
 			_action_set_sound_volume(action, payload)
-
 func _sound_stored_path_by_name(sound_ref: String) -> String:
 	var project := runtime._get_project()
 	if project == null:
@@ -22,7 +20,6 @@ func _sound_stored_path_by_name(sound_ref: String) -> String:
 		if a != null and a.kind == "sound" and (a.id == sound_ref or a.asset_name == sound_ref):
 			return a.path
 	return ""
-
 func _action_play_sound(action: GyroAction, payload: Dictionary) -> void:
 	var sound_ref := str(runtime._resolve_value(action.data.get("sound", ""), payload))
 	if sound_ref == "":
@@ -47,6 +44,15 @@ func _action_play_sound(action: GyroAction, payload: Dictionary) -> void:
 			else:
 				stream = base
 			stream_cache[cache_key] = stream
+			if stream_cache.size() > MAX_CACHE_SIZE:
+				var keys_to_remove := []
+				for key in stream_cache.keys():
+					if not sound_players.values().any(func(p): return p != null and is_instance_valid(p) and p.stream == stream_cache[key]):
+						keys_to_remove.append(key)
+					if keys_to_remove.size() >= 10:
+						break
+				for key in keys_to_remove:
+					stream_cache.erase(key)
 	if stream == null:
 		runtime._debug("PlaySound: не удалось загрузить аудио: " + resolved)
 		return
@@ -63,7 +69,6 @@ func _action_play_sound(action: GyroAction, payload: Dictionary) -> void:
 	else:
 		player.volume_db = linear_to_db(volume)
 	player.play()
-
 func _action_stop_sound(action: GyroAction, payload: Dictionary) -> void:
 	var sound_ref := str(runtime._resolve_value(action.data.get("sound", ""), payload))
 	if sound_ref == "":
@@ -75,7 +80,6 @@ func _action_stop_sound(action: GyroAction, payload: Dictionary) -> void:
 	var player: AudioStreamPlayer = sound_players.get(sound_ref, null)
 	if player != null and is_instance_valid(player):
 		player.stop()
-
 func _action_set_sound_volume(action: GyroAction, payload: Dictionary) -> void:
 	var sound_ref := str(runtime._resolve_value(action.data.get("sound", ""), payload))
 	var volume := clampf(runtime._to_float(runtime._resolve_value(action.data.get("volume", 100), payload)), 0.0, 100.0) / 100.0

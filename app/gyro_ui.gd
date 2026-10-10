@@ -251,3 +251,18 @@ static func set_orientation(mode: String) -> void:
 			DisplayServer.screen_set_orientation(DisplayServer.SCREEN_PORTRAIT)
 		_:
 			DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR)
+
+	var tree := Engine.get_main_loop()
+	if tree == null:
+		return
+	for node in tree.get_nodes_in_group(""):
+		pass
+	_notify_hosts_recursive(tree.root, mode)
+
+static func _notify_hosts_recursive(node: Node, mode: String) -> void:
+	if node == null:
+		return
+	if node is GyroEventHost and node.has_method("set_orientation"):
+		node.set_orientation(mode)
+	for child in node.get_children():
+		_notify_hosts_recursive(child, mode)

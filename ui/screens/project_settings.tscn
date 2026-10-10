@@ -45,151 +45,225 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AppNameRow" type="HBoxContainer" parent="Root" unique_id=41521926]
+[node name="SettingsScroll" type="ScrollContainer" parent="Root" unique_id=310000030]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="SettingsVBox" type="VBoxContainer" parent="Root/SettingsScroll" unique_id=310000031]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="AppNameRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=41521926]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AppNameLabel" type="Label" parent="Root/AppNameRow" unique_id=912447541]
+[node name="AppNameLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/AppNameRow" unique_id=912447541]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="AppNameEdit" type="LineEdit" parent="Root/AppNameRow" unique_id=1753488289]
+[node name="AppNameEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/AppNameRow" unique_id=1753488289]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PackageRow" type="HBoxContainer" parent="Root" unique_id=358224858]
+[node name="PackageRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=358224858]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="PackageLabel" type="Label" parent="Root/PackageRow" unique_id=137173813]
+[node name="PackageLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/PackageRow" unique_id=137173813]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="PackageEdit" type="LineEdit" parent="Root/PackageRow" unique_id=1754964352]
+[node name="PackageEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/PackageRow" unique_id=1754964352]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VersionRow" type="HBoxContainer" parent="Root" unique_id=310000001]
+[node name="VersionRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=310000001]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="VersionLabel" type="Label" parent="Root/VersionRow" unique_id=310000002]
+[node name="VersionLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/VersionRow" unique_id=310000002]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="VersionEdit" type="LineEdit" parent="Root/VersionRow" unique_id=310000003]
+[node name="VersionEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/VersionRow" unique_id=310000003]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VersionCodeRow" type="HBoxContainer" parent="Root" unique_id=310000004]
+[node name="VersionCodeRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=310000004]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="VersionCodeLabel" type="Label" parent="Root/VersionCodeRow" unique_id=310000005]
+[node name="VersionCodeLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/VersionCodeRow" unique_id=310000005]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="VersionCodeEdit" type="LineEdit" parent="Root/VersionCodeRow" unique_id=310000006]
+[node name="VersionCodeEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/VersionCodeRow" unique_id=310000006]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PermsRow" type="HBoxContainer" parent="Root" unique_id=310000007]
+[node name="PermsRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=310000007]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="PermsLabel" type="Label" parent="Root/PermsRow" unique_id=310000008]
+[node name="PermsLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/PermsRow" unique_id=310000008]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="PermsButton" type="Button" parent="Root/PermsRow" unique_id=310000009]
+[node name="PermsButton" type="Button" parent="Root/SettingsScroll/SettingsVBox/PermsRow" unique_id=310000009]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="IconRow" type="HBoxContainer" parent="Root" unique_id=1421772823]
+[node name="IconRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=1421772823]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="IconLabel" type="Label" parent="Root/IconRow" unique_id=1148859018]
+[node name="IconLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/IconRow" unique_id=1148859018]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="IconEdit" type="LineEdit" parent="Root/IconRow" unique_id=1253329036]
+[node name="IconEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/IconRow" unique_id=1253329036]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="IconPickButton" type="Button" parent="Root/IconRow" unique_id=1153427455]
+[node name="IconPickButton" type="Button" parent="Root/SettingsScroll/SettingsVBox/IconRow" unique_id=1153427455]
 unique_name_in_owner = true
 layout_mode = 2
 text = "..."
 
-[node name="OrientRow" type="HBoxContainer" parent="Root" unique_id=2064304954]
+[node name="OrientRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=2064304954]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="OrientLabel" type="Label" parent="Root/OrientRow" unique_id=762308906]
+[node name="OrientLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/OrientRow" unique_id=762308906]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="OrientationOption" type="OptionButton" parent="Root/OrientRow" unique_id=1255345570]
+[node name="OrientationOption" type="OptionButton" parent="Root/SettingsScroll/SettingsVBox/OrientRow" unique_id=1255345570]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="KeystoreRow" type="HBoxContainer" parent="Root" unique_id=767756919]
+[node name="KeystoreRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=767756919]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="KeystoreLabel" type="Label" parent="Root/KeystoreRow" unique_id=2086230767]
+[node name="KeystoreLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/KeystoreRow" unique_id=2086230767]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="KeystoreEdit" type="LineEdit" parent="Root/KeystoreRow" unique_id=1634813400]
+[node name="KeystoreEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/KeystoreRow" unique_id=1634813400]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="KeystorePickButton" type="Button" parent="Root/KeystoreRow" unique_id=785220059]
+[node name="KeystorePickButton" type="Button" parent="Root/SettingsScroll/SettingsVBox/KeystoreRow" unique_id=785220059]
 unique_name_in_owner = true
 layout_mode = 2
 text = "..."
 
-[node name="AliasRow" type="HBoxContainer" parent="Root" unique_id=1677655274]
+[node name="AliasRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=1677655274]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AliasLabel" type="Label" parent="Root/AliasRow" unique_id=2144853782]
+[node name="AliasLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/AliasRow" unique_id=2144853782]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="AliasEdit" type="LineEdit" parent="Root/AliasRow" unique_id=12469429]
+[node name="AliasEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/AliasRow" unique_id=12469429]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PasswordRow" type="HBoxContainer" parent="Root" unique_id=1077120271]
+[node name="PasswordRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=1077120271]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="PasswordLabel" type="Label" parent="Root/PasswordRow" unique_id=963551908]
+[node name="PasswordLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/PasswordRow" unique_id=963551908]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
-[node name="PasswordEdit" type="LineEdit" parent="Root/PasswordRow" unique_id=443782472]
+[node name="PasswordEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/PasswordRow" unique_id=443782472]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+secret = true
+
+[node name="BuildReleaseRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=310000010]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BuildReleaseLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/BuildReleaseRow" unique_id=310000011]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="BuildReleaseCheck" type="CheckBox" parent="Root/SettingsScroll/SettingsVBox/BuildReleaseRow" unique_id=310000012]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DebugKsRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=310000013]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DebugKsLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/DebugKsRow" unique_id=310000014]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="DebugKsEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/DebugKsRow" unique_id=310000015]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DebugKsPickButton" type="Button" parent="Root/SettingsScroll/SettingsVBox/DebugKsRow" unique_id=310000016]
+unique_name_in_owner = true
+layout_mode = 2
+text = "..."
+
+[node name="DebugAliasRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=310000017]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DebugAliasLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/DebugAliasRow" unique_id=310000018]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="DebugAliasEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/DebugAliasRow" unique_id=310000019]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DebugPasswordRow" type="HBoxContainer" parent="Root/SettingsScroll/SettingsVBox" unique_id=310000020]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DebugPasswordLabel" type="Label" parent="Root/SettingsScroll/SettingsVBox/DebugPasswordRow" unique_id=310000021]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="DebugPasswordEdit" type="LineEdit" parent="Root/SettingsScroll/SettingsVBox/DebugPasswordRow" unique_id=310000022]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

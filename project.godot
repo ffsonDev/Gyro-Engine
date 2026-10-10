@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GyroFilePicker="*uid://bmw35qrjlgx25"
+GyroIntentHandler="*uid://bvgtxck1mcnsr"
 
 [display]
 
@@ -30,7 +31,7 @@ window/handheld/orientation=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/Godot-File-Picker-main/godot/plugin.cfg")
+enabled=PackedStringArray("res://addons/Godot-File-Picker-main/godot/plugin.cfg", "res://addons/gyro_intent_plugin/plugin.cfg")
 
 [physics]
 

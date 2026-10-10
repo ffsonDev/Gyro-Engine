@@ -4,7 +4,7 @@ extends Control
 signal back_requested
 signal docs_requested
 
-const APP_VERSION := "1.0.0"
+const APP_VERSION := "1.1.0"
 
 func _ready() -> void:
 	%BackButton.pressed.connect(func(): back_requested.emit())

@@ -105,16 +105,40 @@ func _values_equal(a: Variant, b: Variant) -> bool:
 func _execute_actions(actions: Array, payload: Dictionary, start_index: int = 0) -> void:
 	for i in range(start_index, actions.size()):
 		var action := actions[i] as GyroAction
-		if action == null or action.disabled:
+		if action == null:
+			continue
+		if not is_instance_valid(action):
+			continue
+		if action.disabled:
 			continue
 		if action.type == "Wait":
 			var seconds := runtime._to_float(runtime._resolve_value(action.data.get("wait", 1.0), payload))
 			if host != null and host.is_inside_tree():
-				var rest := actions
+				var rest_data: Array = []
+				for j in range(i + 1, actions.size()):
+					var next_action := actions[j] as GyroAction
+					if next_action != null and is_instance_valid(next_action):
+						rest_data.append({
+							"type": next_action.type,
+							"data": next_action.data.duplicate(true),
+							"disabled": next_action.disabled
+						})
 				var pl := payload
-				var next := i + 1
-				host.get_tree().create_timer(maxf(0.01, seconds)).timeout.connect(func(): _execute_actions(rest, pl, next))
+				host.get_tree().create_timer(maxf(0.01, seconds)).timeout.connect(func(): _execute_actions_from_data(rest_data, pl))
 			return
+		runtime.execute_action(action, payload)
+
+func _execute_actions_from_data(actions_data: Array, payload: Dictionary) -> void:
+	for action_data in actions_data:
+		var ad: Dictionary = action_data
+		if ad.is_empty():
+			continue
+		var action := GyroAction.new()
+		action.type = str(ad.get("type", ""))
+		action.data = (ad.get("data", {}) as Dictionary).duplicate(true)
+		action.disabled = bool(ad.get("disabled", false))
+		if action.disabled:
+			continue
 		runtime.execute_action(action, payload)
 
 func _execute_flow_blocks(action: GyroAction, payload: Dictionary) -> void:
