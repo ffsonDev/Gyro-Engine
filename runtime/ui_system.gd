@@ -42,9 +42,10 @@ func _action_toast(action: GyroAction, payload: Dictionary) -> void:
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", style)
 	panel.add_child(label)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	host.add_child(panel)
-	panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	panel.position.y -= 90
+	panel.size = panel.get_combined_minimum_size()
+	panel.position = Vector2((host.size.x - panel.size.x) * 0.5, host.size.y - panel.size.y - GyroUI.sz(90))
 	panel.modulate.a = 0.0
 	var tw := host.create_tween()
 	tw.tween_property(panel, "modulate:a", 1.0, 0.2)

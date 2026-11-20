@@ -56,6 +56,9 @@ func _ready() -> void:
 	%BuildReleaseCheck.toggled.connect(func(on: bool):
 		_change(func(): project.settings.build_release_version = on)
 	)
+	%CompressCheck.toggled.connect(func(on: bool):
+		_change(func(): project.settings.compress_textures = on)
+	)
 	%DebugKsPickButton.pressed.connect(_pick_debug_keystore)
 	%DebugKsEdit.text_changed.connect(func(t: String):
 		_change(func(): project.settings.debug_ks_path = t)
@@ -67,6 +70,13 @@ func _ready() -> void:
 		_change(func(): project.settings.debug_ks_password = t)
 	)
 	apply_lang()
+	_animate_in()
+	GyroUI.apply_background(self)
+
+func _animate_in() -> void:
+	modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(self, "modulate:a", 1.0, DesignTokens.ANIM_NORMAL).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 func apply_lang() -> void:
 	%Title.text = GyroLang.t("project_settings")
@@ -84,6 +94,7 @@ func apply_lang() -> void:
 	%AliasLabel.text = GyroLang.t("alias")
 	%PasswordLabel.text = GyroLang.t("password")
 	%BuildReleaseLabel.text = GyroLang.t("build_release_version")
+	%CompressLabel.text = GyroLang.t("compress_textures")
 	%DebugKsLabel.text = GyroLang.t("debug_keystore")
 	%DebugAliasLabel.text = GyroLang.t("debug_alias")
 	%DebugPasswordLabel.text = GyroLang.t("debug_password")
@@ -118,6 +129,7 @@ func _refresh_fields() -> void:
 	%AliasEdit.text = project.settings.keystore_alias
 	%PasswordEdit.text = project.settings.keystore_password
 	%BuildReleaseCheck.set_pressed_no_signal(project.settings.build_release_version)
+	%CompressCheck.set_pressed_no_signal(project.settings.compress_textures)
 	%DebugKsEdit.text = project.settings.debug_ks_path
 	%DebugAliasEdit.text = project.settings.debug_ks_alias
 	%DebugPasswordEdit.text = project.settings.debug_ks_password
@@ -147,7 +159,7 @@ func _change(callback: Callable) -> void:
 	_save()
 
 func _save() -> void:
-	GyroUI.save_resource(project, save_path)
+	GyroProjectJSON.save_to_file(project, save_path)
 
 func _pick_icon() -> void:
 	var on_selected := func(path: String):
@@ -262,8 +274,10 @@ func _setup_perms_overlay() -> void:
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(title)
 	var close := Button.new()
-	close.text = "×"
+	close.icon = load("res://ui/icons/close.svg")
 	close.flat = true
+	close.add_theme_constant_override("icon_max_width", 25)
+	close.add_theme_color_override("font_color", Color(0.7, 0.72, 0.76))
 	close.pressed.connect(_close_perms)
 	top.add_child(close)
 	var scroll := ScrollContainer.new()

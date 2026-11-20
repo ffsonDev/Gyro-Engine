@@ -4,11 +4,26 @@ extends RefCounted
 static var lang := "ru"
 static var strings: Dictionary = {}
 static var is_loaded := false
+static var _lang_changed_callbacks: Array[Callable] = []
 
 const LANG_FILES := {
 	"ru": "Русский",
 	"en": "English",
 }
+
+static func add_lang_changed_callback(callback: Callable) -> void:
+	if not _lang_changed_callbacks.has(callback):
+		_lang_changed_callbacks.append(callback)
+
+static func remove_lang_changed_callback(callback: Callable) -> void:
+	_lang_changed_callbacks.erase(callback)
+
+static func _notify_lang_changed() -> void:
+	for cb in _lang_changed_callbacks.duplicate():
+		if cb.is_valid():
+			cb.call()
+		else:
+			_lang_changed_callbacks.erase(cb)
 
 static func load_lang() -> void:
 	var file_name: String = LANG_FILES.get(lang, "Русский")
@@ -48,3 +63,4 @@ static func set_language(new_lang: String) -> void:
 		lang = new_lang
 		is_loaded = false
 		load_lang()
+		_notify_lang_changed()

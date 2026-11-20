@@ -10,6 +10,7 @@ const GAP := 6.0
 const PANEL_W := 52.0
 const CLOSED_H := 56.0
 const OPEN_H := 150.0
+const MAX_LOG_LINES := 50
 
 var host: GyroEventHost
 var log_label: Label
@@ -47,9 +48,12 @@ func start(project: GyroProject, project_path: String) -> void:
 	host.project = project
 	host.project_path = project_path
 	host.runtime.print_handler = _on_print
+	if GyroAppSettings.load_settings().show_test_log:
+		host.runtime.enable_timing()
 	
 	var root := _editor.get_tree().root
 	root.add_child(host)
+	host.process_mode = Node.PROCESS_MODE_ALWAYS
 	host.z_index = 100
 	host.refresh_layout()
 	
@@ -80,7 +84,8 @@ func start(project: GyroProject, project_path: String) -> void:
 	log_label.offset_bottom = -8
 	log_label.visible = GyroAppSettings.load_settings().show_test_log
 	log_label.text = ""
-	
+	if not _log_lines.is_empty():
+		log_label.text = "\n".join(_log_lines)
 	_build_fab()
 	
 	GyroUI.set_orientation(project.settings.orientation if project != null and project.settings != null else "portrait")
@@ -113,9 +118,17 @@ func _build_fab() -> void:
 	host.add_child(_fab_panel)
 	
 	_bar_bg = PanelContainer.new()
-	var bar_style := StyleBoxFlat.new()
+	var bar_style := GyroUI.glass_panel_style().duplicate() as StyleBoxFlat
 	bar_style.bg_color = Color(0.10, 0.11, 0.14, 0.85)
 	bar_style.set_corner_radius_all(22)
+	bar_style.content_margin_left = 4
+	bar_style.content_margin_right = 4
+	bar_style.content_margin_top = 4
+	bar_style.content_margin_bottom = 4
+	bar_style.border_width_left = 0
+	bar_style.border_width_right = 0
+	bar_style.border_width_top = 0
+	bar_style.border_width_bottom = 0
 	_bar_bg.add_theme_stylebox_override("panel", bar_style)
 	_bar_bg.position = Vector2.ZERO
 	_bar_bg.size = Vector2(PANEL_W, CLOSED_H)
@@ -263,6 +276,7 @@ func _on_layout_object_moved(obj_name: String, pos: Vector2) -> void:
 
 func stop() -> void:
 	_kill_tween()
+	var was_running := host != null or layout != null
 	if layout != null:
 		if layout.has_method("cleanup"):
 			layout.call("cleanup")
@@ -270,37 +284,32 @@ func stop() -> void:
 	if _fab_panel != null:
 		_fab_panel.queue_free()
 		_fab_panel = null
-		_bar_bg = null
-		_fab_button = null
-		_layout_btn = null
-		_exit_btn = null
+	_bar_bg = null
+	_fab_button = null
+	_layout_btn = null
+	_exit_btn = null
 	if _menu_overlay != null:
 		_menu_overlay.queue_free()
 		_menu_overlay = null
 	if host != null:
-		if host.get_parent() != null:
-			host.get_parent().remove_child(host)
+		if host.runtime != null:
+			host.runtime.disable_timing()
 		host.queue_free()
 		host = null
-	if log_label != null:
-		log_label.queue_free()
 		log_label = null
+	if not was_running:
+		return
 	RenderingServer.set_default_clear_color(_prev_clear_color)
 	GyroUI.set_orientation("portrait")
+	_log_lines.clear()
 	stopped.emit()
 
-func _on_runtime_print(message: Variant) -> void:
-	if log_label == null:
-		return
-	_log_lines.append(str(message))
-	while _log_lines.size() > 10:
-		_log_lines.pop_front()
-	log_label.text = "\n".join(_log_lines)
-
 func _on_print(message: Variant) -> void:
-	var text := str(message) + "\n"
+	_log_lines.append(str(message))
+	while _log_lines.size() > MAX_LOG_LINES:
+		_log_lines.pop_front()
 	if log_label != null:
-		log_label.text = log_label.text + text
+		log_label.text = "\n".join(_log_lines)
 	print_received.emit(message)
 
 func emit_back() -> void:

@@ -3,6 +3,7 @@ extends Control
 
 signal back_requested
 signal lang_changed
+signal about_requested
 
 var app_settings: GyroAppSettings
 
@@ -11,11 +12,6 @@ var backup_label: Label
 var friction_option: OptionButton
 var friction_label: Label
 var about_button: Button
-
-const APP_VERSION := "1.1.0"
-
-const ABOUT_SCENE := preload("res://ui/screens/about_screen.tscn")
-var about_screen: AboutScreen
 
 func _ready() -> void:
 	%Title.add_theme_font_size_override("font_size", GyroUI.fs(28))
@@ -28,7 +24,6 @@ func _ready() -> void:
 		app_settings.language = "ru" if id == 0 else "en"
 		GyroAppSettings.save_settings(app_settings)
 		GyroLang.set_language(app_settings.language)
-		lang_changed.emit()
 	)
 	
 	%VibrationCheck.toggled.connect(func(on: bool):
@@ -47,6 +42,7 @@ func _ready() -> void:
 	
 	_build_extra_settings()
 	apply_lang()
+	GyroUI.apply_background(self)
 
 func _build_extra_settings() -> void:
 	var root := get_node("Root") as VBoxContainer
@@ -105,19 +101,8 @@ func _build_extra_settings() -> void:
 	about_button = Button.new()
 	about_button.custom_minimum_size = Vector2(0, 56)
 	about_button.layout_mode = 2
-	about_button.pressed.connect(_show_about)
+	about_button.pressed.connect(func(): about_requested.emit())
 	root.add_child(about_button)
-
-func _show_about() -> void:
-	if about_screen == null:
-		about_screen = ABOUT_SCENE.instantiate()
-		about_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		about_screen.z_index = 50
-		about_screen.back_requested.connect(func():
-			about_screen.visible = false
-		)
-		get_parent().add_child(about_screen)
-	about_screen.visible = true
 
 func apply_lang() -> void:
 	%Title.text = GyroLang.t("settings")

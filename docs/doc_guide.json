@@ -1,0 +1,766 @@
+{
+  "version": 3,
+  "chapters": [
+	{
+	  "id": "ch1",
+	  "title_key": "doc_ch1_title",
+	  "sections": [
+		{
+		  "id": "ch1_intro",
+		  "title_key": "doc_ch1_intro",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_intro_p1"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_intro_analogy"},
+			{"type": "heading", "level": 2, "key": "doc_what_is"},
+			{"type": "list", "items": ["doc_intro_b1", "doc_intro_b2", "doc_intro_b3", "doc_intro_b4"]},
+			{"type": "quote", "label_key": "doc_note", "key": "doc_intro_info"},
+			{"type": "heading", "level": 2, "key": "doc_for_whom"},
+			{"type": "paragraph", "key": "doc_for_whom_p"}
+		  ]
+		},
+		{
+		  "id": "ch1_interface",
+		  "title_key": "doc_ch1_interface",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_interface_p"},
+			{"type": "quote", "label_key": "doc_note", "key": "doc_interface_info"},
+			{"type": "heading", "level": 2, "key": "doc_screen_home"},
+			{"type": "paragraph", "key": "doc_screen_home_p"},
+			{"type": "heading", "level": 2, "key": "doc_screen_manager"},
+			{"type": "paragraph", "key": "doc_screen_manager_p"},
+			{"type": "list", "items": ["doc_screen_manager_b1", "doc_screen_manager_b2", "doc_screen_manager_b3"]},
+			{"type": "heading", "level": 2, "key": "doc_screen_hub"},
+			{"type": "paragraph", "key": "doc_screen_hub_p"},
+			{"type": "heading", "level": 2, "key": "doc_screen_structure"},
+			{"type": "paragraph", "key": "doc_screen_structure_p"},
+			{"type": "heading", "level": 2, "key": "doc_screen_resources"},
+			{"type": "paragraph", "key": "doc_screen_resources_p"},
+			{"type": "heading", "level": 2, "key": "doc_screen_editor"},
+			{"type": "paragraph", "key": "doc_screen_editor_p"}
+		  ]
+		},
+		{
+		  "id": "ch1_quickstart",
+		  "title_key": "doc_ch1_quickstart",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_quickstart_p"},
+			{"type": "heading", "level": 2, "key": "doc_qs_step1_t"},
+			{"type": "paragraph", "key": "doc_qs_step1"},
+			{"type": "heading", "level": 2, "key": "doc_qs_step2_t"},
+			{"type": "paragraph", "key": "doc_qs_step2"},
+			{"type": "heading", "level": 2, "key": "doc_qs_step3_t"},
+			{"type": "paragraph", "key": "doc_qs_step3"},
+			{"type": "heading", "level": 2, "key": "doc_qs_step4_t"},
+			{"type": "paragraph", "key": "doc_qs_step4"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "ready", "depth": 0},
+			  {"kind": "action", "type": "CreateObject", "depth": 1, "fields": [
+				{"label": "field.name", "value": "obj1"},
+				{"label": "field.type", "value": "rect"},
+				{"label": "field.x", "value": "200"},
+				{"label": "field.y", "value": "400"},
+				{"label": "field.w", "value": "80"},
+				{"label": "field.h", "value": "80"},
+				{"label": "field.color", "value": "#ff8800"}
+			  ]}
+			]},
+			{"type": "heading", "level": 2, "key": "doc_qs_step5_t"},
+			{"type": "paragraph", "key": "doc_qs_step5"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "tap", "depth": 0},
+			  {"kind": "action", "type": "AddVelocity", "depth": 1, "fields": [
+				{"label": "field.node", "value": "obj1"},
+				{"label": "field.imp_y", "value": "-700"}
+			  ]}
+			]},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_qs_tip"},
+			{"type": "link", "target": "ch2_events", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch1_layout",
+		  "title_key": "doc_ch1_layout",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_layout_mode_p"},
+			{"type": "heading", "level": 2, "key": "doc_layout_mode_how"},
+			{"type": "paragraph", "key": "doc_layout_mode_how_p"},
+			{"type": "list", "items": ["doc_layout_mode_b1", "doc_layout_mode_b2", "doc_layout_mode_b3"]},
+			{"type": "heading", "level": 2, "key": "doc_layout_mode_snap"},
+			{"type": "paragraph", "key": "doc_layout_mode_snap_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_layout_mode_warning"}
+		  ]
+		},
+		{
+		  "id": "ch1_palette",
+		  "title_key": "doc_ch1_palette",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_ch1_palette_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch1_palette_cats"},
+			{"type": "paragraph", "key": "doc_ch1_palette_cats_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch1_palette_fav"},
+			{"type": "paragraph", "key": "doc_ch1_palette_fav_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch1_palette_drag"},
+			{"type": "paragraph", "key": "doc_ch1_palette_drag_p"}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": "ch2",
+	  "title_key": "doc_ch2_title",
+	  "sections": [
+		{
+		  "id": "ch2_events",
+		  "title_key": "doc_ch2_events",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_events_p"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_events_analogy"},
+			{"type": "heading", "level": 2, "key": "doc_events_lifecycle"},
+			{"type": "heading", "level": 3, "key": "doc_ev_ready"},
+			{"type": "paragraph", "key": "doc_ev_ready_p"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "ready", "depth": 0},
+			  {"kind": "action", "type": "SetVariable", "depth": 1, "fields": [
+				{"label": "field.var_name", "value": "score"},
+				{"label": "field.value", "value": "0"}
+			  ]},
+			  {"kind": "action", "type": "CreateObject", "depth": 1, "fields": [
+				{"label": "field.name", "value": "player"}
+			  ]}
+			]},
+			{"type": "heading", "level": 3, "key": "doc_ev_update"},
+			{"type": "paragraph", "key": "doc_ev_update_p"},
+			{"type": "heading", "level": 2, "key": "doc_events_input"},
+			{"type": "heading", "level": 3, "key": "doc_ev_tap"},
+			{"type": "paragraph", "key": "doc_ev_tap_p"},
+			{"type": "heading", "level": 3, "key": "doc_ev_input"},
+			{"type": "paragraph", "key": "doc_ev_input_p"},
+			{"type": "paragraph", "key": "doc_ev_drag_p"},
+			{"type": "paragraph", "key": "doc_ev_touch_p"},
+			{"type": "heading", "level": 2, "key": "doc_events_physics"},
+			{"type": "paragraph", "key": "doc_ev_collide_p"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "collide", "depth": 0},
+			  {"kind": "condition", "type": "PayloadEquals", "depth": 1, "fields": [
+				{"label": "field.key", "value": "a"},
+				{"label": "field.value", "value": "player"}
+			  ]},
+			  {"kind": "action", "type": "AddToVariable", "depth": 1, "fields": [
+				{"label": "field.var_name", "value": "score"},
+				{"label": "field.amount", "value": "10"}
+			  ]},
+			  {"kind": "action", "type": "PlaySound", "depth": 1, "fields": [
+				{"label": "field.sound", "value": "coin"}
+			  ]}
+			]},
+			{"type": "heading", "level": 2, "key": "doc_events_time"},
+			{"type": "paragraph", "key": "doc_ev_timer_p"},
+			{"type": "heading", "level": 2, "key": "doc_events_custom"},
+			{"type": "paragraph", "key": "doc_ev_custom_p"},
+			{"type": "heading", "level": 2, "key": "doc_events_data"},
+			{"type": "paragraph", "key": "doc_ev_data_p"},
+			{"type": "link", "target": "ch2_actions", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch2_actions",
+		  "title_key": "doc_ch2_actions",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_actions_p"},
+			{"type": "heading", "level": 2, "key": "doc_act_objects"},
+			{"type": "list", "items": ["doc_act_create_obj", "doc_act_delete_obj"]},
+			{"type": "heading", "level": 2, "key": "doc_act_logic"},
+			{"type": "list", "items": ["doc_act_flow"]},
+			{"type": "heading", "level": 2, "key": "doc_act_sound"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "ready", "depth": 0},
+			  {"kind": "action", "type": "PlaySound", "depth": 1, "fields": [
+				{"label": "field.sound", "value": "coin_sound"},
+				{"label": "field.volume", "value": "0.8"},
+				{"label": "field.loop", "value": "false"}
+			  ]}
+			]},
+			{"type": "heading", "level": 2, "key": "doc_act_tweens"},
+			{"type": "heading", "level": 2, "key": "doc_act_system"},
+			{"type": "quote", "label_key": "doc_note", "key": "doc_act_info"},
+			{"type": "link", "target": "ch2_conditions", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch2_conditions",
+		  "title_key": "doc_ch2_conditions",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_conditions_p"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_conditions_analogy"},
+			{"type": "heading", "level": 2, "key": "condition.Always"},
+			{"type": "paragraph", "key": "doc_cond_always_p"},
+			{"type": "heading", "level": 2, "key": "doc_cond_var_p"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "update", "depth": 0},
+			  {"kind": "condition", "type": "VariableGreaterThan", "depth": 1, "fields": [
+				{"label": "field.var_name", "value": "hp"},
+				{"label": "field.value", "value": "0"}
+			  ]},
+			  {"kind": "action", "type": "SetVisible", "depth": 1, "fields": [
+				{"label": "field.node", "value": "player"},
+				{"label": "field.on", "value": "true"}
+			  ]},
+			  {"kind": "condition", "type": "VariableEquals", "depth": 1, "fields": [
+				{"label": "field.var_name", "value": "hp"},
+				{"label": "field.value", "value": "0"}
+			  ]},
+			  {"kind": "action", "type": "EmitEvent", "depth": 1, "fields": [
+				{"label": "field.event", "value": "game_over"}
+			  ]}
+			]},
+			{"type": "heading", "level": 2, "key": "doc_cond_payload_p"},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_cond_tip"},
+			{"type": "link", "target": "ch6_vars", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch2_expressions",
+		  "title_key": "doc_ch2_expressions",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_expressions_p"},
+			{"type": "heading", "level": 2, "key": "doc_expressions_syntax"},
+			{"type": "paragraph", "key": "doc_expressions_syntax_p"},
+			{"type": "code", "key": "doc_expressions_syntax_code"},
+			{"type": "heading", "level": 2, "key": "doc_expressions_ops"},
+			{"type": "list", "items": ["doc_expressions_arith", "doc_expressions_cmp", "doc_expressions_logic"]},
+			{"type": "heading", "level": 2, "key": "doc_expressions_funcs"},
+			{"type": "paragraph", "key": "doc_expressions_funcs_p"},
+			{"type": "list", "items": ["doc_expr_math", "doc_expr_text", "doc_expr_trig", "doc_expr_screen", "doc_expr_object", "doc_expr_time"]},
+			{"type": "code", "key": "doc_expr_funcs_code"},
+			{"type": "heading", "level": 2, "key": "doc_expressions_examples"},
+			{"type": "code", "key": "doc_expressions_examples_code"}
+		  ]
+		},
+		{
+		  "id": "ch2_functions",
+		  "title_key": "doc_ch2_functions",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_ch2_functions_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch2_functions_create"},
+			{"type": "paragraph", "key": "doc_ch2_functions_create_p"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "action", "type": "Print", "depth": 0, "fields": [
+				{"label": "field.message", "value": "triple($var.x)"}
+			  ]}
+			]},
+			{"type": "heading", "level": 2, "key": "doc_ch2_functions_export"},
+			{"type": "paragraph", "key": "doc_ch2_functions_export_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_ch2_functions_warn"}
+		  ]
+		},
+		{
+		  "id": "ch2_custom_events",
+		  "title_key": "doc_ch2_custom_events",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_custom_events_p"},
+			{"type": "heading", "level": 2, "key": "doc_custom_emit_p"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "ready", "depth": 0},
+			  {"kind": "action", "type": "EmitEvent", "depth": 1, "fields": [
+				{"label": "field.event", "value": "game_over"}
+			  ]}
+			]},
+			{"type": "heading", "level": 2, "key": "doc_custom_payload"},
+			{"type": "paragraph", "key": "doc_custom_payload_p"},
+			{"type": "heading", "level": 2, "key": "doc_custom_func"},
+			{"type": "paragraph", "key": "doc_custom_func_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_custom_warning"}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": "ch3",
+	  "title_key": "doc_ch3_title",
+	  "sections": [
+		{
+		  "id": "ch3_objects",
+		  "title_key": "doc_ch3_objects",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_objects_p"},
+			{"type": "heading", "level": 2, "key": "doc_obj_types"},
+			{"type": "list", "items": ["doc_obj_rect", "doc_obj_label", "doc_obj_sprite", "doc_obj_circle", "doc_obj_line", "doc_obj_group", "doc_obj_sprite_anim"]},
+			{"type": "heading", "level": 2, "key": "doc_obj_props"},
+			{"type": "paragraph", "key": "doc_obj_props_p"},
+			{"type": "heading", "level": 2, "key": "doc_obj_hierarchy"},
+			{"type": "paragraph", "key": "doc_obj_hierarchy_p"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_obj_hierarchy_analogy"},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_obj_tip"},
+			{"type": "link", "target": "ch4_physics", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch3_transforms",
+		  "title_key": "doc_ch3_transforms",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_transforms_p"},
+			{"type": "heading", "level": 2, "key": "doc_transforms_pivot_h"},
+			{"type": "paragraph", "key": "doc_transforms_pivot_p"},
+			{"type": "heading", "level": 2, "key": "doc_transforms_face_h"},
+			{"type": "paragraph", "key": "doc_transforms_face_p"},
+			{"type": "heading", "level": 2, "key": "doc_transforms_meta_h"},
+			{"type": "paragraph", "key": "doc_transforms_meta_p"},
+			{"type": "quote", "label_key": "doc_note", "key": "doc_transforms_meta_tip"}
+		  ]
+		},
+		{
+		  "id": "ch3_styles",
+		  "title_key": "doc_ch3_styles",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_styles_p"},
+			{"type": "list", "items": ["doc_styles_linear", "doc_styles_vertical", "doc_styles_radial"]},
+			{"type": "heading", "level": 2, "key": "doc_styles_gradient_h"},
+			{"type": "paragraph", "key": "doc_styles_gradient_p"},
+			{"type": "heading", "level": 2, "key": "doc_styles_border_h"},
+			{"type": "paragraph", "key": "doc_styles_border_p"},
+			{"type": "heading", "level": 2, "key": "doc_styles_corner_h"},
+			{"type": "paragraph", "key": "doc_styles_corner_p"}
+		  ]
+		},
+		{
+		  "id": "ch3_anchors",
+		  "title_key": "doc_ch3_anchors",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_anchors_p"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_anchors_analogy"},
+			{"type": "heading", "level": 2, "key": "doc_anchors_points"},
+			{"type": "list", "items": ["doc_anchors_tl", "doc_anchors_tc", "doc_anchors_tr", "doc_anchors_ml", "doc_anchors_c", "doc_anchors_mr", "doc_anchors_bl", "doc_anchors_bc", "doc_anchors_br", "doc_anchors_free"]},
+			{"type": "heading", "level": 2, "key": "doc_anchors_offset"},
+			{"type": "paragraph", "key": "doc_anchors_offset_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_anchors_warning"},
+			{"type": "link", "target": "ch1_layout", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch3_groups",
+		  "title_key": "doc_ch3_groups",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_groups_p"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_groups_analogy"},
+			{"type": "heading", "level": 2, "key": "doc_groups_relative"},
+			{"type": "paragraph", "key": "doc_groups_relative_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_groups_warning"},
+			{"type": "link", "target": "ch6_tags", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch3_shapes",
+		  "title_key": "doc_ch3_shapes",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_shapes_p"},
+			{"type": "heading", "level": 2, "key": "doc_shapes_physics"},
+			{"type": "paragraph", "key": "doc_shapes_physics_p"}
+		  ]
+		},
+		{
+		  "id": "ch3_tweens",
+		  "title_key": "doc_ch3_tweens",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_tweens_p"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_tweens_analogy"},
+			{"type": "heading", "level": 2, "key": "doc_tweens_ease"},
+			{"type": "list", "items": ["doc_tweens_linear", "doc_tweens_in", "doc_tweens_out"]},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_tweens_tip"}
+		  ]
+		},
+		{
+		  "id": "ch3_spawn",
+		  "title_key": "doc_ch3_spawn",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_spawn_p"},
+			{"type": "heading", "level": 2, "key": "doc_spawn_fields"},
+			{"type": "list", "items": ["doc_spawn_scene", "doc_spawn_parent", "doc_spawn_pos", "doc_spawn_var"]},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_spawn_warning"}
+		  ]
+		},
+		{
+		  "id": "ch3_sprite_shaper",
+		  "title_key": "doc_ch3_sprite_shaper",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_ch3_shaper_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch3_shaper_hitbox"},
+			{"type": "paragraph", "key": "doc_ch3_shaper_hitbox_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch3_shaper_atlas"},
+			{"type": "paragraph", "key": "doc_ch3_shaper_atlas_p"},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_ch3_shaper_tip"}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": "ch4",
+	  "title_key": "doc_ch4_title",
+	  "sections": [
+		{
+		  "id": "ch4_physics",
+		  "title_key": "doc_ch4_physics",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_physics_p"},
+			{"type": "heading", "level": 2, "key": "doc_phys_bodies"},
+			{"type": "list", "items": ["doc_phys_static", "doc_phys_sensor", "doc_phys_no_body"]},
+			{"type": "heading", "level": 2, "key": "doc_phys_motion"},
+			{"type": "list", "items": ["doc_phys_vel", "doc_phys_imp", "doc_phys_grav", "doc_phys_ggrav"]},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "tap", "depth": 0},
+			  {"kind": "action", "type": "AddVelocity", "depth": 1, "fields": [
+				{"label": "field.node", "value": "player"},
+				{"label": "field.imp_y", "value": "-700"}
+			  ]}
+			]},
+			{"type": "heading", "level": 2, "key": "doc_phys_collisions"},
+			{"type": "paragraph", "key": "doc_phys_coll_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_phys_warning"}
+		  ]
+		},
+		{
+		  "id": "ch4_draggable",
+		  "title_key": "doc_ch4_draggable",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_draggable_p"},
+			{"type": "heading", "level": 2, "key": "doc_draggable_events"},
+			{"type": "paragraph", "key": "doc_draggable_events_p"},
+			{"type": "quote", "label_key": "doc_note", "key": "doc_draggable_tip"},
+			{"type": "link", "target": "ch4_physics", "text_key": "doc_see_also"}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": "ch5",
+	  "title_key": "doc_ch5_title",
+	  "sections": [
+		{
+		  "id": "ch5_sound",
+		  "title_key": "doc_ch5_sound",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_sound_p"},
+			{"type": "heading", "level": 2, "key": "doc_sound_formats"},
+			{"type": "paragraph", "key": "doc_sound_formats_p"},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_sound_tip"},
+			{"type": "heading", "level": 2, "key": "doc_sound_volume"},
+			{"type": "paragraph", "key": "doc_sound_volume_p"},
+			{"type": "heading", "level": 2, "key": "doc_sound_loop"},
+			{"type": "paragraph", "key": "doc_sound_loop_p"}
+		  ]
+		},
+		{
+		  "id": "ch5_camera",
+		  "title_key": "doc_ch5_camera",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_camera_p"},
+			{"type": "heading", "level": 2, "key": "doc_cam_pos_h"},
+			{"type": "paragraph", "key": "doc_cam_pos_p"},
+			{"type": "heading", "level": 2, "key": "doc_cam_follow_h"},
+			{"type": "paragraph", "key": "doc_cam_follow_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_cam_reset_warn"},
+			{"type": "heading", "level": 2, "key": "doc_cam_parallax_h"},
+			{"type": "paragraph", "key": "doc_cam_parallax_p"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_cam_parallax_analogy"}
+		  ]
+		},
+		{
+		  "id": "ch5_particles",
+		  "title_key": "doc_ch5_particles",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_particles_p"},
+			{"type": "heading", "level": 2, "key": "doc_part_presets_h"},
+			{"type": "paragraph", "key": "doc_part_presets_p"},
+			{"type": "heading", "level": 2, "key": "doc_part_params_h"},
+			{"type": "paragraph", "key": "doc_part_params_p"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "ready", "depth": 0},
+			  {"kind": "action", "type": "CreateParticles", "depth": 1, "fields": [
+				{"label": "field.name", "value": "snow1"},
+				{"label": "field.preset", "value": "snow"},
+				{"label": "field.x", "value": "540"},
+				{"label": "field.y", "value": "0"}
+			  ]}
+			]}
+		  ]
+		},
+		{
+		  "id": "ch5_sprite_anim",
+		  "title_key": "doc_ch5_sprite_anim",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_sprite_anim_p"},
+			{"type": "heading", "level": 2, "key": "doc_sprite_anim_fields"},
+			{"type": "paragraph", "key": "doc_sprite_anim_fields_p"},
+			{"type": "list", "items": ["doc_sprite_anim_sprite", "doc_sprite_anim_frame_size", "doc_sprite_anim_count", "doc_sprite_anim_fps", "doc_sprite_anim_name"]},
+			{"type": "heading", "level": 2, "key": "doc_sprite_anim_play_h"},
+			{"type": "paragraph", "key": "doc_sprite_anim_play_p"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "ready", "depth": 0},
+			  {"kind": "action", "type": "CreateSpriteAnim", "depth": 1, "fields": [
+				{"label": "field.name", "value": "hero"},
+				{"label": "field.texture", "value": "hero_walk"},
+				{"label": "field.frame_w", "value": "32"},
+				{"label": "field.frame_h", "value": "32"},
+				{"label": "field.count", "value": "8"},
+				{"label": "field.fps", "value": "12"},
+				{"label": "field.anim", "value": "walk"},
+				{"label": "field.x", "value": "270"},
+				{"label": "field.y", "value": "960"}
+			  ]}
+			]},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_sprite_anim_tip"}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": "ch6",
+	  "title_key": "doc_ch6_title",
+	  "sections": [
+		{
+		  "id": "ch6_vars",
+		  "title_key": "doc_ch6_vars",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_vars_p"},
+			{"type": "heading", "level": 2, "key": "doc_vars_types"},
+			{"type": "list", "items": ["doc_vars_number", "doc_vars_text", "doc_vars_bool", "doc_vars_table"]},
+			{"type": "heading", "level": 2, "key": "doc_vars_syntax"},
+			{"type": "paragraph", "key": "doc_vars_syntax_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_vars_warning"}
+		  ]
+		},
+		{
+		  "id": "ch6_tables",
+		  "title_key": "doc_ch6_tables",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_tables_p"},
+			{"type": "heading", "level": 2, "key": "doc_tab_dict"},
+			{"type": "paragraph", "key": "doc_tab_dict_p"},
+			{"type": "heading", "level": 2, "key": "doc_tab_array"},
+			{"type": "paragraph", "key": "doc_tab_array_p"},
+			{"type": "heading", "level": 2, "key": "doc_tab_loops"},
+			{"type": "paragraph", "key": "doc_tab_loops_p"},
+			{"type": "paragraph", "key": "doc_tab_json_p"}
+		  ]
+		},
+		{
+		  "id": "ch6_tags",
+		  "title_key": "doc_ch6_tags",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_tags_p"},
+			{"type": "quote", "label_key": "doc_analogy", "key": "doc_tags_analogy"},
+			{"type": "heading", "level": 2, "key": "doc_tags_ops"},
+			{"type": "list", "items": ["doc_tags_add", "doc_tags_del"]},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_tags_tip"},
+			{"type": "link", "target": "ch3_groups", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch6_widgets",
+		  "title_key": "doc_ch6_widgets",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_widgets_p"},
+			{"type": "heading", "level": 2, "key": "doc_wid_types_h"},
+			{"type": "paragraph", "key": "doc_wid_types_p"},
+			{"type": "heading", "level": 2, "key": "doc_wid_events"},
+			{"type": "paragraph", "key": "doc_wid_events_p"},
+			{"type": "block_example", "blocks": [
+			  {"kind": "event", "type": "widget_changed", "depth": 0},
+			  {"kind": "condition", "type": "PayloadEquals", "depth": 1, "fields": [
+				{"label": "field.key", "value": "name"},
+				{"label": "field.value", "value": "slider1"}
+			  ]},
+			  {"kind": "action", "type": "SetVariable", "depth": 1, "fields": [
+				{"label": "field.var_name", "value": "volume"},
+				{"label": "field.value", "value": "$payload.value"}
+			  ]}
+			]},
+			{"type": "quote", "label_key": "doc_note", "key": "doc_wid_info"},
+			{"type": "link", "target": "ch2_events", "text_key": "doc_see_also"}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": "ch7",
+	  "title_key": "doc_ch7_title",
+	  "sections": [
+		{
+		  "id": "ch7_files",
+		  "title_key": "doc_ch7_files",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_files_p"},
+			{"type": "heading", "level": 2, "key": "doc_files_local"},
+			{"type": "list", "items": ["doc_files_read", "doc_files_write", "doc_files_save"]},
+			{"type": "heading", "level": 2, "key": "doc_files_http"},
+			{"type": "paragraph", "key": "doc_adv_files_http_p"},
+			{"type": "heading", "level": 2, "key": "doc_files_op"},
+			{"type": "paragraph", "key": "doc_adv_files_op_p"},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_adv_files_save_tip"},
+			{"type": "link", "target": "ch6_vars", "text_key": "doc_see_also"}
+		  ]
+		},
+		{
+		  "id": "ch7_system",
+		  "title_key": "doc_ch7_system",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_system_actions_p"},
+			{"type": "heading", "level": 2, "key": "doc_system_toast_h"},
+			{"type": "paragraph", "key": "doc_system_toast_p"},
+			{"type": "heading", "level": 2, "key": "doc_system_url_h"},
+			{"type": "paragraph", "key": "doc_system_url_p"},
+			{"type": "heading", "level": 2, "key": "doc_system_clipboard_h"},
+			{"type": "paragraph", "key": "doc_system_clipboard_p"},
+			{"type": "heading", "level": 2, "key": "doc_system_seed_h"},
+			{"type": "paragraph", "key": "doc_system_seed_p"},
+			{"type": "heading", "level": 2, "key": "doc_system_bg_h"},
+			{"type": "paragraph", "key": "doc_system_bg_p"},
+			{"type": "heading", "level": 2, "key": "doc_system_orient_h"},
+			{"type": "paragraph", "key": "doc_system_orient_p"}
+		  ]
+		},
+		{
+		  "id": "ch7_custom_blocks",
+		  "title_key": "doc_ch7_custom_blocks",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_ch7_custom_blocks_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch7_custom_create"},
+			{"type": "paragraph", "key": "doc_ch7_custom_create_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch7_custom_fields"},
+			{"type": "paragraph", "key": "doc_ch7_custom_fields_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch7_custom_body"},
+			{"type": "paragraph", "key": "doc_ch7_custom_body_p"},
+			{"type": "heading", "level": 2, "key": "doc_ch7_custom_packs"},
+			{"type": "paragraph", "key": "doc_ch7_custom_packs_p"},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_ch7_custom_tip"}
+		  ]
+		},
+		{
+		  "id": "ch7_export_custom",
+		  "title_key": "doc_ch7_export_custom",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_ch7_export_custom_p"},
+			{"type": "list", "items": ["doc_ch7_export_pack", "doc_ch7_export_func", "doc_ch7_export_block"]},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_ch7_export_warn"}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": "ch8",
+	  "title_key": "doc_ch8_title",
+	  "sections": [
+		{
+		  "id": "ch8_build",
+		  "title_key": "doc_ch8_build",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_build_p"},
+			{"type": "heading", "level": 2, "key": "doc_build_settings"},
+			{"type": "list", "items": ["doc_build_appname", "doc_build_pkg"]},
+			{"type": "heading", "level": 2, "key": "doc_build_keystore"},
+			{"type": "paragraph", "key": "doc_build_keystore_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_build_keystore_warning"},
+			{"type": "heading", "level": 2, "key": "doc_build_process"},
+			{"type": "paragraph", "key": "doc_build_process_p"},
+			{"type": "list", "items": ["doc_build_step1", "doc_build_step2", "doc_build_step3", "doc_build_step4"]},
+			{"type": "quote", "label_key": "doc_tip", "key": "doc_build_tip"}
+		  ]
+		},
+		{
+		  "id": "ch8_import",
+		  "title_key": "doc_ch8_import",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_import_p"},
+			{"type": "heading", "level": 2, "key": "doc_import_formats"},
+			{"type": "paragraph", "key": "doc_import_formats_p"},
+			{"type": "heading", "level": 2, "key": "doc_import_export"},
+			{"type": "paragraph", "key": "doc_import_export_p"},
+			{"type": "heading", "level": 2, "key": "doc_import_import"},
+			{"type": "paragraph", "key": "doc_import_import_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_import_warning"}
+		  ]
+		},
+		{
+		  "id": "ch8_backups",
+		  "title_key": "doc_ch8_backups",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_backups_p"},
+			{"type": "heading", "level": 2, "key": "doc_backups_auto"},
+			{"type": "paragraph", "key": "doc_backups_auto_p"},
+			{"type": "heading", "level": 2, "key": "doc_backups_manual"},
+			{"type": "paragraph", "key": "doc_backups_manual_p"},
+			{"type": "heading", "level": 2, "key": "doc_backups_restore"},
+			{"type": "paragraph", "key": "doc_backups_restore_p"},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_backups_warning"}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": "ch9",
+	  "title_key": "doc_ch9_title",
+	  "sections": [
+		{
+		  "id": "ch9_debug",
+		  "title_key": "doc_ch9_debug",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_debug_p"},
+			{"type": "heading", "level": 2, "key": "doc_debug_print"},
+			{"type": "paragraph", "key": "doc_debug_print_p"},
+			{"type": "heading", "level": 2, "key": "doc_debug_flow"},
+			{"type": "paragraph", "key": "doc_debug_flow_p"},
+			{"type": "heading", "level": 2, "key": "doc_debug_perf"},
+			{"type": "paragraph", "key": "doc_debug_perf_p"}
+		  ]
+		},
+		{
+		  "id": "ch9_faq",
+		  "title_key": "doc_ch9_faq",
+		  "content_keys": [
+			{"type": "heading", "level": 2, "key": "doc_faq_apk_q"},
+			{"type": "paragraph", "key": "doc_faq_apk"},
+			{"type": "heading", "level": 2, "key": "doc_faq_collision_q"},
+			{"type": "paragraph", "key": "doc_faq_collision"},
+			{"type": "heading", "level": 2, "key": "doc_faq_perf_q"},
+			{"type": "paragraph", "key": "doc_faq_perf"},
+			{"type": "heading", "level": 2, "key": "doc_faq_sound_q"},
+			{"type": "paragraph", "key": "doc_faq_sound"},
+			{"type": "heading", "level": 2, "key": "doc_faq_svg_q"},
+			{"type": "paragraph", "key": "doc_faq_svg"},
+			{"type": "heading", "level": 2, "key": "doc_faq_var_q"},
+			{"type": "paragraph", "key": "doc_faq_var"}
+		  ]
+		},
+		{
+		  "id": "ch9_android",
+		  "title_key": "doc_ch9_android",
+		  "content_keys": [
+			{"type": "paragraph", "key": "doc_android_p"},
+			{"type": "heading", "level": 2, "key": "doc_android_back"},
+			{"type": "paragraph", "key": "doc_android_back_p"},
+			{"type": "heading", "level": 2, "key": "doc_android_orient"},
+			{"type": "paragraph", "key": "doc_android_orient_p"},
+			{"type": "heading", "level": 2, "key": "doc_android_perms"},
+			{"type": "paragraph", "key": "doc_android_perms_p"},
+			{"type": "heading", "level": 2, "key": "doc_perf_title"},
+			{"type": "paragraph", "key": "doc_perf_tips_p"},
+			{"type": "heading", "level": 2, "key": "doc_multitouch"},
+			{"type": "paragraph", "key": "doc_multitouch_p"}
+		  ]
+		},
+		{
+		  "id": "ch9_settings",
+		  "title_key": "doc_ch9_settings",
+		  "content_keys": [
+			{"type": "heading", "level": 2, "key": "doc_ch9_app_settings"},
+			{"type": "paragraph", "key": "doc_ch9_app_settings_p"},
+			{"type": "list", "items": ["doc_ch9_set_lang", "doc_ch9_set_vibro", "doc_ch9_set_log", "doc_ch9_set_backup", "doc_ch9_set_friction"]},
+			{"type": "heading", "level": 2, "key": "doc_ch9_proj_settings"},
+			{"type": "paragraph", "key": "doc_ch9_proj_settings_p"},
+			{"type": "list", "items": ["doc_ch9_set_icon", "doc_ch9_set_orient", "doc_ch9_set_perms", "doc_ch9_set_ks", "doc_ch9_set_debug_ks", "doc_ch9_set_compress"]},
+			{"type": "quote", "label_key": "doc_warning", "key": "doc_ch9_ks_warn"}
+		  ]
+		}
+	  ]
+	}
+  ]
+}

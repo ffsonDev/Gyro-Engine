@@ -1,25 +1,43 @@
 class_name GyroMedia
 extends RefCounted
 
+static var _tex_cache := {}
+const MAX_TEX_CACHE := 128
 
 static func load_texture(path: String) -> Texture2D:
 	var p := path.replace("\\", "/")
 	if p == "":
 		return null
+	if _tex_cache.has(p):
+		return _tex_cache[p]
+	var tex := _load_texture_uncached(p)
+	if tex != null:
+		if _tex_cache.size() >= MAX_TEX_CACHE:
+			_tex_cache.erase(_tex_cache.keys()[0])
+		_tex_cache[p] = tex
+	return tex
 
+static func invalidate_texture(path: String) -> void:
+	_tex_cache.erase(path.replace("\\", "/"))
+
+static func clear_texture_cache() -> void:
+	_tex_cache.clear()
+
+static func _load_texture_uncached(p: String) -> Texture2D:
+	var gtx := p + ".gtx"
+	if FileAccess.file_exists(gtx):
+		var compressed := GyroTextureCodec.load_gtx_texture(gtx)
+		if compressed != null:
+			return compressed
 	if ResourceLoader.exists(p):
 		var loaded := load(p)
 		if loaded is Texture2D:
 			return loaded
-
 	if FileAccess.file_exists(p):
 		var img := Image.new()
-		var err := img.load(p)
-		if err == OK:
+		if img.load(p) == OK:
 			return ImageTexture.create_from_image(img)
-
 	return null
-
 
 static func load_audio(path: String) -> AudioStream:
 	var p := path.replace("\\", "/")

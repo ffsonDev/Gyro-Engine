@@ -1,7 +1,9 @@
 class_name GyroExprEditor
 extends Control
 signal accepted(text: String)
+signal functions_requested
 var _var_names: Array = []
+var _param_names: Array = []
 var _current_chip := ""
 
 func _ready() -> void:
@@ -17,6 +19,17 @@ func _ready() -> void:
 	%ChipVars.pressed.connect(func(): _toggle("vars"))
 	%ChipCompare.pressed.connect(func(): _toggle("compare"))
 	%ChipLogic.pressed.connect(func(): _toggle("logic"))
+	var chips := %ChipLogic.get_parent() as VBoxContainer
+	var mine := Button.new()
+	mine.name = "ChipMine"
+	mine.custom_minimum_size = Vector2(0, GyroUI.sz(56))
+	mine.pressed.connect(func(): _toggle("mine"))
+	chips.add_child(mine)
+	var manage := Button.new()
+	manage.name = "ChipManage"
+	manage.custom_minimum_size = Vector2(0, GyroUI.sz(48))
+	manage.pressed.connect(func(): functions_requested.emit())
+	chips.add_child(manage)
 	
 	var ts := GyroTouchScroll.new()
 	add_child(ts)
@@ -30,9 +43,15 @@ func apply_lang() -> void:
 	%ChipVars.text = GyroLang.t("expr_vars")
 	%ChipCompare.text = GyroLang.t("expr_compare")
 	%ChipLogic.text = GyroLang.t("expr_logic")
+	var chips := %ChipLogic.get_parent()
+	if chips.has_node("ChipMine"):
+		(chips.get_node("ChipMine") as Button).text = GyroLang.t("expr_functions_mine")
+	if chips.has_node("ChipManage"):
+		(chips.get_node("ChipManage") as Button).text = GyroLang.t("expr_manage_functions")
 
-func open(initial: String, var_names: Array) -> void:
+func open(initial: String, var_names: Array, param_names: Array = []) -> void:
 	_var_names = var_names
+	_param_names = param_names
 	%ExprEdit.text = initial
 	_current_chip = ""
 	GyroUI.clear_children(%ExtraList)
@@ -47,7 +66,7 @@ func _toggle(which: String) -> void:
 	GyroUI.clear_children(%ExtraList)
 	match which:
 		"funcs":
-			for f in ["min(", "max(", "abs(", "round(", "floor(", "ceil(", "rand(", "clamp(", "len(", "text("]:
+			for f in ["min(", "max(", "abs(", "round(", "floor(", "ceil(", "rand(", "randi(", "clamp(", "len(", "text(", "sqrt(", "pow(", "sin(", "cos(", "lerp(", "map(", "screen_w(", "screen_h(", "center_x(", "center_y(", "offset_x(", "offset_y(", "obj_x(", "obj_y(", "obj_w(", "obj_h(", "dist(", "time("]:
 				_add_extra(f)
 		"compare":
 			for c in ["==", "!=", "<", "<=", ">", ">="]:
@@ -55,9 +74,18 @@ func _toggle(which: String) -> void:
 		"logic":
 			for l in ["and", "or", "not", "&&", "||", "!"]:
 				_add_extra(l)
+		"mine":
+			for v in GyroFunctions.items():
+				var f := v as GyroCustomFunction
+				if f != null:
+					_add_extra(f.func_name + "(")
 		"vars":
 			for name in _var_names:
 				_add_extra("$var." + str(name))
+			for name in _param_names:
+				_add_extra("$param." + str(name))
+			for p in ["x", "y", "dx", "dy", "value", "name", "old", "new", "a", "b", "status", "body", "keycode", "type"]:
+				_add_extra("$payload." + p)
 
 func _add_extra(token: String) -> void:
 	var b := Button.new()

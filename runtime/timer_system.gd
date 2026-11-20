@@ -19,6 +19,7 @@ func execute(action: GyroAction, payload: Dictionary) -> void:
 			var timer_name := str(runtime._resolve_value(action.data.get("name", ""), payload))
 			if timer_name == "":
 				return
+			_timer_repeats.erase(timer_name)
 			host.stop_timer(timer_name)
 
 func on_timer_fired(timer_name: String) -> void:

@@ -5,6 +5,7 @@ var _rules_by_event := {}
 var emit_depth := 0
 var max_emit_depth := 32
 var _logger := GyroLogger.get_instance()
+var _tap_last_frame := -1
 
 func setup() -> void:
 	_rebuild_index()
@@ -31,10 +32,16 @@ func has_event(event_name: String) -> bool:
 	return _rules_by_event.has(event_name)
 
 func emit_event(event_name: String, payload: Dictionary) -> void:
-	if runtime.blueprint == null:
+	if runtime == null or runtime._shutdown or runtime.blueprint == null:
 		return
 	if emit_depth >= max_emit_depth:
+		runtime._debug("Event depth limit: " + event_name)
 		return
+	if event_name == "tap":
+		var frame := Engine.get_process_frames()
+		if _tap_last_frame == frame:
+			return
+		_tap_last_frame = frame
 	emit_depth += 1
 	var list: Array = _rules_by_event.get(event_name, [])
 	for rule_value in list:
@@ -44,7 +51,7 @@ func emit_event(event_name: String, payload: Dictionary) -> void:
 		if not _filter_matches(rule, event_name, payload):
 			continue
 		if _check_conditions(rule.conditions, payload):
-			_execute_actions(rule.actions, payload)
+			runtime.start_sequence(rule.actions, payload)
 	emit_depth -= 1
 
 func _filter_matches(rule: GyroEventRule, event_name: String, payload: Dictionary) -> bool:
@@ -102,45 +109,6 @@ func _values_equal(a: Variant, b: Variant) -> bool:
 		return str(a) == str(b)
 	return runtime._to_float(a) == runtime._to_float(b)
 
-func _execute_actions(actions: Array, payload: Dictionary, start_index: int = 0) -> void:
-	for i in range(start_index, actions.size()):
-		var action := actions[i] as GyroAction
-		if action == null:
-			continue
-		if not is_instance_valid(action):
-			continue
-		if action.disabled:
-			continue
-		if action.type == "Wait":
-			var seconds := runtime._to_float(runtime._resolve_value(action.data.get("wait", 1.0), payload))
-			if host != null and host.is_inside_tree():
-				var rest_data: Array = []
-				for j in range(i + 1, actions.size()):
-					var next_action := actions[j] as GyroAction
-					if next_action != null and is_instance_valid(next_action):
-						rest_data.append({
-							"type": next_action.type,
-							"data": next_action.data.duplicate(true),
-							"disabled": next_action.disabled
-						})
-				var pl := payload
-				host.get_tree().create_timer(maxf(0.01, seconds)).timeout.connect(func(): _execute_actions_from_data(rest_data, pl))
-			return
-		runtime.execute_action(action, payload)
-
-func _execute_actions_from_data(actions_data: Array, payload: Dictionary) -> void:
-	for action_data in actions_data:
-		var ad: Dictionary = action_data
-		if ad.is_empty():
-			continue
-		var action := GyroAction.new()
-		action.type = str(ad.get("type", ""))
-		action.data = (ad.get("data", {}) as Dictionary).duplicate(true)
-		action.disabled = bool(ad.get("disabled", false))
-		if action.disabled:
-			continue
-		runtime.execute_action(action, payload)
-
 func _execute_flow_blocks(action: GyroAction, payload: Dictionary) -> void:
 	var blocks = action.data.get("blocks", [])
 	if not (blocks is Array):
@@ -152,6 +120,7 @@ func _execute_flow_blocks(action: GyroAction, payload: Dictionary) -> void:
 		var child := GyroAction.new()
 		child.type = str(bd.get("type", ""))
 		child.data = (bd.get("data", {}) as Dictionary).duplicate(true)
+		child.disabled = bool(bd.get("disabled", false))
 		if child.disabled:
 			continue
 		runtime.execute_action(child, payload)

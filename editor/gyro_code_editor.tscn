@@ -1,0 +1,104 @@
+[gd_scene format=3 uid="uid://ed6wxhyh8ngu"]
+
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="2_back"]
+[ext_resource type="Texture2D" uid="uid://0uhodap1jf5f" path="res://ui/icons/play.svg" id="3_play"]
+[ext_resource type="Texture2D" uid="uid://bt4qsbl3j18lf" path="res://ui/icons/chevron_up.svg" id="7_chev_up"]
+
+[sub_resource type="GDScript" id="GDScript_prwnw"]
+
+[node name="GyroCodeEditor" type="Control" unique_id=638499495]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_prwnw")
+
+[node name="Background" type="ColorRect" parent="." unique_id=522445602]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.0588235, 0.0705882, 0.0901961, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=454197889]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=823990745]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=1784604572]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("2_back")
+flat = true
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=947166357]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Script"
+
+[node name="PlayButton" type="Button" parent="Root/Header" unique_id=194657984]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("3_play")
+flat = true
+
+[node name="VSplitContainer" type="VSplitContainer" parent="Root" unique_id=900000001]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+dragger_visibility = 1
+
+[node name="CodeEdit" type="CodeEdit" parent="Root/VSplitContainer" unique_id=609735173]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+scroll_smooth = true
+
+[node name="ConsoleToggleBar" type="HBoxContainer" parent="Root" unique_id=30151222]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+alignment = 2
+
+[node name="ToggleConsoleBtn" type="Button" parent="Root/ConsoleToggleBar" unique_id=1227050369]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 28)
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("7_chev_up")
+flat = true
+
+[node name="ConsolePanel" type="PanelContainer" parent="Root" unique_id=900000002]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Root/ConsolePanel" unique_id=1005564496]
+layout_mode = 2
+
+[node name="ConsoleTitle" type="Label" parent="Root/ConsolePanel/VBoxContainer" unique_id=628107081]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Console"
+
+[node name="ConsoleLog" type="RichTextLabel" parent="Root/ConsolePanel/VBoxContainer" unique_id=1572772267]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+scroll_following = true

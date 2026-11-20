@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://wrbn4pivuycs" path="res://editor/gyro_palette.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="2"]
+[ext_resource type="Texture2D" uid="uid://cs645pp40rjrc" path="res://ui/icons/burger.svg" id="2_sten5"]
 
 [node name="GyroPalette" type="Control" unique_id=1816316645]
 layout_mode = 3
@@ -16,9 +17,10 @@ script = ExtResource("1")
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.1, 0.11, 0.13, 0.98)
+color = Color(0.05882353, 0.07058824, 0.09019608, 1)
 
 [node name="Root" type="VBoxContainer" parent="." unique_id=181865420]
+unique_name_in_owner = true
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -32,9 +34,17 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_constants/separation = 10
 
+[node name="CategoriesButton" type="Button" parent="Root/Header" unique_id=1619259536]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_constants/icon_max_width = 30
+icon = ExtResource("2_sten5")
+icon_alignment = 1
+
 [node name="SearchEdit" type="LineEdit" parent="Root/Header" unique_id=1389788004]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -44,19 +54,6 @@ layout_mode = 2
 theme_override_constants/icon_max_width = 35
 icon = ExtResource("2")
 flat = true
-
-[node name="QuickNavScroll" type="ScrollContainer" parent="Root" unique_id=990000001]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-horizontal_scroll_mode = 2
-vertical_scroll_mode = 0
-
-[node name="QuickNavHBox" type="HBoxContainer" parent="Root/QuickNavScroll" unique_id=990000002]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
 
 [node name="Scroll" type="ScrollContainer" parent="Root" unique_id=505757184]
 unique_name_in_owner = true
@@ -71,9 +68,38 @@ size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 8
 
-[node name="ListVBox2" type="VBoxContainer" parent="Root/Scroll" unique_id=461226422]
+[node name="CategoriesOverlay" type="ColorRect" parent="." unique_id=158738295]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="CategoriesPanel" type="PanelContainer" parent="." unique_id=1782772988]
+unique_name_in_owner = true
+visible = false
+z_index = 31
+custom_minimum_size = Vector2(280, 0)
+custom_maximum_size = Vector2(280, -1)
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 292.0
+offset_bottom = -12.0
+grow_vertical = 2
+
+[node name="CategoriesScroll" type="ScrollContainer" parent="CategoriesPanel" unique_id=329561090]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="CategoriesVBox" type="VBoxContainer" parent="CategoriesPanel/CategoriesScroll" unique_id=713027189]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6

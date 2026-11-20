@@ -19,6 +19,7 @@ func _action_create_input(action: GyroAction, payload: Dictionary) -> void:
 		return
 	var old := stage.get_node_or_null(NodePath(widget_name))
 	if old != null:
+		runtime.object_system.on_object_deleted(widget_name)
 		stage.remove_child(old)
 		old.free()
 	var w := runtime._to_float(runtime._resolve_value(action.data.get("w", 240), payload))
@@ -50,9 +51,11 @@ func _action_create_input(action: GyroAction, payload: Dictionary) -> void:
 		node = line_edit
 	node.name = widget_name
 	node.mouse_filter = Control.MOUSE_FILTER_STOP
+	node.custom_minimum_size = Vector2(w, 48)
 	node.size = Vector2(w, 48)
 	node.position = runtime.apply_anchor(node, widget_name, str(action.data.get("anchor", "free")), pos)
 	stage.add_child(node)
+	runtime.invalidate_node_cache()
 	runtime.object_system.last_object_name = widget_name
 	
 func _action_create_slider(action: GyroAction, payload: Dictionary) -> void:
@@ -62,8 +65,9 @@ func _action_create_slider(action: GyroAction, payload: Dictionary) -> void:
 	var widget_name := GyroEventRuntime.sanitize_node_name(str(runtime._resolve_value(action.data.get("name", ""), payload)))
 	if widget_name == "":
 		return
-	var old: Node = stage.get_node_or_null(NodePath(widget_name))
+	var old := stage.get_node_or_null(NodePath(widget_name))
 	if old != null:
+		runtime.object_system.on_object_deleted(widget_name)
 		stage.remove_child(old)
 		old.free()
 	var vertical := runtime._to_bool(runtime._resolve_value(action.data.get("vertical", false), payload))
@@ -84,6 +88,7 @@ func _action_create_slider(action: GyroAction, payload: Dictionary) -> void:
 			runtime.emit_event("widget_changed", {"name": widget_name, "value": v})
 	)
 	stage.add_child(slider)
+	runtime.invalidate_node_cache()
 	runtime.object_system.last_object_name = widget_name
 	
 func _action_create_toggle(action: GyroAction, payload: Dictionary) -> void:
@@ -95,16 +100,18 @@ func _action_create_toggle(action: GyroAction, payload: Dictionary) -> void:
 		return
 	var old := stage.get_node_or_null(NodePath(widget_name))
 	if old != null:
+		runtime.object_system.on_object_deleted(widget_name)
 		stage.remove_child(old)
 		old.free()
 	var check := CheckBox.new()
 	check.button_pressed = runtime._to_bool(runtime._resolve_value(action.data.get("on", false), payload))
 	check.name = widget_name
 	check.mouse_filter = Control.MOUSE_FILTER_STOP
-	check.position = Vector2(
+	check.custom_minimum_size = Vector2(48, 48)
+	check.position = runtime.apply_anchor(check, widget_name, str(action.data.get("anchor", "free")), Vector2(
 		runtime._to_float(runtime._resolve_value(action.data.get("x", 0), payload)),
 		runtime._to_float(runtime._resolve_value(action.data.get("y", 0), payload))
-	)
+	))
 	var weak_ref: Variant = weakref(check)
 	check.toggled.connect(func(v: bool):
 		var c = weak_ref.get_ref()
@@ -112,6 +119,7 @@ func _action_create_toggle(action: GyroAction, payload: Dictionary) -> void:
 			runtime.emit_event("widget_changed", {"name": widget_name, "value": v})
 	)
 	stage.add_child(check)
+	runtime.invalidate_node_cache()
 	runtime.object_system.last_object_name = widget_name
 
 func _action_get_widget(action: GyroAction, payload: Dictionary) -> void:
@@ -137,18 +145,3 @@ func _action_set_toggle(action: GyroAction, payload: Dictionary) -> void:
 	var target := runtime._node_from_value(runtime._resolve_value(action.data.get("widget", ""), payload))
 	if target != null and "button_pressed" in target:
 		target.set("button_pressed", runtime._to_bool(runtime._resolve_value(action.data.get("on", true), payload)))
-
-func on_object_deleted(object_name: String) -> void:
-	runtime.physics_system.on_object_deleted(object_name)
-	runtime.tag_system.cleanup_tags(object_name)
-	var gh := runtime.host as GyroEventHost
-	if gh != null:
-		gh.unregister_anchor(object_name)
-
-func _get_stage_ui() -> Control:
-	if host == null:
-		return null
-	var ui := host.get_node_or_null(NodePath("StageUI"))
-	if ui is Control:
-		return ui as Control
-	return null

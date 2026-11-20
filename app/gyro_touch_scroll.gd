@@ -10,6 +10,7 @@ var last_x := 0.0
 var horizontal := false
 var dragged := false
 var _drag_dist := 0.0
+var _acc := 0.0
 
 const DRAG_THRESHOLD := 24.0
 
@@ -17,14 +18,18 @@ func setup(target: ScrollContainer, blocks: Array = []) -> void:
 	scroll = target
 	block_nodes = blocks
 
+func _current_friction() -> float:
+	var settings := GyroAppSettings.load_settings()
+	return settings.scroll_friction if settings != null else 1.0
+
 func _input(event: InputEvent) -> void:
 	if scroll == null or not scroll.is_visible_in_tree():
 		active = false
 		return
-	var friction := 1.0
-	var settings := GyroAppSettings.load_settings()
-	if settings != null:
-		friction = settings.scroll_friction
+	var focus_owner := get_viewport().gui_get_focus_owner()
+	if focus_owner != null and focus_owner is LineEdit:
+		return
+	var friction := _current_friction()
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			active = _allowed() and scroll.get_global_rect().has_point(event.position) and not _blocked(event.position)
@@ -32,6 +37,7 @@ func _input(event: InputEvent) -> void:
 			last_x = event.position.x
 			dragged = false
 			_drag_dist = 0.0
+			_acc = 0.0
 		else:
 			active = false
 	elif event is InputEventScreenDrag:
@@ -40,14 +46,26 @@ func _input(event: InputEvent) -> void:
 				var dx = event.position.x - last_x
 				last_x = event.position.x
 				_drag_dist += absf(dx)
-				scroll.scroll_horizontal = int(scroll.scroll_horizontal - dx * friction)
+				if _drag_dist < DRAG_THRESHOLD:
+					return
+				dragged = true
+				_acc -= dx * friction
+				var step := int(_acc)
+				if step != 0:
+					scroll.scroll_horizontal += step
+					_acc -= step
 			else:
 				var delta = event.position.y - last_y
 				last_y = event.position.y
 				_drag_dist += absf(delta)
-				scroll.scroll_vertical = int(scroll.scroll_vertical - delta * friction)
-			if _drag_dist > DRAG_THRESHOLD:
+				if _drag_dist < DRAG_THRESHOLD:
+					return
 				dragged = true
+				_acc -= delta * friction
+				var step := int(_acc)
+				if step != 0:
+					scroll.scroll_vertical += step
+					_acc -= step
 
 func _allowed() -> bool:
 	if scroll != null and scroll.get_meta("gyro_layout_blocked", false):

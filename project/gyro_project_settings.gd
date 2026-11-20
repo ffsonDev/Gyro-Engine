@@ -10,9 +10,10 @@ extends Resource
 @export var keystore_path := ""
 @export var keystore_alias := ""
 @export var keystore_password := ""
-@export var splash_path := icon_path
+@export var splash_path := ""
 @export var build_release_version := false
-@export var debug_ks_path := "user://android_keystore.keystore"
+@export var compress_textures := true
+@export var debug_ks_path := "res://build/android_debug.p12"
 @export var debug_ks_alias := "androiddebugkey"
 @export var debug_ks_password := "android"
 

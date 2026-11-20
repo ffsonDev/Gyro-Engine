@@ -14,7 +14,7 @@ const ACTION_SCHEMAS := {
 	"SetText": [["node", "field.node", "obj"], ["text", "field.text"]],
 	"PlayAnimation": [["node", "field.node", "obj"], ["animation", "field.animation"]],
 	"Spawn": [["scene", "field.scene"], ["parent", "field.parent"], ["x", "field.x"], ["y", "field.y"], ["variable", "field.variable"]],
-	"CreateObject": [["name", "field.name"], ["type", "field.type"], ["x", "field.x"], ["y", "field.y"], ["w", "field.w"], ["h", "field.h"], ["color", "field.color"], ["text", "field.text"], ["texture", "field.texture", "sprite"], ["font", "field.font"], ["variable", "field.variable"]],
+	"CreateObject": [["name", "field.name"], ["type", "field.type"], ["x", "field.x"], ["y", "field.y"], ["w", "field.w"], ["h", "field.h"], ["color", "field.color", "color"], ["text", "field.text"], ["texture", "field.texture", "sprite"], ["font", "field.font"], ["variable", "field.variable"]],
 	"CreateSprite": [["name", "field.name"], ["texture", "field.texture", "sprite"], ["x", "field.x"], ["y", "field.y"], ["w", "field.w"], ["h", "field.h"]],
 	"CreateText": [["name", "field.name"], ["text", "field.text"], ["font", "field.font", "font"], ["size", "field.size"], ["x", "field.x"], ["y", "field.y"], ["w", "field.w"], ["h", "field.h"]],
 	"DeleteObject": [["node", "field.node", "obj"]],
@@ -32,7 +32,7 @@ const ACTION_SCHEMAS := {
 	"SetScale": [["node", "field.node", "obj"], ["percent", "field.percent"], ["x", "field.x"], ["y", "field.y"]],
 	"ChangeLayer": [["node", "field.node", "obj"], ["dir", "field.dir"]],
 	"SetFontSize": [["node", "field.node", "obj"], ["size", "field.size"]],
-	"SetColor": [["node", "field.node", "obj"], ["color", "field.color"]],
+	"SetColor": [["node", "field.node", "obj"], ["color", "field.color", "color"]],
 	"SetTextAlign": [["node", "field.node", "obj"], ["align", "field.align"]],
 	"SaveValue": [["key", "field.key"], ["value", "field.value"]],
 	"LoadValue": [["key", "field.key"], ["variable", "field.variable", "var"]],
@@ -40,7 +40,8 @@ const ACTION_SCHEMAS := {
 	"Quit": [],
 	"Toast": [["text", "field.text"]],
 	"Wait": [["wait", "field.wait"]],
-	"SetBackgroundColor": [["color", "field.color"]],
+	"WaitUntil": [["condition", "field.condition"], ["timeout", "field.timeout"]],
+	"SetBackgroundColor": [["color", "field.color", "color"]],
 	"SetOrientation": [["mode", "field.mode"]],
 	"Clipboard": [["mode", "field.mode"], ["text", "field.text"], ["variable", "field.variable", "var"]],
 	"SetTexture": [["node", "field.node", "obj"], ["texture", "field.texture", "sprite"]],
@@ -89,17 +90,17 @@ const ACTION_SCHEMAS := {
 	"SetParticlesParam": [["node", "field.node", "obj"], ["param", "field.param"], ["value", "field.value"]],
 	"DeleteParticles": [["node", "field.node", "obj"]],
 	"SetGlobalGravity": [["value", "field.value"]],
-	"CreateCircle": [["name", "field.name"], ["radius", "field.radius"], ["color", "field.color"], ["border_w", "field.border_w"], ["border_color", "field.border_color"], ["x", "field.x"], ["y", "field.y"]],
-	"CreateLine": [["name", "field.name"], ["x", "field.x"], ["y", "field.y"], ["x2", "field.x2"], ["y2", "field.y2"], ["color", "field.color"], ["width", "field.width"]],
-	"SetGradient": [["node", "field.node", "obj"], ["mode", "field.type"], ["color1", "field.color1"], ["color2", "field.color2"]],
-	"SetBorder": [["node", "field.node", "obj"], ["color", "field.border_color"], ["width", "field.width"]],
+	"CreateCircle": [["name", "field.name"], ["radius", "field.radius"], ["color", "field.color", "color"], ["border_w", "field.border_w"], ["border_color", "field.border_color", "color"], ["x", "field.x"], ["y", "field.y"]],
+	"CreateLine": [["name", "field.name"], ["x", "field.x"], ["y", "field.y"], ["x2", "field.x2"], ["y2", "field.y2"], ["color", "field.color", "color"], ["width", "field.width"]],
+	"SetGradient": [["node", "field.node", "obj"], ["mode", "field.type"], ["color1", "field.color1", "color"], ["color2", "field.color2", "color"]],
+	"SetBorder": [["node", "field.node", "obj"], ["color", "field.border_color", "color"], ["width", "field.width"]],
 	"SetParallax": [["node", "field.node", "obj"], ["x", "field.x"], ["y", "field.y"]],
-	"SetTableValue": [["name", "field.table", "var"], ["key", "field.key"], ["value", "field.value"]],
-	"GetTableValue": [["name", "field.table", "var"], ["key", "field.key"], ["variable", "field.variable", "var"]],
-	"InsertArrayValue": [["name", "field.table", "var"], ["index", "field.index"], ["value", "field.value"]],
-	"RemoveArrayValue": [["name", "field.table", "var"], ["index", "field.index"]],
-	"OverwriteTable": [["name", "field.table", "var"], ["json", "field.json"]],
-	"ForEachTable": [["name", "field.table", "var"], ["element", "field.element"], ["keyvar", "field.keyvar"]],
+	"SetTableValue": [["name", "field.table", "table"], ["key", "field.key", ""], ["value", "field.value", ""]],
+	"GetTableValue": [["name", "field.table", "table"], ["key", "field.key", ""], ["variable", "field.variable", "var"]],
+	"OverwriteTable": [["name", "field.table", "table"], ["json", "field.json", ""]],
+	"ForEachTable": [["name", "field.table", "table"], ["element", "field.element", "var"], ["keyvar", "field.keyvar", "var"]],
+	"InsertArrayValue": [["name", "field.table", "table"], ["index", "field.index", ""], ["value", "field.value", ""]],
+	"RemoveArrayValue": [["name", "field.table", "table"], ["index", "field.index", ""]],
 	"LoopRange": [["from", "field.from"], ["to", "field.to"], ["step", "field.step"], ["variable", "field.variable", "var"]],
 	"SetAnchor": [["node", "field.node", "obj"], ["anchor", "field.anchor"]],
 }
@@ -111,6 +112,34 @@ const CONDITION_SCHEMAS := {
 	"PayloadEquals": [["key", "field.key"], ["value", "field.value"]],
 	"PayloadGreaterThan": [["key", "field.key"], ["value", "field.value"]],
 }
+
+const TABLE_TYPES := ["SetTableValue", "GetTableValue", "InsertArrayValue", "RemoveArrayValue", "OverwriteTable", "ForEachTable"]
+
+static func normalize_action_data(type: String, data: Dictionary) -> void:
+	if TABLE_TYPES.has(type):
+		if data.has("table"):
+			var t := str(data["table"])
+			if t != "" or not data.has("name"):
+				data["name"] = t
+			data.erase("table")
+		if type == "ForEachTable":
+			if data.has("variable"):
+				var v := str(data["variable"])
+				if v != "":
+					data["element"] = v
+				data.erase("variable")
+			if not data.has("element"):
+				data["element"] = "item"
+			if not data.has("keyvar"):
+				data["keyvar"] = "k"
+	var blocks = data.get("blocks", [])
+	if blocks is Array:
+		for b in (blocks as Array):
+			if b is Dictionary:
+				var bd := b as Dictionary
+				var inner = bd.get("data", {})
+				if inner is Dictionary:
+					normalize_action_data(str(bd.get("type", "")), inner as Dictionary)
 
 const ACTION_COLORS := {
 	"Print": Color(0.29, 0.56, 0.35),
@@ -149,6 +178,7 @@ const ACTION_COLORS := {
 	"Quit": Color(0.70, 0.25, 0.20),
 	"Toast": Color(0.45, 0.50, 0.35),
 	"Wait": Color(0.55, 0.50, 0.25),
+	"WaitUntil": Color(0.55, 0.50, 0.25),
 	"SetBackgroundColor": Color(0.35, 0.40, 0.55),
 	"SetOrientation": Color(0.40, 0.55, 0.45),
 	"Clipboard": Color(0.50, 0.45, 0.50),
@@ -224,8 +254,9 @@ const CONDITION_COLORS := {
 const BUILTIN_EVENTS := [
 	"ready", "update", "tap", "input", "timer", "collide", "collide_end",
 	"obj_touch_begin", "obj_touch_end", "drag", "back",
-	"app_paused", "app_resumed", "var_changed", "widget_changed", "http_done",
+	"app_paused", "app_resumed", "var_changed", "widget_changed", "http_done", "io_error",
 ]
+
 
 static func event_name(type: String) -> String:
 	var key := "event." + type
@@ -254,8 +285,7 @@ static func palette_sections() -> Array:
 			{"kind": "event", "type": "input", "name": event_name("input")},
 			{"kind": "event", "type": "timer", "name": event_name("timer")},
 			{"kind": "event", "type": "collide", "name": event_name("collide")},
-			{"kind": "event", "type": "custom", "name": GyroLang.t("preset.custom_event")},
-			{"kind": "event", "type": "func", "name": GyroLang.t("preset.create_func")},
+			{"kind": "event", "type": "collide_end", "name": event_name("collide_end")},
 			{"kind": "event", "type": "obj_touch_begin", "name": event_name("obj_touch_begin")},
 			{"kind": "event", "type": "obj_touch_end", "name": event_name("obj_touch_end")},
 			{"kind": "event", "type": "drag", "name": event_name("drag")},
@@ -265,7 +295,9 @@ static func palette_sections() -> Array:
 			{"kind": "event", "type": "var_changed", "name": event_name("var_changed")},
 			{"kind": "event", "type": "widget_changed", "name": event_name("widget_changed")},
 			{"kind": "event", "type": "http_done", "name": event_name("http_done")},
-			{"kind": "event", "type": "collide_end", "name": event_name("collide_end")},
+			{"kind": "event", "type": "io_error", "name": event_name("io_error")},
+			{"kind": "event", "type": "custom", "name": GyroLang.t("preset.custom_event")},
+			{"kind": "event", "type": "func", "name": GyroLang.t("preset.create_func")},
 		]},
 		{"title": GyroLang.t("section.objects"), "items": [
 			{"kind": "action", "type": "CreateObject", "name": GyroLang.t("action.CreateObject")},
@@ -278,8 +310,6 @@ static func palette_sections() -> Array:
 			{"kind": "action", "type": "Spawn", "name": action_name("Spawn")},
 			{"kind": "action", "type": "AddToGroup", "name": action_name("AddToGroup")},
 			{"kind": "action", "type": "DeleteObject", "name": action_name("DeleteObject")},
-			{"kind": "action", "type": "DeleteByTag", "name": action_name("DeleteByTag")},
-			{"kind": "action", "type": "DeleteParticles", "name": action_name("DeleteParticles")},
 		]},
 		{"title": GyroLang.t("doc_transforms"), "items": [
 			{"kind": "action", "type": "MoveNode", "name": action_name("MoveNode")},
@@ -315,6 +345,10 @@ static func palette_sections() -> Array:
 			{"kind": "action", "type": "SetPhysicsPaused", "name": action_name("SetPhysicsPaused")},
 			{"kind": "action", "type": "AddVelocity", "name": GyroLang.t("preset.jump"), "preset": {"y": -700}},
 		]},
+		{"title": GyroLang.t("section.timers"), "items": [
+			{"kind": "action", "type": "StartTimer", "name": action_name("StartTimer")},
+			{"kind": "action", "type": "StopTimer", "name": action_name("StopTimer")},
+		]},
 		{"title": GyroLang.t("doc_tweens"), "items": [
 			{"kind": "action", "type": "TweenPosition", "name": action_name("TweenPosition")},
 			{"kind": "action", "type": "TweenScale", "name": action_name("TweenScale")},
@@ -338,10 +372,23 @@ static func palette_sections() -> Array:
 		{"title": GyroLang.t("doc_particles"), "items": [
 			{"kind": "action", "type": "CreateParticles", "name": action_name("CreateParticles")},
 			{"kind": "action", "type": "SetParticlesParam", "name": action_name("SetParticlesParam")},
+			{"kind": "action", "type": "DeleteParticles", "name": action_name("DeleteParticles")},
+		]},
+		{"title": GyroLang.t("section.tags"), "items": [
+			{"kind": "action", "type": "AddTag", "name": action_name("AddTag")},
+			{"kind": "action", "type": "DeleteByTag", "name": action_name("DeleteByTag")},
+			{"kind": "action", "type": "SetVisibleByTag", "name": action_name("SetVisibleByTag")},
+			{"kind": "action", "type": "SetPositionByTag", "name": action_name("SetPositionByTag")},
+			{"kind": "action", "type": "SetRotationByTag", "name": action_name("SetRotationByTag")},
+			{"kind": "action", "type": "SetOpacityByTag", "name": action_name("SetOpacityByTag")},
+			{"kind": "action", "type": "SetScaleByTag", "name": action_name("SetScaleByTag")},
+			{"kind": "action", "type": "ChangeLayerByTag", "name": action_name("ChangeLayerByTag")},
 		]},
 		{"title": GyroLang.t("section.variables"), "items": [
 			{"kind": "action", "type": "SetVariable", "name": action_name("SetVariable")},
 			{"kind": "action", "type": "AddToVariable", "name": action_name("AddToVariable")},
+		]},
+		{"title": GyroLang.t("section.tables"), "items": [
 			{"kind": "action", "type": "SetTableValue", "name": action_name("SetTableValue")},
 			{"kind": "action", "type": "GetTableValue", "name": action_name("GetTableValue")},
 			{"kind": "action", "type": "InsertArrayValue", "name": action_name("InsertArrayValue")},
@@ -354,18 +401,10 @@ static func palette_sections() -> Array:
 			{"kind": "action", "type": "If", "name": action_name("If")},
 			{"kind": "action", "type": "Repeat", "name": action_name("Repeat")},
 			{"kind": "action", "type": "Wait", "name": action_name("Wait")},
+			{"kind": "action", "type": "WaitUntil", "name": action_name("WaitUntil")},
 			{"kind": "action", "type": "Print", "name": action_name("Print")},
 			{"kind": "action", "type": "Toast", "name": action_name("Toast")},
 			{"kind": "action", "type": "EmitEvent", "name": action_name("EmitEvent")},
-		]},
-		{"title": GyroLang.t("section.tables"), "items": [
-			{"kind": "action", "type": "SetTableValue", "name": action_name("SetTableValue")},
-			{"kind": "action", "type": "GetTableValue", "name": action_name("GetTableValue")},
-			{"kind": "action", "type": "InsertArrayValue", "name": action_name("InsertArrayValue")},
-			{"kind": "action", "type": "RemoveArrayValue", "name": action_name("RemoveArrayValue")},
-			{"kind": "action", "type": "OverwriteTable", "name": action_name("OverwriteTable")},
-			{"kind": "action", "type": "ForEachTable", "name": action_name("ForEachTable")},
-			{"kind": "action", "type": "LoopRange", "name": action_name("LoopRange")},
 		]},
 		{"title": GyroLang.t("section.widgets"), "items": [
 			{"kind": "action", "type": "CreateInput", "name": action_name("CreateInput")},
@@ -400,3 +439,21 @@ static func palette_sections() -> Array:
 			{"kind": "condition", "type": "PayloadGreaterThan", "name": condition_name("PayloadGreaterThan")},
 		]},
 	]
+
+static func default_data(type: String) -> Dictionary:
+	var data := {}
+	var schema: Array = ACTION_SCHEMAS.get(type, [])
+	if schema.is_empty():
+		schema = CONDITION_SCHEMAS.get(type, [])
+	for field in schema:
+		var key := str(field[0])
+		var pick := str(field[2]) if field.size() > 2 else ""
+		match pick:
+			"color": data[key] = "#ffffff"
+			"obj": data[key] = ""
+			"var": data[key] = ""
+			"sprite": data[key] = ""
+			"sound": data[key] = ""
+			"event": data[key] = ""
+			_: data[key] = ""
+	return data

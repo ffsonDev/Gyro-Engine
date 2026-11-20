@@ -18,29 +18,50 @@ var _pending_collide_events: Array = []
 func step(delta: float) -> void:
 	if host == null:
 		return
+	_sync_bodies()
 	if physics_paused:
 		_contacts_now.clear()
 		_pending_collide_events.clear()
 		return
+
 	for key in _contacts.keys():
 		if not _contacts_now.has(key):
-			var parts := str(key).split("|")
-			if parts.size() == 2:
-				runtime.emit_event("collide_end", {"a": parts[0], "b": parts[1]})
+			runtime.emit_event("collide_end", _contacts[key])
+
 	for event_payload in _pending_collide_events:
-		var key := _contact_key(str(event_payload.get("a", "")), str(event_payload.get("b", "")))
-		if _contacts_now.has(key):
-			runtime.emit_event("collide", event_payload)
+		runtime.emit_event("collide", event_payload)
+
 	_pending_collide_events.clear()
 	_contacts = _contacts_now.duplicate()
 	_contacts_now = {}
+
+func _sync_bodies() -> void:
+	var stage := runtime._get_stage()
+	if stage == null:
+		return
+	for child_value in stage.get_children():
+		var root := child_value as Node2D
+		if root == null:
+			continue
+		var body := root.get_node_or_null(NodePath("PhysicsBody")) as RigidBody2D
+		if body == null or body.freeze:
+			continue
+		if body.position == Vector2.ZERO and body.rotation == 0.0:
+			continue
+		var delta := root.global_transform.basis_xform(body.position)
+		if delta != Vector2.ZERO:
+			root.global_position += delta
+		if body.rotation != 0.0:
+			root.global_rotation += body.rotation
+		body.position = Vector2.ZERO
+		body.rotation = 0.0
+		if runtime.object_system != null:
+			runtime.object_system.update_aabb(root)
 
 func set_paused(on: bool) -> void:
 	if physics_paused == on:
 		return
 	physics_paused = on
-	if host != null:
-		host.physics_process_callback = not on
 	var stage := runtime._get_stage()
 	if stage != null:
 		_apply_pause_recursive(stage, on)
@@ -62,55 +83,60 @@ func _apply_pause_recursive(node: Node, on: bool) -> void:
 		_apply_pause_recursive(child, on)
 
 func _ensure_physics_body(root: Node2D, mode: String) -> Node:
+	var is_sensor := (mode == "area")
 	var body := root.get_node_or_null(NodePath("PhysicsBody"))
+	if body != null:
+		var is_rigid_or_static := (body is RigidBody2D)
+		var is_area := (body is Area2D)
+		if (not is_sensor and is_rigid_or_static) or (is_sensor and is_area):
+			if body is RigidBody2D:
+				var rb := body as RigidBody2D
+				rb.freeze = (mode == "static" or physics_paused)
+				if rb.freeze:
+					rb.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
+				else:
+					rb.gravity_scale = float(_get_state(root.name).gravity) / DEFAULT_GRAVITY
+				rb.contact_monitor = true
+				rb.max_contacts_reported = 8
+				rb.can_sleep = false
+			elif body is Area2D:
+				var area := body as Area2D
+				area.monitoring = not physics_paused
+				area.monitorable = true
+			_update_shape_only(body, root)
+			return body
+
 	var current_mode := "none"
-	if body is RigidBody2D:
-		current_mode = "rigid"
-	elif body is StaticBody2D:
-		current_mode = "static"
-	elif body is Area2D:
-		current_mode = "area"
-	elif body is Node2D:
-		current_mode = "none"
+	if body is RigidBody2D: current_mode = "rigid"
+	elif body is StaticBody2D: current_mode = "static"
+	elif body is Area2D: current_mode = "area"
+	elif body is Node2D: current_mode = "none"
+
 	if current_mode == mode:
 		return body
-	var pivot: Node2D = null
-	var direct_pivot := root.get_node_or_null(NodePath("Pivot"))
-	if direct_pivot is Node2D:
-		pivot = direct_pivot
-	elif body != null:
-		var body_pivot := body.get_node_or_null(NodePath("Pivot"))
-		if body_pivot is Node2D:
-			pivot = body_pivot
+
 	var children: Array = []
 	if body != null:
 		for child in body.get_children():
-			if child != pivot:
-				children.append(child)
-	_disconnect_signals(body, root.name)
-	if body != null:
+			children.append(child)
+		_disconnect_signals(body, root.name)
 		for child in body.get_children():
-			if child.get_parent() == body:
-				body.remove_child(child)
+			body.remove_child(child)
 		root.remove_child(body)
 		body.queue_free()
-	if pivot != null and pivot.get_parent() == root:
-		root.remove_child(pivot)
-	var st := _get_state(root.name)
+
 	var new_body: Node
 	match mode:
-		"rigid":
+		"rigid", "static":
 			var rb := RigidBody2D.new()
-			rb.gravity_scale = float(st.gravity) / DEFAULT_GRAVITY
+			rb.gravity_scale = float(_get_state(root.name).gravity) / DEFAULT_GRAVITY
 			rb.contact_monitor = true
 			rb.max_contacts_reported = 8
 			rb.can_sleep = false
-			rb.freeze = physics_paused
-			if physics_paused:
+			rb.freeze = (mode == "static" or physics_paused)
+			if rb.freeze:
 				rb.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
 			new_body = rb
-		"static":
-			new_body = StaticBody2D.new()
 		"area":
 			var area := Area2D.new()
 			area.monitoring = not physics_paused
@@ -118,17 +144,18 @@ func _ensure_physics_body(root: Node2D, mode: String) -> Node:
 			new_body = area
 		_:
 			new_body = Node2D.new()
+
 	new_body.name = "PhysicsBody"
 	new_body.position = Vector2.ZERO
 	new_body.set_meta(META_OBJECT_NAME, root.name)
 	root.add_child(new_body)
-	if pivot != null:
-		new_body.add_child(pivot)
+
 	for child in children:
 		if child is CollisionShape2D and mode == "none":
 			child.queue_free()
 		else:
 			new_body.add_child(child)
+
 	if mode != "none":
 		var has_shape := false
 		for child in new_body.get_children():
@@ -139,27 +166,34 @@ func _ensure_physics_body(root: Node2D, mode: String) -> Node:
 			var shape := _create_collision_shape(root)
 			if shape != null:
 				new_body.add_child(shape)
+
 	if new_body is RigidBody2D:
-		(new_body as RigidBody2D).body_entered.connect(_on_body_entered.bind(root.name))
+		(new_body as RigidBody2D).body_entered.connect(_on_body_entered.bind(root.name, root.get_instance_id()))
 		(new_body as RigidBody2D).body_exited.connect(_on_body_exited.bind(root.name))
 	if new_body is Area2D:
-		(new_body as Area2D).body_entered.connect(_on_body_entered.bind(root.name))
+		(new_body as Area2D).body_entered.connect(_on_body_entered.bind(root.name, root.get_instance_id()))
 		(new_body as Area2D).body_exited.connect(_on_body_exited.bind(root.name))
-		(new_body as Area2D).area_entered.connect(_on_area_entered.bind(root.name))
+		(new_body as Area2D).area_entered.connect(_on_area_entered.bind(root.name, root.get_instance_id()))
 		(new_body as Area2D).area_exited.connect(_on_area_exited.bind(root.name))
+
 	return new_body
 
+func _update_shape_only(body: Node, root: Node2D) -> void:
+	var old_shape: CollisionShape2D = null
+	for child in body.get_children():
+		if child is CollisionShape2D:
+			old_shape = child
+			break
+	if old_shape != null:
+		body.remove_child(old_shape)
+		old_shape.queue_free()
+	var new_shape := _create_collision_shape(root)
+	if new_shape != null:
+		body.add_child(new_shape)
+
 func _create_collision_shape(root: Node2D) -> CollisionShape2D:
-	var body := root.get_node_or_null(NodePath("PhysicsBody"))
-	if body == null:
-		return null
-
-	var pivot := body.get_node_or_null(NodePath("Pivot"))
-	if pivot == null:
-		return null
-
 	var visual: Node = null
-	for child in pivot.get_children():
+	for child in root.get_children():
 		if child is CanvasItem:
 			visual = child
 			break
@@ -167,32 +201,32 @@ func _create_collision_shape(root: Node2D) -> CollisionShape2D:
 		return null
 
 	var shape_node := CollisionShape2D.new()
+	var bounds: Dictionary = runtime.object_system.get_visual_bounds(visual)
+	var size: Vector2 = bounds.get("size", Vector2.ZERO)
+	var origin: Vector2 = bounds.get("origin", Vector2.ZERO)
 
-	var bounds := runtime.object_system._get_visual_bounds(visual)
-	var size = bounds.size
-	var origin = bounds.origin
-
-	if size.x <= 0 or size.y <= 0:
+	if size.x <= 0.0 or size.y <= 0.0:
 		return null
 
-	shape_node.position = pivot.position + visual.position
+	var visual_center: Vector2 = origin + size * 0.5
+	var is_circle: bool = root.has_meta(META_SHAPE) and str(root.get_meta(META_SHAPE)) == "circle"
 
-	var is_circle := root.has_meta(META_SHAPE) and str(root.get_meta(META_SHAPE)) == "circle"
 	if is_circle:
 		var circle := CircleShape2D.new()
 		circle.radius = maxf(1.0, minf(size.x, size.y)) * 0.5
 		shape_node.shape = circle
+		shape_node.position = visual_center
 		return shape_node
 
 	if visual is Line2D:
 		var ln := visual as Line2D
-		var points := ln.points
+		var points: PackedVector2Array = ln.points
 		if points.size() >= 2:
 			var p1: Vector2 = points[0]
 			var p2: Vector2 = points[1]
-			var length := p1.distance_to(p2)
-			var center := (p1 + p2) * 0.5
-			shape_node.position = pivot.position + center
+			var length: float = p1.distance_to(p2)
+			var center: Vector2 = (p1 + p2) * 0.5
+			shape_node.position = center
 			shape_node.rotation = (p2 - p1).angle()
 			var cap := CapsuleShape2D.new()
 			cap.height = length
@@ -203,7 +237,7 @@ func _create_collision_shape(root: Node2D) -> CollisionShape2D:
 	var rect := RectangleShape2D.new()
 	rect.size = size
 	shape_node.shape = rect
-
+	shape_node.position = visual_center
 	return shape_node
 
 func _disconnect_signals(body: Node, _object_name: String) -> void:
@@ -217,37 +251,57 @@ func _disconnect_signals(body: Node, _object_name: String) -> void:
 			var callable: Callable = connection.get("callable")
 			if callable.is_valid() and callable.get_object() == self and callable.get_method() == "_on_body_exited":
 				rb.body_exited.disconnect(callable)
+	elif body is Area2D:
+		var area := body as Area2D
+		for connection in area.body_entered.get_connections():
+			var callable: Callable = connection.get("callable")
+			if callable.is_valid() and callable.get_object() == self and callable.get_method() == "_on_body_entered":
+				area.body_entered.disconnect(callable)
+		for connection in area.body_exited.get_connections():
+			var callable: Callable = connection.get("callable")
+			if callable.is_valid() and callable.get_object() == self and callable.get_method() == "_on_body_exited":
+				area.body_exited.disconnect(callable)
+		for connection in area.area_entered.get_connections():
+			var callable: Callable = connection.get("callable")
+			if callable.is_valid() and callable.get_object() == self and callable.get_method() == "_on_area_entered":
+				area.area_entered.disconnect(callable)
+		for connection in area.area_exited.get_connections():
+			var callable: Callable = connection.get("callable")
+			if callable.is_valid() and callable.get_object() == self and callable.get_method() == "_on_area_exited":
+				area.area_exited.disconnect(callable)
 
-func _on_body_entered(other_body: Node, self_name: String) -> void:
+func _on_body_entered(other_body: Node, self_name: String, _self_id: int) -> void:
 	var other_name := _get_object_name(other_body)
 	if other_name == "" or other_name == self_name:
 		return
-	var key := _contact_key(self_name, other_name)
-	_contacts_now[key] = true
+	var key := _contact_key_by_name(self_name, other_name)
+	var payload := {"a": self_name, "b": other_name}
+	_contacts_now[key] = payload
 	if not _contacts.has(key):
-		_pending_collide_events.append({"a": self_name, "b": other_name, "axis": "x"})
+		_pending_collide_events.append(payload)
 
 func _on_body_exited(other_body: Node, self_name: String) -> void:
 	var other_name := _get_object_name(other_body)
-	if other_name == "":
+	if other_name == "" or other_name == self_name:
 		return
-	var key := _contact_key(self_name, other_name)
+	var key := _contact_key_by_name(self_name, other_name)
 	_contacts_now.erase(key)
 
-func _on_area_entered(other_area: Node, self_name: String) -> void:
+func _on_area_entered(other_area: Node, self_name: String, _self_id: int) -> void:
 	var other_name := _get_object_name(other_area)
 	if other_name == "" or other_name == self_name:
 		return
-	var key := _contact_key(self_name, other_name)
-	_contacts_now[key] = true
+	var key := _contact_key_by_name(self_name, other_name)
+	var payload := {"a": self_name, "b": other_name}
+	_contacts_now[key] = payload
 	if not _contacts.has(key):
-		_pending_collide_events.append({"a": self_name, "b": other_name, "axis": "x"})
+		_pending_collide_events.append(payload)
 
 func _on_area_exited(other_area: Node, self_name: String) -> void:
 	var other_name := _get_object_name(other_area)
-	if other_name == "":
+	if other_name == "" or other_name == self_name:
 		return
-	var key := _contact_key(self_name, other_name)
+	var key := _contact_key_by_name(self_name, other_name)
 	_contacts_now.erase(key)
 
 func _get_object_name(node: Node) -> String:
@@ -261,7 +315,7 @@ func _get_object_name(node: Node) -> String:
 		current = current.get_parent()
 	return ""
 
-func _contact_key(a: String, b: String) -> String:
+func _contact_key_by_name(a: String, b: String) -> String:
 	if a < b:
 		return a + "|" + b
 	return b + "|" + a
@@ -270,82 +324,62 @@ func execute(action: GyroAction, payload: Dictionary) -> void:
 	match action.type:
 		"SetVelocity":
 			var object_name := runtime._name_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
-			if object_name == "":
-				return
+			if object_name == "": return
 			var root := runtime._get_target_node(object_name) as Node2D
-			if root == null:
-				return
+			if root == null: return
 			var body := _ensure_physics_body(root, "rigid") as RigidBody2D
-			if body == null:
-				return
+			if body == null: return
 			var velocity := body.linear_velocity
 			var x_value: Variant = action.data.get("x", null)
 			var y_value: Variant = action.data.get("y", null)
-			if x_value != null:
-				velocity.x = runtime._to_float(runtime._resolve_value(x_value, payload))
-			if y_value != null:
-				velocity.y = runtime._to_float(runtime._resolve_value(y_value, payload))
+			if x_value != null: velocity.x = runtime._to_float(runtime._resolve_value(x_value, payload))
+			if y_value != null: velocity.y = runtime._to_float(runtime._resolve_value(y_value, payload))
 			body.linear_velocity = velocity
 			var state := _get_state(object_name)
 			state.velocity = velocity
 		"AddVelocity":
 			var object_name := runtime._name_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
-			if object_name == "":
-				return
+			if object_name == "": return
 			var root := runtime._get_target_node(object_name) as Node2D
-			if root == null:
-				return
+			if root == null: return
 			var body := _ensure_physics_body(root, "rigid") as RigidBody2D
-			if body == null:
-				return
+			if body == null: return
 			var velocity := body.linear_velocity
 			var x_value: Variant = action.data.get("x", null)
 			var y_value: Variant = action.data.get("y", null)
-			if x_value != null:
-				velocity.x += runtime._to_float(runtime._resolve_value(x_value, payload))
-			if y_value != null:
-				velocity.y += runtime._to_float(runtime._resolve_value(y_value, payload))
+			if x_value != null: velocity.x += runtime._to_float(runtime._resolve_value(x_value, payload))
+			if y_value != null: velocity.y += runtime._to_float(runtime._resolve_value(y_value, payload))
 			body.linear_velocity = velocity
 			var state := _get_state(object_name)
 			state.velocity = velocity
 		"SetGravity":
 			var object_name := runtime._name_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
-			if object_name == "":
-				return
+			if object_name == "": return
 			var root := runtime._get_target_node(object_name) as Node2D
-			if root == null:
-				return
-			var body := root.get_node_or_null(NodePath("PhysicsBody")) as RigidBody2D
-			if body == null:
-				return
+			if root == null: return
 			var gravity := runtime._to_float(runtime._resolve_value(action.data.get("value", 0.0), payload))
-			body.gravity_scale = gravity / DEFAULT_GRAVITY
 			var state := _get_state(object_name)
 			state.gravity = gravity
+			var body := _ensure_physics_body(root, "rigid") as RigidBody2D
+			if body == null: return
+			body.freeze = false
+			body.gravity_scale = gravity / DEFAULT_GRAVITY
 		"SetSolid":
 			var object_name := runtime._name_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
-			if object_name == "":
-				return
+			if object_name == "": return
 			var root := runtime._get_target_node(object_name) as Node2D
-			if root == null:
-				return
+			if root == null: return
 			var solid := runtime._to_bool(runtime._resolve_value(action.data.get("on", true), payload))
-			if solid:
-				_ensure_physics_body(root, "static")
-			else:
-				_remove_physics_body(root)
+			if solid: _ensure_physics_body(root, "static")
+			else: _remove_physics_body(root)
 		"SetSensor":
 			var object_name := runtime._name_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
-			if object_name == "":
-				return
+			if object_name == "": return
 			var root := runtime._get_target_node(object_name) as Node2D
-			if root == null:
-				return
+			if root == null: return
 			var sensor := runtime._to_bool(runtime._resolve_value(action.data.get("on", true), payload))
-			if sensor:
-				_ensure_physics_body(root, "area")
-			else:
-				_remove_physics_body(root)
+			if sensor: _ensure_physics_body(root, "area")
+			else: _remove_physics_body(root)
 		"SetDraggable":
 			var object_name := runtime._name_from_value(runtime._resolve_value(action.data.get("node", ""), payload))
 			draggable[object_name] = runtime._to_bool(runtime._resolve_value(action.data.get("on", true), payload))
@@ -359,7 +393,7 @@ func execute(action: GyroAction, payload: Dictionary) -> void:
 					var body := root.get_node_or_null(NodePath("PhysicsBody")) as RigidBody2D
 					if body != null:
 						body.gravity_scale = global_gravity / DEFAULT_GRAVITY
-				physics_states[key].gravity = global_gravity
+					physics_states[key].gravity = global_gravity
 
 func _get_state(object_name: String) -> Dictionary:
 	if not physics_states.has(object_name):
@@ -373,30 +407,24 @@ func _get_state(object_name: String) -> Dictionary:
 
 func _remove_physics_body(root: Node2D) -> void:
 	var body := root.get_node_or_null(NodePath("PhysicsBody"))
-	if body == null:
-		return
-	var pivot := body.get_node_or_null(NodePath("Pivot"))
-	if pivot != null:
-		body.remove_child(pivot)
-		root.add_child(pivot)
+	if body == null: return
 	_disconnect_signals(body, root.name)
 	root.remove_child(body)
 	body.queue_free()
 
-func try_grab(pos: Vector2) -> bool:
+func try_grab(design_pos: Vector2) -> bool:
 	var stage := runtime._get_stage()
-	if stage == null:
-		return false
+	if stage == null: return false
+	var gh := runtime.host as GyroEventHost
+	var scene_pos := design_pos + (gh.stage_shift() if gh != null else Vector2.ZERO)
 	for child_value in stage.get_children():
 		var root := child_value as Node2D
-		if root == null or not root.visible:
-			continue
-		if not draggable.get(root.name, false):
-			continue
-		var aabb := runtime.object_system._get_aabb(root)
-		if aabb.has_point(pos):
+		if root == null or not root.visible: continue
+		if not draggable.get(root.name, false): continue
+		var aabb := runtime.object_system.get_aabb(root)
+		if aabb.has_point(scene_pos):
 			_grab_node = root
-			_grab_offset = pos - root.position
+			_grab_offset = design_pos - root.position
 			var body := root.get_node_or_null(NodePath("PhysicsBody"))
 			if body is RigidBody2D:
 				var rb := body as RigidBody2D
@@ -429,10 +457,8 @@ func on_object_deleted(object_name: String) -> void:
 
 func update_collision_shape(root: Node2D) -> void:
 	var body := root.get_node_or_null(NodePath("PhysicsBody"))
-	if body == null:
-		return
-	if not (body is CollisionObject2D):
-		return
+	if body == null: return
+	if not (body is CollisionObject2D): return
 	var old_shape: CollisionShape2D = null
 	for child in body.get_children():
 		if child is CollisionShape2D:

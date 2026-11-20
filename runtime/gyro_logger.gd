@@ -4,6 +4,7 @@ extends RefCounted
 signal log_received(entry: Dictionary)
 
 var _enabled := false
+var _enable_count := 0
 var _entries: Array[Dictionary] = []
 var _max_entries := 500
 
@@ -15,11 +16,14 @@ static func get_instance() -> GyroLogger:
 	return _instance
 
 func enable() -> void:
-	_enabled = true
-	_entries.clear()
+	_enable_count += 1
+	if _enable_count == 1:
+		_enabled = true
+		_entries.clear()
 
 func disable() -> void:
-	_enabled = false
+	_enable_count = maxi(0, _enable_count - 1)
+	_enabled = _enable_count > 0
 
 func log_message(message: String, level: String = "info") -> void:
 	if not _enabled:

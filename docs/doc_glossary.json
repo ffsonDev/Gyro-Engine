@@ -1,0 +1,20 @@
+{
+"version": 1,
+"terms": [
+{"id": "event", "term_key": "gloss.event.term", "def_key": "gloss.event.def", "see": "ch2_events"},
+{"id": "action", "term_key": "gloss.action.term", "def_key": "gloss.action.def", "see": "ch2_actions"},
+{"id": "condition", "term_key": "gloss.condition.term", "def_key": "gloss.condition.def", "see": "ch2_conditions"},
+{"id": "rule", "term_key": "gloss.rule.term", "def_key": "gloss.rule.def", "see": "ch2_events"},
+{"id": "script", "term_key": "gloss.script.term", "def_key": "gloss.script.def", "see": ""},
+{"id": "payload", "term_key": "gloss.payload.term", "def_key": "gloss.payload.def", "see": "ch2_custom_events"},
+{"id": "anchor", "term_key": "gloss.anchor.term", "def_key": "gloss.anchor.def", "see": "ch3_anchors"},
+{"id": "tag", "term_key": "gloss.tag.term", "def_key": "gloss.tag.def", "see": "ch6_tags"},
+{"id": "tween", "term_key": "gloss.tween.term", "def_key": "gloss.tween.def", "see": "ch3_tweens"},
+{"id": "blueprint", "term_key": "gloss.blueprint.term", "def_key": "gloss.blueprint.def", "see": ""},
+{"id": "variable", "term_key": "gloss.variable.term", "def_key": "gloss.variable.def", "see": "ch6_vars"},
+{"id": "widget", "term_key": "gloss.widget.term", "def_key": "gloss.widget.def", "see": "ch6_widgets"},
+{"id": "keystore", "term_key": "gloss.keystore.term", "def_key": "gloss.keystore.def", "see": "ch8_build"},
+{"id": "flow_block", "term_key": "gloss.flow_block.term", "def_key": "gloss.flow_block.def", "see": "ch2_conditions"},
+{"id": "custom_block", "term_key": "gloss.custom_block.term", "def_key": "gloss.custom_block.def", "see": ""}
+]
+}

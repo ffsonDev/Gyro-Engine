@@ -8,9 +8,11 @@ var save_path := ""
 var selected_asset: GyroAsset
 var selected_scope := ""
 var expanded: Dictionary = {}
+var _icon_round_shader: Shader
 
 var drag_asset: GyroAsset
 var drag_panel: Control
+var drag_folder := ""
 var drop_zones: Array = []
 var current_drop: Dictionary = {}
 var pointer := Vector2()
@@ -35,8 +37,8 @@ var preview_time_label: Label = null
 var preview_len_label: Label = null
 var _preview_len := 0.0
 var _preview_seeking := false
-
-var _style_cache := {}
+var _imported_regex := RegEx.create_from_string("^imported_\\d+_(.+)$")
+var _picked_regex := RegEx.create_from_string("^picked_\\d+_(.+)$")
 
 func setup(proj: GyroProject, path: String) -> void:
 	project = proj
@@ -45,6 +47,7 @@ func setup(proj: GyroProject, path: String) -> void:
 	selected_scope = ""
 	_load_ui_state()
 	_refresh()
+	GyroUI.apply_background(self)
 
 func _ready() -> void:
 	%Title.add_theme_font_size_override("font_size", GyroUI.fs(30))
@@ -56,6 +59,21 @@ func _ready() -> void:
 	%KindOption.add_item(GyroLang.t("kind_font"), 2)
 	%KindOption.add_item(GyroLang.t("kind_video"), 3)
 	%KindOption.add_item(GyroLang.t("kind_other"), 4)
+	
+	var shader_code := "
+	shader_type canvas_item;
+	uniform vec2 size;
+	uniform float radius;
+	void fragment() {
+	    vec2 pos = UV * size;
+	    vec2 half_size = size * 0.5;
+	    vec2 d = abs(pos - half_size) - (half_size - vec2(radius));
+	    float dist = length(max(d, 0.0)) - radius;
+	    float alpha = 1.0 - smoothstep(-0.5, 0.5, dist);
+	    COLOR.a *= alpha;
+	}"
+	_icon_round_shader = Shader.new()
+	_icon_round_shader.code = shader_code
 
 	drop_indicator = ColorRect.new()
 	drop_indicator.color = Color(0.2, 0.8, 0.9)
@@ -124,6 +142,10 @@ func _ready() -> void:
 	)
 
 	apply_lang()
+	GyroUI.apply_glass_style(%AddPanel)
+	GyroUI.apply_glass_style(%AddMenuPanel)
+	GyroUI.apply_glass_style(%GearPanel)
+	GyroUI.apply_glass_style(%ImportPanel)
 
 func _process(_delta: float) -> void:
 	if preview_overlay == null or not is_instance_valid(preview_overlay):
@@ -169,24 +191,7 @@ func apply_lang() -> void:
 	if picked_path == "":
 		%PickButton.text = GyroLang.t("pick_file")
 
-func _row_style(selected: bool) -> StyleBoxFlat:
-	var key := "sel_" + str(selected)
-	if _style_cache.has(key):
-		return _style_cache[key]
-	var style := StyleBoxFlat.new()
-	if selected:
-		style.bg_color = Color(0.11, 0.55, 0.62)
-	else:
-		style.bg_color = Color(0.22, 0.24, 0.28)
-	style.set_corner_radius_all(10)
-	style.content_margin_left = 12
-	style.content_margin_right = 12
-	style.content_margin_top = 8
-	style.content_margin_bottom = 8
-	_style_cache[key] = style
-	return style
-
-func _refresh() -> void:
+func _refresh(animate := true) -> void:
 	GyroUI.clear_children(%ListVBox)
 	drop_zones.clear()
 	if project != null:
@@ -195,6 +200,8 @@ func _refresh() -> void:
 	%EmptyState.visible = project == null or (project.assets.is_empty() and project.asset_folders.is_empty())
 	%GearButton.disabled = selected_asset == null and not _is_folder_scope()
 	_save_ui_state()
+	if %ListVBox.get_child_count() > 0 and animate:
+		GyroUI.stagger_children(%ListVBox, 0.03)
 
 func _build_category(kind: String) -> void:
 	var is_open: bool = expanded.get(kind, true)
@@ -202,7 +209,7 @@ func _build_category(kind: String) -> void:
 	var outer := PanelContainer.new()
 	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	outer.custom_minimum_size = Vector2(0, GyroUI.sz(56))
-	outer.add_theme_stylebox_override("panel", _row_style(selected_scope == kind))
+	outer.add_theme_stylebox_override("panel", GyroUI.row_style(selected_scope == kind, true))
 	
 	var inner := HBoxContainer.new()
 	inner.add_theme_constant_override("separation", 8)
@@ -211,7 +218,7 @@ func _build_category(kind: String) -> void:
 	var arrow := _make_arrow_button(expanded.get(kind, false))
 	arrow.pressed.connect(func():
 		expanded[kind] = not expanded.get(kind, false)
-		_refresh()
+		_refresh(false)
 	)
 	inner.add_child(arrow)
 	
@@ -241,7 +248,7 @@ func _make_arrow_button(is_open: bool) -> Button:
 func _on_category_tapped(kind: String) -> void:
 	selected_scope = kind
 	selected_asset = null
-	_refresh()
+	_refresh(false)
 
 func _build_level(parent: Control, scope: String, depth: int) -> void:
 	for folder_name in _subfolders_of(scope):
@@ -250,12 +257,12 @@ func _build_level(parent: Control, scope: String, depth: int) -> void:
 		frow.add_theme_constant_override("separation", 6)
 		frow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		if depth > 1:
-			frow.add_child(_make_guide(depth - 1, GyroUI.sz(56), false))
+			frow.add_child(GyroUI.make_guide(depth - 1, GyroUI.sz(56), false))
 
 		var outer := PanelContainer.new()
 		outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		outer.custom_minimum_size = Vector2(0, GyroUI.sz(56))
-		outer.add_theme_stylebox_override("panel", _row_style(selected_scope == fp))
+		outer.add_theme_stylebox_override("panel", GyroUI.row_style(selected_scope == fp, true))
 
 		var inner := HBoxContainer.new()
 		inner.add_theme_constant_override("separation", 8)
@@ -264,7 +271,7 @@ func _build_level(parent: Control, scope: String, depth: int) -> void:
 		var arrow := _make_arrow_button(expanded.get(fp, false))
 		arrow.pressed.connect(func():
 			expanded[fp] = not expanded.get(fp, false)
-			_refresh()
+			_refresh(false)
 		)
 		inner.add_child(arrow)
 
@@ -278,6 +285,8 @@ func _build_level(parent: Control, scope: String, depth: int) -> void:
 		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		inner.add_child(name_label)
+		
+		GyroUI.attach_hold_drag(outer, func(): _start_folder_drag(fp, outer))
 
 		frow.add_child(outer)
 		parent.add_child(frow)
@@ -306,57 +315,60 @@ func _build_asset_row(parent: Control, a: GyroAsset, depth: int) -> void:
 	row.add_theme_constant_override("separation", 6)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if depth > 1:
-		row.add_child(_make_guide(depth - 1, GyroUI.sz(72), true))
-
+		row.add_child(GyroUI.make_guide(depth - 1, GyroUI.sz(72), true))
+		
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.custom_minimum_size = Vector2(0, GyroUI.sz(72))
-	panel.add_theme_stylebox_override("panel", _row_style(selected_asset == a))
-
+	panel.add_theme_stylebox_override("panel", GyroUI.row_style(selected_asset == a, true))
+	
 	var inner := HBoxContainer.new()
 	inner.add_theme_constant_override("separation", 8)
 	panel.add_child(inner)
-
-	var handle := Button.new()
-	handle.icon = load("res://ui/icons/burger.svg")
-	handle.flat = true
-	handle.custom_minimum_size = Vector2(GyroUI.sz(44), GyroUI.sz(44))
-	handle.add_theme_constant_override("icon_max_width", 25)
-	handle.add_theme_color_override("font_color", Color(0.7, 0.72, 0.76))
-	handle.button_down.connect(func(): _start_asset_drag(a, panel))
-	inner.add_child(handle)
-
-	var info := VBoxContainer.new()
-	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	info.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	inner.add_child(info)
-
+	
+	var icon_panel := PanelContainer.new()
+	icon_panel.custom_minimum_size = Vector2(GyroUI.sz(60), GyroUI.sz(60))
+	icon_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icon_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var icon_style := StyleBoxFlat.new()
+	icon_style.bg_color = _asset_type_color(a.kind)
+	icon_style.set_corner_radius_all(DesignTokens.RADIUS_MD)
+	icon_panel.add_theme_stylebox_override("panel", icon_style)
+	inner.add_child(icon_panel)
+	
+	var icon_node := _make_asset_icon(a)
+	icon_panel.add_child(icon_node)
+	
+	var info_vbox := VBoxContainer.new()
+	info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_vbox.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	info_vbox.add_theme_constant_override("separation", 4)
+	inner.add_child(info_vbox)
+	
+	info_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var name_label := Label.new()
 	name_label.text = a.asset_name
 	name_label.add_theme_font_size_override("font_size", GyroUI.fs(22))
 	name_label.add_theme_color_override("font_color", Color.WHITE)
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_label.clip_text = true
 	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	info_vbox.add_child(name_label)
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	info.add_child(name_label)
-
-	var path_label := Label.new()
-	path_label.text = a.path
-	path_label.add_theme_font_size_override("font_size", GyroUI.fs(12))
-	path_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
-	path_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	path_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	info.add_child(path_label)
-
+	
+	GyroUI.attach_hold_drag(panel, func(): _start_asset_drag(a, panel))
+	
 	row.add_child(panel)
 	parent.add_child(row)
-
+	
 	GyroUI.attach_tap(panel, func(): _on_asset_tapped(a))
 	drop_zones.append({"type": "asset", "asset": a, "control": panel})
 
 func _on_folder_tapped(fp: String) -> void:
 	selected_scope = fp
 	selected_asset = null
-	_refresh()
+	_refresh(false)
 
 func _on_asset_tapped(a: GyroAsset) -> void:
 	var now := Time.get_ticks_msec()
@@ -367,84 +379,125 @@ func _on_asset_tapped(a: GyroAsset) -> void:
 	_last_tap_asset = a
 	_last_tap_time = now
 	selected_asset = a
-	_refresh()
+	_refresh(false)
 
 func _is_folder_scope() -> bool:
 	return selected_scope != "" and selected_scope.contains("/")
-
-func _make_guide(depth: int, row_height: int, with_stub: bool) -> HBoxContainer:
-	var box := HBoxContainer.new()
-	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var center := float(row_height) * 0.5
-	for i in depth:
-		var slot := Control.new()
-		slot.custom_minimum_size = Vector2(16, row_height)
-		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var vline := ColorRect.new()
-		vline.color = Color(0.35, 0.37, 0.40)
-		vline.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		vline.anchor_top = 0.0
-		vline.anchor_bottom = 1.0
-		vline.anchor_left = 0.0
-		vline.anchor_right = 0.0
-		vline.offset_left = 6.0
-		vline.offset_right = 8.0
-		slot.add_child(vline)
-		if i == depth - 1 and with_stub:
-			var hline := ColorRect.new()
-			hline.color = Color(0.35, 0.37, 0.40)
-			hline.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			hline.anchor_top = 0.0
-			hline.anchor_bottom = 0.0
-			hline.anchor_left = 0.0
-			hline.anchor_right = 0.0
-			hline.offset_left = 6.0
-			hline.offset_right = 14.0
-			hline.offset_top = center - 1.0
-			hline.offset_bottom = center + 1.0
-			slot.add_child(hline)
-		box.add_child(slot)
-	return box
 
 func _input(event: InputEvent) -> void:
 	if not visible:
 		return
 	if event is InputEventMouse or event is InputEventScreenTouch or event is InputEventScreenDrag:
 		pointer = event.position
-	if event is InputEventScreenTouch and not event.pressed and drag_asset != null:
-		_finish_drag()
-	elif event is InputEventMouseButton and not event.pressed and drag_asset != null:
-		_finish_drag()
-	if drag_asset != null:
+	if event is InputEventScreenTouch and not event.pressed:
+		if drag_asset != null:
+			_finish_drag()
+		elif drag_folder != "":
+			_finish_folder_drag()
+	elif event is InputEventMouseButton and not event.pressed:
+		if drag_asset != null:
+			_finish_drag()
+		elif drag_folder != "":
+			_finish_folder_drag()
+	if drag_asset != null or drag_folder != "":
 		_update_drop_target()
 
 func _start_asset_drag(a: GyroAsset, panel: Control) -> void:
 	drag_asset = a
 	drag_panel = panel
 	panel.modulate.a = 0.5
-	%Scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_update_drop_target()
+
+func _start_folder_drag(fp: String, panel: Control) -> void:
+	drag_folder = fp
+	drag_panel = panel
+	panel.modulate.a = 0.5
+	_update_drop_target()
+
+func _finish_folder_drag() -> void:
+	if drag_panel != null and is_instance_valid(drag_panel):
+		drag_panel.modulate.a = 1.0
+	%Scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	if drag_folder != "" and not current_drop.is_empty():
+		if current_drop.type == "folder":
+			var target_fp: String = current_drop.path
+			if target_fp != drag_folder and not target_fp.begins_with(drag_folder + "/"):
+				_move_folder(drag_folder, target_fp)
+				_save_project()
+				_refresh(false)
+	current_drop = {}
+	drag_folder = ""
+	drag_panel = null
+	drop_indicator.visible = false
+
+func _move_folder(old_fp: String, new_parent: String) -> void:
+	var folder_name := old_fp.get_file()
+	var new_fp := _join(new_parent, folder_name)
+	if new_fp == old_fp or project.asset_folders.has(new_fp):
+		return
+	var prefix := old_fp + "/"
+	var new_folders: Array = []
+	for f in project.asset_folders:
+		if str(f) == old_fp:
+			new_folders.append(new_fp)
+		elif str(f).begins_with(prefix):
+			new_folders.append(new_fp + "/" + str(f).substr(prefix.length()))
+		else:
+			new_folders.append(f)
+	project.asset_folders.clear()
+	for f in new_folders:
+		project.asset_folders.append(f)
+	for v in project.assets:
+		var a := v as GyroAsset
+		if a == null:
+			continue
+		if a.folder == old_fp:
+			a.folder = new_fp
+		elif a.folder.begins_with(prefix):
+			a.folder = new_fp + "/" + a.folder.substr(prefix.length())
+	if selected_scope == old_fp:
+		selected_scope = new_fp
+	expanded.erase(old_fp)
+	expanded[new_fp] = true
 
 func _update_drop_target() -> void:
 	current_drop = {}
+	
+	var is_dragging_folder := drag_folder != ""
+	var is_dragging_asset := drag_asset != null
+	
 	for zone in drop_zones:
 		var rect: Rect2 = zone.control.get_global_rect()
 		if not rect.has_point(pointer):
 			continue
+		
 		if zone.type == "kind":
-			if zone.path != drag_asset.kind:
+			if is_dragging_folder:
 				continue
-			current_drop = {"type": "kind", "path": zone.path, "x": rect.position.x, "y": rect.end.y - 2, "w": rect.size.x}
+			elif is_dragging_asset:
+				if zone.path != drag_asset.kind:
+					continue
+				current_drop = {"type": "kind", "path": zone.path, "x": rect.position.x, "y": rect.end.y - 2, "w": rect.size.x}
 		elif zone.type == "folder":
-			if not str(zone.path).begins_with(drag_asset.kind + "/"):
-				continue
-			current_drop = {"type": "folder", "path": zone.path, "x": rect.position.x, "y": rect.end.y - 2, "w": rect.size.x}
-		else:
+			if is_dragging_folder:
+				if zone.path == drag_folder:
+					break
+				if zone.path.begins_with(drag_folder + "/"):
+					break
+				current_drop = {"type": "folder", "path": zone.path, "x": rect.position.x, "y": rect.end.y - 2, "w": rect.size.x}
+			elif is_dragging_asset:
+				if not str(zone.path).begins_with(drag_asset.kind + "/"):
+					continue
+				current_drop = {"type": "folder", "path": zone.path, "x": rect.position.x, "y": rect.end.y - 2, "w": rect.size.x}
+		elif zone.type == "asset" and is_dragging_asset:
 			if zone.asset == drag_asset or zone.asset.kind != drag_asset.kind:
 				continue
 			var before := pointer.y < rect.position.y + rect.size.y * 0.5
 			current_drop = {"type": "asset", "asset": zone.asset, "before": before, "x": rect.position.x, "y": rect.position.y if before else rect.end.y, "w": rect.size.x}
+		
+		if not current_drop.is_empty():
 			break
+	
 	if current_drop.is_empty():
 		drop_indicator.visible = false
 	else:
@@ -461,14 +514,14 @@ func _finish_drag() -> void:
 			if current_drop.path == drag_asset.kind and drag_asset.folder != "":
 				drag_asset.folder = ""
 				_save_project()
-				_refresh()
+				_refresh(false)
 		elif current_drop.type == "folder":
 			var fp: String = current_drop.path
 			if fp.begins_with(drag_asset.kind + "/") and drag_asset.folder != fp:
 				drag_asset.folder = fp
 				expanded[fp] = true
 				_save_project()
-				_refresh()
+				_refresh(false)
 		else:
 			var target: GyroAsset = current_drop.asset
 			var from_index := project.assets.find(drag_asset)
@@ -481,7 +534,7 @@ func _finish_drag() -> void:
 					drag_asset.folder = _folder_for_drop(target)
 					project.assets.insert(to_index, drag_asset)
 					_save_project()
-					_refresh()
+					_refresh(false)
 	current_drop = {}
 	drag_asset = null
 	drag_panel = null
@@ -525,12 +578,12 @@ func _clean_pick_name(path: String) -> String:
 	var f := GyroFilePicker.last_picked_file
 	if f == "":
 		f = path.get_file()
-		var m := RegEx.create_from_string("^imported_\\d+_(.+)$").search(f)
-		if m != null:
-			f = m.get_string(1)
-		var m2 := RegEx.create_from_string("^picked_\\d+_(.+)$").search(f)
-		if m2 != null:
-			f = m2.get_string(1)
+	var m := _imported_regex.search(f)
+	if m != null:
+		f = m.get_string(1)
+	var m2 := _picked_regex.search(f)
+	if m2 != null:
+		f = m2.get_string(1)
 	return f.get_basename()
 
 func _add_asset() -> void:
@@ -576,6 +629,16 @@ func _add_asset() -> void:
 		_set_importing(false)
 		if not ok:
 			return
+		if kind == "sprite" and project != null and project.settings != null and project.settings.compress_textures:
+			_set_importing(true, GyroLang.t("compressing"))
+			await get_tree().process_frame
+			var cres := GyroTextureCodec.process_sprite_file(dest_abs)
+			if cres.ok and str(cres.new_path) != "":
+				dest_abs = str(cres.new_path)
+				unique_name = dest_abs.get_file()
+			if cres.ok and OS.get_name() == "Android":
+				GyroTextureCodec.build_gtx_file(dest_abs, dest_abs + ".gtx")
+			_set_importing(false)
 		if src.begins_with("user://imported_"):
 			DirAccess.remove_absolute(src)
 		stored_relative = kind + "/" + unique_name
@@ -594,7 +657,7 @@ func _add_asset() -> void:
 		expanded[folder] = true
 	_close_add_panel()
 	_save_project()
-	_refresh()
+	_refresh(false)
 
 func _set_importing(active: bool, text: String = "") -> void:
 	importing = active
@@ -603,6 +666,17 @@ func _set_importing(active: bool, text: String = "") -> void:
 	%ImportProgress.value = 0.0
 	%ImportOverlay.visible = active
 	%ImportPanel.visible = active
+	
+	if active:
+		var skeleton := SkeletonLoader.new()
+		skeleton.name = "ImportSkeleton"
+		skeleton.custom_minimum_size = Vector2(0, GyroUI.sz(24))
+		skeleton.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		%ImportVBox.add_child(skeleton)
+	else:
+		var old_skel = %ImportVBox.get_node_or_null("ImportSkeleton")
+		if old_skel:
+			old_skel.stop_and_free()
 
 func _copy_file_with_progress(src: String, dst: String) -> bool:
 	var src_file := FileAccess.open(src, FileAccess.READ)
@@ -664,7 +738,7 @@ func _open_name_dialog(mode: String, target: Variant) -> void:
 			title = GyroLang.t("rename")
 			var parts := String(target).split("/")
 			initial = parts[parts.size() - 1]
-	%NameDialog.open(title, "имя ", initial)
+	%NameDialog.open(title, GyroLang.t("name_placeholder"), initial)
 
 func _apply_name(name_text: String) -> void:
 	var clean := GyroUI.sanitize_name(name_text)
@@ -675,7 +749,7 @@ func _apply_name(name_text: String) -> void:
 		"folder":
 			var fp := selected_scope + "/" + clean
 			if project.asset_folders.has(fp):
-				GyroUI.alert(self, "Ошибка", "Папка с таким именем уже существует.")
+				GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("folder_exists"))
 				return
 			project.asset_folders.append(fp)
 			expanded[selected_scope] = true
@@ -697,7 +771,7 @@ func _apply_name(name_text: String) -> void:
 			if new_fp != old_fp:
 				_rename_folder_recursive(old_fp, new_fp)
 	_save_project()
-	_refresh()
+	_refresh(false)
 
 func _rename_folder_recursive(old_fp: String, new_fp: String) -> void:
 	var prefix := old_fp + "/"
@@ -735,6 +809,7 @@ func _open_confirm_folder(fp: String) -> void:
 
 func _do_confirm() -> void:
 	if confirm_mode == "asset" and confirm_asset != null:
+		GyroMedia.invalidate_texture(GyroAssetPaths.resolve_asset_path(confirm_asset.path, save_path))
 		project.assets.erase(confirm_asset)
 		if selected_asset == confirm_asset:
 			selected_asset = null
@@ -746,7 +821,7 @@ func _do_confirm() -> void:
 		confirm_folder_path = ""
 	confirm_mode = ""
 	_save_project()
-	_refresh()
+	_refresh(false)
 
 func _delete_folder(fp: String) -> void:
 	var parent_scope := _parent_of(fp)
@@ -819,16 +894,27 @@ func _new_asset_id() -> String:
 	return "a" + str(Time.get_unix_time_from_system()) + str(randi() % 100000)
 
 func _save_project() -> void:
-	GyroUI.save_resource(project, save_path)
+	if project != null and save_path != "":
+		GyroProjectJSON.save_to_file(project, save_path)
 
 func _ui_state_path() -> String:
+	if save_path == "":
+		return ""
 	return save_path.get_basename() + ".resources_ui.json"
+
+func _legacy_ui_state_path() -> String:
+	if save_path == "":
+		return ""
+	return save_path.get_basename()
 
 func _load_ui_state() -> void:
 	expanded = {}
 	if save_path == "":
 		return
-	var f := FileAccess.open(_ui_state_path(), FileAccess.READ)
+	var path := _ui_state_path()
+	if not FileAccess.file_exists(path) and FileAccess.file_exists(_legacy_ui_state_path()):
+		path = _legacy_ui_state_path()
+	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
 		return
 	var parsed: Variant = JSON.parse_string(f.get_as_text())
@@ -888,13 +974,13 @@ func _open_preview(a: GyroAsset) -> void:
 	var kind := a.kind
 	
 	if kind == "sprite" and ext in ["png", "jpg", "jpeg", "webp", "svg"]:
-		pass # OK
+		pass
 	elif kind == "sound" and ext in ["mp3", "ogg", "wav"]:
-		pass # OK
+		pass
 	elif kind == "font" and ext in ["ttf", "otf", "woff2"]:
-		pass # OK
+		pass
 	elif kind == "video" and ext in ["webm", "ogv"]:
-		pass # OK
+		pass
 	else:
 		if ext in ["png", "jpg", "jpeg", "webp", "svg"]:
 			kind = "sprite"
@@ -968,10 +1054,12 @@ func _open_preview(a: GyroAsset) -> void:
 func _close_preview() -> void:
 	if preview_audio != null and is_instance_valid(preview_audio):
 		preview_audio.stop()
+		preview_audio.stream = null
 		preview_audio.queue_free()
 	preview_audio = null
 	if preview_video != null and is_instance_valid(preview_video):
 		preview_video.stop()
+		preview_video.stream = null
 		preview_video.queue_free()
 	preview_video = null
 	if preview_overlay != null and is_instance_valid(preview_overlay):
@@ -1148,3 +1236,62 @@ static func _fmt_time(sec: float) -> String:
 	var m := s / 60
 	var r := s % 60
 	return str(m) + ":" + ("0" + str(r) if r < 10 else str(r))
+
+func _asset_type_color(kind: String) -> Color:
+	return DesignTokens.COLOR_ACCENT_SOFT
+
+func _asset_type_icon(kind: String) -> String:
+	match kind:
+		"sound": return "res://ui/icons/sound.svg"
+		"video": return "res://ui/icons/play.svg"
+		"other": return "res://ui/icons/script_visual.svg"
+	return ""
+
+func _asset_type_symbol(kind: String) -> String:
+	if kind == "font":
+		return "Aa"
+	return ""
+
+func _make_asset_icon(a: GyroAsset) -> Node:
+	if a.kind == "sprite":
+		var resolved := GyroAssetPaths.resolve_asset_path(a.path, save_path)
+		var tex := GyroMedia.load_texture(resolved)
+		if tex != null:
+			var tr := TextureRect.new()
+			tr.texture = tex
+			tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			tr.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			tr.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			var mat := ShaderMaterial.new()
+			mat.shader = _icon_round_shader
+			var panel_size := Vector2(GyroUI.sz(60), GyroUI.sz(60))
+			mat.set_shader_parameter("size", panel_size)
+			mat.set_shader_parameter("radius", float(DesignTokens.RADIUS_MD))
+			tr.material = mat
+			return tr
+	
+	var icon_path := _asset_type_icon(a.kind)
+	if icon_path != "" and FileAccess.file_exists(icon_path):
+		var icon := TextureRect.new()
+		icon.texture = load(icon_path)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon.modulate = DesignTokens.COLOR_TEXT_PRIMARY
+		icon.custom_minimum_size = Vector2(GyroUI.sz(32), GyroUI.sz(32))
+		return icon
+	
+	var label := Label.new()
+	label.text = _asset_type_symbol(a.kind)
+	label.add_theme_font_size_override("font_size", GyroUI.fs(24))
+	label.add_theme_color_override("font_color", DesignTokens.COLOR_TEXT_PRIMARY)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return label

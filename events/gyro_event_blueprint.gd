@@ -2,8 +2,9 @@ class_name GyroEventBlueprint
 extends Resource
 
 @export var rules: Array[GyroEventRule] = []
-@export var variables: Dictionary = {}
-@export var variable_types: Dictionary = {}
+var variables: Dictionary = {}
+var variable_types: Dictionary = {}
+var tables: Dictionary = {}
 @export var timers: Array[GyroTimerConfig] = []
 
 func migrate_event_names() -> bool:

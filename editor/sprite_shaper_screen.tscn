@@ -1,0 +1,126 @@
+[gd_scene format=3 uid="uid://dvavgynhnnx8m"]
+
+[ext_resource type="Script" uid="uid://p0qx53u8kl2j" path="res://editor/sprite_shaper_screen.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dv86g7sasfedj" path="res://ui/icons/arrow_left.svg" id="2"]
+[ext_resource type="Script" uid="uid://cinybl2q80uri" path="res://editor/draw_canvas.gd" id="3_70pp1"]
+
+[node name="SpriteShaperScreen" type="Control" unique_id=100000001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1279190776]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.0588235, 0.0705882, 0.0901961, 1)
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=615585468]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = -16.0
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root" unique_id=1034177189]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="Root/Header" unique_id=1285008741]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/icon_max_width = 35
+icon = ExtResource("2")
+flat = true
+
+[node name="Title" type="Label" parent="Root/Header" unique_id=1528089055]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Редактор"
+
+[node name="ModeHitboxBtn" type="Button" parent="Root/Header" unique_id=2009901652]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Хитбоксы"
+
+[node name="ModeAtlasBtn" type="Button" parent="Root/Header" unique_id=112798389]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Атлас"
+
+[node name="SnapCheck" type="CheckBox" parent="Root/Header" unique_id=1728327812]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Сетка"
+
+[node name="Body" type="HBoxContainer" parent="Root" unique_id=314093597]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sidebar" type="VBoxContainer" parent="Root/Body" unique_id=1438788044]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AddPolygonBtn" type="Button" parent="Root/Body/Sidebar" unique_id=1432124283]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+ Полигон"
+
+[node name="AddPointBtn" type="Button" parent="Root/Body/Sidebar" unique_id=190064893]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+ Точка"
+
+[node name="PolygonList" type="ScrollContainer" parent="Root/Body/Sidebar" unique_id=561582398]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PolygonListInner" type="VBoxContainer" parent="Root/Body/Sidebar/PolygonList" unique_id=1591356539]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ZoomSlider" type="HSlider" parent="Root/Body/Sidebar" unique_id=1060650237]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.5
+max_value = 3.0
+step = 0.1
+value = 1.0
+
+[node name="ClearBtn" type="Button" parent="Root/Body/Sidebar" unique_id=1091394392]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Очистить"
+
+[node name="SaveBtn" type="Button" parent="Root/Body/Sidebar" unique_id=17442469]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Сохранить"
+
+[node name="CanvasContainer" type="Control" parent="Root/Body" unique_id=563882295]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="Root/Body/CanvasContainer" unique_id=169675257]
+unique_name_in_owner = true
+layout_mode = 0
+
+[node name="DrawCanvas" type="Control" parent="Root/Body/CanvasContainer" unique_id=1774271453]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("3_70pp1")

@@ -6,3 +6,5 @@ extends Resource
 @export var path := ""
 @export var folder := ""
 @export var id := ""
+@export var hitbox_polygons: Array = []
+@export var atlas_slices: Array = []

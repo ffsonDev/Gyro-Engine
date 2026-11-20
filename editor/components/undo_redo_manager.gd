@@ -71,7 +71,27 @@ func _trim() -> void:
 		undo_stack.pop_front()
 
 func _snapshots_equal(a: Dictionary, b: Dictionary) -> bool:
-	var json := JSON.new()
-	var sa := json.stringify(a)
-	var sb := json.stringify(b)
-	return sa == sb
+	return _deep_equal(a, b)
+
+func _deep_equal(a: Variant, b: Variant) -> bool:
+	if typeof(a) != typeof(b):
+		return false
+	if a is Dictionary and b is Dictionary:
+		var ad := a as Dictionary
+		var bd := b as Dictionary
+		if ad.size() != bd.size():
+			return false
+		for k in ad:
+			if not bd.has(k) or not _deep_equal(ad[k], bd[k]):
+				return false
+		return true
+	if a is Array and b is Array:
+		var aa := a as Array
+		var ba := b as Array
+		if aa.size() != ba.size():
+			return false
+		for i in aa.size():
+			if not _deep_equal(aa[i], ba[i]):
+				return false
+		return true
+	return a == b

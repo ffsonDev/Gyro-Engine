@@ -38,6 +38,14 @@ func _ready() -> void:
 	test_runner.stopped.connect(_on_test_stopped)
 
 	apply_lang()
+	_animate_in()
+	GyroUI.apply_background(self)
+	_apply_glass_style(%BackupsPanel)
+
+func _animate_in() -> void:
+	modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(self, "modulate:a", 1.0, DesignTokens.ANIM_NORMAL).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 func apply_lang() -> void:
 	%StructureButton.text = GyroLang.t("structure")
@@ -90,29 +98,44 @@ func _close_backups() -> void:
 
 func _refresh_backups() -> void:
 	GyroUI.clear_children(%BackupsVBox)
-
 	var make := Button.new()
 	make.text = GyroLang.t("make_backup")
 	make.custom_minimum_size = Vector2(0, GyroUI.sz(56))
-	make.pressed.connect(func():
-		GyroBackups.make_backup_async(project.resource_path)
-		_refresh_backups()
-	)
+	make.pressed.connect(func(): _create_backup_now(make))
 	%BackupsVBox.add_child(make)
-
-	for bp in GyroBackups.list_backups(project.resource_path):
+	for bp in GyroBackups.list_backups(project_path):
+		var info := GyroBackups.backup_info(bp)
 		var row := Button.new()
-		row.text = str(bp).get_file().get_basename()
+		row.text = "%s · %s" % [str(info.name), _fmt_size(int(info.size))]
 		row.custom_minimum_size = Vector2(0, GyroUI.sz(56))
 		row.pressed.connect(func(): _restore_backup(bp))
 		%BackupsVBox.add_child(row)
 
+func _create_backup_now(btn: Button) -> void:
+	btn.disabled = true
+	btn.text = GyroLang.t("backup_in_progress")
+	GyroBackups.make_backup_async(project_path, true, func(ok: bool):
+		if not is_instance_valid(btn):
+			return
+		btn.disabled = false
+		btn.text = GyroLang.t("make_backup")
+		_refresh_backups()
+		GyroUI.alert(self, GyroLang.t("backups"),
+			GyroLang.t("backup_created") if ok else GyroLang.t("backup_failed"))
+	)
+
 func _restore_backup(bp: String) -> void:
 	_close_backups()
-	if GyroBackups.restore_backup(project.resource_path, bp):
-		reload_requested.emit(project.resource_path)
+	if GyroBackups.restore_backup(project_path, bp):
+		GyroUI.alert(self, GyroLang.t("backups"), GyroLang.t("backup_restored"))
+		reload_requested.emit(project_path)
 	else:
 		GyroUI.alert(self, GyroLang.t("backups"), GyroLang.t("restore_backup_failed"))
+
+func _fmt_size(bytes: int) -> String:
+	if bytes >= 1048576:
+		return "%.1f MB" % (bytes / 1048576.0)
+	return "%d KB" % maxi(1, bytes / 1024)
 
 func _export_project() -> void:
 	if project == null or project_path == "":
@@ -132,30 +155,8 @@ func _export_project() -> void:
 			GyroUI.alert(self, GyroLang.t("error"), message)
 	)
 
-func _share_file(path: String) -> void:
-	if OS.get_name() != "Android":
-		return
-	var runtime := Engine.get_singleton("AndroidRuntime")
-	if runtime == null:
-		return
-	var activity = runtime.getActivity()
-	if activity == null:
-		return
-	var FileClass := JavaClassWrapper.wrap("java.io.File")
-	var file = FileClass.new(ProjectSettings.globalize_path(path))
-	var FileProvider := JavaClassWrapper.wrap("androidx.core.content.FileProvider")
-	var authority := str(activity.getPackageName()) + ".fileprovider"
-	var uri = FileProvider.getUriForFile(activity, authority, file)
-	if uri == null:
-		return
-	var Intent := JavaClassWrapper.wrap("android.content.Intent")
-	var intent = Intent.new("android.intent.action.SEND")
-	intent.setType("application/octet-stream")
-	intent.putExtra("android.intent.extra.STREAM", uri)
-	intent.addFlags(1)
-	activity.startActivity(Intent.createChooser(intent, "Gyro Engine"))
-
 var build_button: Button
+var _build_dialog: GyroBuildDialog = null
 var key_button: Button
 
 func _setup_build_button() -> void:
@@ -188,21 +189,29 @@ func _build_apk() -> void:
 		pkg = "com.gyro.game"
 	var file_name := pkg + "-" + str(project.settings.version_name) + ".apk"
 	var out_path := "user://builds/" + file_name
-	var err := GyroApkBuilder.build_project(project, project_path, out_path)
-	if err != "":
-		GyroUI.alert(self, GyroLang.t("error"), err)
+
+	if _build_dialog == null:
+		_build_dialog = preload("res://ui/components/gyro_build_dialog.tscn").instantiate()
+		add_child(_build_dialog)
+		_build_dialog.build_completed.connect(_on_build_completed)
+
+	_build_dialog.start_build(project, project_path, out_path)
+
+func _on_build_completed(success: bool, output_path: String) -> void:
+	if not success:
 		return
-	var src := FileAccess.open(out_path, FileAccess.READ)
+	var src := FileAccess.open(output_path, FileAccess.READ)
 	if src == null or src.get_length() == 0:
-		GyroUI.alert(self, GyroLang.t("error"), "Сборка создала пустой файл (0 байт).")
+		GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("apk_empty_error"))
 		return
 	var kb := src.get_length() / 1024
 	src.close()
-	var saved := _save_apk_to_documents(out_path, file_name)
+	var file_name := output_path.get_file()
+	var saved := await _save_apk_to_documents(output_path, file_name)
 	if saved != "":
-		GyroUI.alert(self, GyroLang.t("build_apk"), GyroLang.t("apk_saved_to") % saved + " (" + str(kb) + " КБ)")
+		GyroUI.alert(self, GyroLang.t("build_apk"), GyroLang.t("apk_saved_to") % saved + " (" + str(kb) + " " + GyroLang.t("kb") + ")")
 	else:
-		_share_built_apk(out_path, file_name)
+		_share_built_apk(output_path, file_name)
 
 func _save_apk_to_documents(src_path: String, file_name: String) -> String:
 	if OS.get_name() != "Android":
@@ -244,68 +253,16 @@ func _save_apk_to_documents(src_path: String, file_name: String) -> String:
 			break
 		out.write(buf)
 		copied += buf.size()
+		await get_tree().process_frame
+		if not is_instance_valid(self):
+			src.close()
+			out.close()
+			return ""
 	src.close()
 	out.close()
 	if copied < total:
 		return ""
-	return "Documents/GyroEngine/" + file_name
-
-func _copy_to_downloads(src_abs: String, file_name: String) -> bool:
-	if OS.get_name() != "Android":
-		return false
-	var runtime := Engine.get_singleton("AndroidRuntime")
-	if runtime == null:
-		return false
-	var activity = runtime.getActivity()
-	if activity == null:
-		return false
-	var ContentValues = JavaClassWrapper.wrap("android.content.ContentValues")
-	var Uri = JavaClassWrapper.wrap("android.net.Uri")
-	var values = ContentValues.new()
-	values.put("_display_name", file_name)
-	values.put("mime_type", "application/vnd.android.package-archive")
-	var uri = Uri.parse("content://media/external/downloads")
-	var resolver = activity.getContentResolver()
-	var inserted = resolver.insert(uri, values)
-	if inserted == null:
-		return false
-	var out = resolver.openOutputStream(inserted)
-	if out == null:
-		return false
-	var src := FileAccess.open(src_abs, FileAccess.READ)
-	if src == null:
-		out.close()
-		return false
-	while true:
-		var buf := src.get_buffer(1024 * 1024)
-		if buf.is_empty():
-			break
-		out.write(buf)
-	src.close()
-	out.close()
-	return true
-
-func _share_apk(path: String) -> void:
-	if OS.get_name() != "Android":
-		return
-	var runtime := Engine.get_singleton("AndroidRuntime")
-	if runtime == null:
-		return
-	var activity = runtime.getActivity()
-	if activity == null:
-		return
-	var FileClass := JavaClassWrapper.wrap("java.io.File")
-	var file = FileClass.new(ProjectSettings.globalize_path(path))
-	var FileProvider := JavaClassWrapper.wrap("androidx.core.content.FileProvider")
-	var uri = FileProvider.getUriForFile(activity, str(activity.getPackageName()) + ".fileprovider", file)
-	if uri == null:
-		return
-	var Intent := JavaClassWrapper.wrap("android.content.Intent")
-	var intent = Intent.new("android.intent.action.SEND")
-	intent.setType("application/vnd.android.package-archive")
-	intent.putExtra("android.intent.extra.STREAM", uri)
-	intent.addFlags(1)
-	activity.startActivity(Intent.createChooser(intent, "Gyro APK"))
+	return "Documents/GyroEngine/" + file_name	
 
 var _pending_apk_path := ""
 
@@ -316,89 +273,55 @@ func _share_built_apk(out_path: String, file_name: String) -> void:
 			picker.connect("file_saved", _on_apk_saved)
 		_pending_apk_path = out_path
 		picker.saveFileAs(ProjectSettings.globalize_path(out_path), "application/vnd.android.package-archive", file_name)
-		GyroUI.alert(self, GyroLang.t("build_apk"), GyroLang.t("apk_save_hint"))
-	else:
-		GyroUI.alert(self, GyroLang.t("build_apk"), GyroLang.t("export_done") % out_path)
+
+func _exit_tree() -> void:
+	if OS.get_name() == "Android" and Engine.has_singleton("GodotFilePicker"):
+		var picker = Engine.get_singleton("GodotFilePicker")
+		if picker.is_connected("file_saved", _on_apk_saved):
+			picker.disconnect("file_saved", _on_apk_saved)
+	if test_runner != null:
+		test_runner.stop()
 
 func _on_apk_saved(ok: bool, _uri: String) -> void:
 	if ok:
 		DirAccess.remove_absolute(_pending_apk_path)
-		GyroUI.alert(self, GyroLang.t("build_apk"), GyroLang.t("apk_saved"))
-	else:
-		GyroUI.alert(self, GyroLang.t("build_apk"), GyroLang.t("apk_save_failed"))
 	_pending_apk_path = ""
 
-func _import_key() -> void:
-	var on_selected := func(path: String):
-		DirAccess.make_dir_recursive_absolute("user://keystore/")
-		var dest := "user://keystore/release.p12"
-		var err := DirAccess.copy_absolute(path, dest)
-		if err != OK:
-			GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("key_copy_failed"))
-			return
-		if path.begins_with("user://imported_"):
-			DirAccess.remove_absolute(path)
-		_ask_key_alias(dest)
-	var on_failed := func(message: String):
-		GyroUI.alert(self, GyroLang.t("import_key"), message)
-	GyroFilePicker.pick_file("other", on_selected, on_failed)
-
-func _ask_key_alias(key_path: String) -> void:
-	var dialog := GyroInputDialog.new()
-	add_child(dialog)
-	dialog.open(
-		GyroLang.t("key_alias"),
-		GyroLang.t("key_alias_placeholder"),
-		"gyro_sign",
-		GyroLang.t("next"),
-		GyroLang.t("cancel")
-	)
-	dialog.confirmed_text.connect(func(alias: String):
-		dialog.queue_free()
-		if alias.strip_edges() == "":
-			GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("alias_empty_error"))
-			return
-		_ask_key_password(key_path, alias.strip_edges())
-	)
-
-func _ask_key_password(key_path: String, alias: String) -> void:
-	var dialog := GyroInputDialog.new()
-	add_child(dialog)
-	dialog.open(
-		GyroLang.t("key_password_title"),
-		GyroLang.t("key_password_placeholder"),
-		"",
-		GyroLang.t("import"),
-		GyroLang.t("cancel")
-	)
-	dialog.confirmed_text.connect(func(password: String):
-		dialog.queue_free()
-		if password.strip_edges() == "":
-			GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("password_empty_error"))
-			return
-		_finish_import(key_path, alias, password.strip_edges())
-	)
-
-func _finish_import(key_path: String, alias: String, password: String) -> void:
-	var KeyStore = JavaClassWrapper.wrap("java.security.KeyStore")
-	if KeyStore == null:
-		GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("keystore_access_error"))
+func add_move_node_action(obj_name: String, pos: Vector2) -> void:
+	if project == null:
 		return
-	var ks = KeyStore.getInstance("PKCS12")
-	var JString = JavaClassWrapper.wrap("java.lang.String")
-	var chars = JString.new(password).toCharArray()
-	var FileInputStream = JavaClassWrapper.wrap("java.io.FileInputStream")
-	var fis = FileInputStream.new(ProjectSettings.globalize_path(key_path))
-	if fis == null:
-		GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("keystore_open_error"))
-		return
-	ks.load(fis, chars)
-	var key = ks.getKey(alias, chars)
-	if key == null:
-		GyroUI.alert(self, GyroLang.t("error"), GyroLang.t("keystore_invalid_error"))
-		DirAccess.remove_absolute(key_path)
-		return
-	var f := FileAccess.open("user://keystore/config.json", FileAccess.WRITE)
-	if f != null:
-		f.store_string(JSON.stringify({"alias": alias, "password": password}))
-		f.close()
+	var changed := false
+	for rule in _get_merged_blueprint().rules:
+		if rule == null:
+			continue
+		for a_value in rule.actions:
+			var a := a_value as GyroAction
+			if a == null:
+				continue
+			if GyroBlockEditor.OBJECT_CREATING_ACTIONS.has(a.type) and str(a.data.get("name", "")) == obj_name:
+				a.data["x"] = pos.x
+				a.data["y"] = pos.y
+				if a.data.has("anchor"):
+					a.data["anchor"] = "free"
+				changed = true
+			elif a.type == "MoveNode" and str(a.data.get("mode", "delta")) == "set" and str(a.data.get("node", "")) == obj_name:
+				a.data["x"] = pos.x
+				a.data["y"] = pos.y
+				changed = true
+	if changed:
+		GyroProjectJSON.save_to_file(project, project_path)
+
+func _apply_glass_style(panel: PanelContainer) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = DesignTokens.PANEL_BG
+	style.set_corner_radius_all(DesignTokens.RADIUS_XL)
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_width_top = 2
+	style.border_width_bottom = 2
+	style.border_color = DesignTokens.PANEL_BORDER
+	style.content_margin_left = DesignTokens.SPACING_XL
+	style.content_margin_right = DesignTokens.SPACING_XL
+	style.content_margin_top = DesignTokens.SPACING_XL
+	style.content_margin_bottom = DesignTokens.SPACING_XL
+	panel.add_theme_stylebox_override("panel", style)

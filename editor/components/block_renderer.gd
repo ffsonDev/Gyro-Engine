@@ -14,21 +14,22 @@ signal field_focus_entered()
 signal block_collapse_requested(resource: Variant)
 signal expr_pick_requested(set_callback: Callable, key: String, button: Button)
 signal var_pick_requested(set_callback: Callable, key: String, button: Button, resource: Variant)
+signal table_pick_requested(set_callback: Callable, key: String, button: Button)
 signal obj_pick_requested(set_callback: Callable, key: String, button: Button)
 signal asset_pick_requested(set_callback: Callable, key: String, button: Button, kind: String)
 signal event_pick_requested(set_callback: Callable, key: String, button: Button)
 signal block_menu_requested(kind: String, resource: Variant, rule: GyroEventRule)
+signal color_pick_requested(set_callback: Callable, key: String, button: Button, initial_color: String)
 
 var _rule_titles := {}
 var _name_edits := {}
 var editor: GyroBlockEditor
 var flow_handler: FlowHandler
-var _style_cache := {}
-var _style_v_cache := {}
 var _field_nodes := {}
 var _block_panels := {}
+var _style_cache := {}
+var _style_v_cache := {}
 
-var _burger_icon: Texture2D
 var _pick_style_normal: StyleBoxFlat
 var _pick_style_focus: StyleBoxFlat
 var _more_icon: Texture2D
@@ -47,10 +48,8 @@ func setup(ed: GyroBlockEditor, flow: FlowHandler) -> void:
 	editor = ed
 	flow_handler = flow
 	_load_shared_resources()
-	_warm_style_cache()
 
 func _load_shared_resources() -> void:
-	_burger_icon = load("res://ui/icons/burger.svg")
 	_more_icon = load("res://ui/icons/more.svg")
 	_pick_style_normal = StyleBoxFlat.new()
 	_pick_style_normal.bg_color = Color(0, 0, 0, 0)
@@ -62,20 +61,13 @@ func _load_shared_resources() -> void:
 	_pick_style_normal.content_margin_bottom = 2
 	_pick_style_focus = _pick_style_normal.duplicate()
 
-func _warm_style_cache() -> void:
-	for type in GyroBlocks.ACTION_COLORS:
-		_style(GyroBlocks.ACTION_COLORS[type], 8)
-		_style_v(GyroBlocks.ACTION_COLORS[type].darkened(0.35), 0, 10)
-	for type in GyroBlocks.CONDITION_COLORS:
-		_style(GyroBlocks.CONDITION_COLORS[type], 8)
-	_style_v(GyroBlocks.COLOR_EVENT, 10, 0)
-	_style_v(GyroBlocks.COLOR_EVENT.darkened(0.35), 0, 10)
-
 func clear_field_cache() -> void:
 	_field_nodes.clear()
 	_block_panels.clear()
 	_rule_titles.clear()
 	_name_edits.clear()
+	_style_cache.clear()
+	_style_v_cache.clear()
 
 func update_field_value(resource: Variant, key: String, value: Variant) -> void:
 	if _field_nodes.has(resource):
@@ -113,16 +105,14 @@ func build_event_block(parent: Control, rule: GyroEventRule, collapsed: bool) ->
 
 	var header_row := HBoxContainer.new()
 	header.add_child(header_row)
-
-	var handle := _make_handle()
-	handle.button_down.connect(func(): editor._start_drag_from_rule(rule, wrapper))
-	header_row.add_child(handle)
+	
+	GyroUI.attach_hold_drag(header, func(): editor._start_drag_from_rule(rule, wrapper))
 
 	var title_label := Label.new()
 	title_label.text = _rule_title(rule)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title_label.add_theme_font_size_override("font_size", GyroUI.fs(20))
-	title_label.add_theme_color_override("font_color", Color.WHITE)
+	title_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
 	title_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	header_row.add_child(title_label)
 	_rule_titles[rule] = title_label
@@ -151,11 +141,13 @@ func _build_rule_body(body: VBoxContainer, rule: GyroEventRule) -> void:
 	body.add_child(note_row)
 	var note_label := Label.new()
 	note_label.text = GyroLang.t("note")
-	note_label.add_theme_color_override("font_color", Color.WHITE)
+	note_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
 	note_row.add_child(note_label)
 	var note_btn := _make_pick_button(rule.note)
 	note_btn.set_meta("expr_raw", rule.note)
 	var note_set := func(key: String, value: Variant):
+		if not is_instance_valid(rule):
+			return
 		rule.note = str(value)
 		editor._mark_dirty()
 	note_btn.pressed.connect(func(): expr_pick_requested.emit(note_set, "note", note_btn))
@@ -166,11 +158,13 @@ func _build_rule_body(body: VBoxContainer, rule: GyroEventRule) -> void:
 		body.add_child(name_row)
 		var name_label := Label.new()
 		name_label.text = GyroLang.t("event_name_label")
-		name_label.add_theme_color_override("font_color", Color.WHITE)
+		name_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
 		name_row.add_child(name_label)
 		var name_btn := _make_pick_button(rule.event_name)
 		name_btn.set_meta("expr_raw", rule.event_name)
 		var name_set := func(key: String, value: Variant):
+			if not is_instance_valid(rule):
+				return
 			var clean := str(value).strip_edges()
 			if clean == "" or GyroBlocks.BUILTIN_EVENTS.has(clean) or editor._is_event_name_taken(clean, rule):
 				editor._set_pick_text(name_btn, rule.event_name)
@@ -189,7 +183,7 @@ func _build_rule_body(body: VBoxContainer, rule: GyroEventRule) -> void:
 		body.add_child(frow)
 		var flabel := Label.new()
 		flabel.text = GyroLang.t(str(fmeta.label))
-		flabel.add_theme_color_override("font_color", Color.WHITE)
+		flabel.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
 		frow.add_child(flabel)
 		var fbtn := _make_pick_button(rule.event_filter)
 		fbtn.set_meta("expr_raw", rule.event_filter)
@@ -198,11 +192,13 @@ func _build_rule_body(body: VBoxContainer, rule: GyroEventRule) -> void:
 			if fl != null:
 				fl.text = GyroLang.t("filter_any")
 		var set_filter := func(key: String, value: Variant):
+			if not is_instance_valid(rule):
+				return
 			rule.event_filter = str(value)
 			editor._mark_dirty()
 		match str(fmeta.kind):
 			"timer":
-				fbtn.pressed.connect(func(): editor._open_timer_for(set_filter, "event_filter", fbtn))
+				fbtn.pressed.connect(func(): editor.menus.open_timer_for(set_filter, "event_filter", fbtn))
 			"var":
 				fbtn.pressed.connect(func(): var_pick_requested.emit(set_filter, "event_filter", fbtn, rule))
 			"obj":
@@ -233,14 +229,30 @@ func _build_condition_block(parent: Control, rule: GyroEventRule, condition: Gyr
 	)
 
 func _build_action_block(parent: Control, rule: GyroEventRule, action: GyroAction) -> void:
-	var schema: Array = GyroBlocks.ACTION_SCHEMAS.get(action.type, [])
-	var color: Color = GyroBlocks.ACTION_COLORS.get(action.type, Color(0.72, 0.55, 0.25))
+	var schema: Array
+	var color: Color
+	var title_text: String
+	if str(action.type).begins_with("custom:"):
+		var def := GyroCustomRegistry.find_block(editor.state.project, str(action.type).substr(7))
+		if def != null:
+			schema = def.renderer_schema()
+			color = def.color
+			title_text = def.block_name
+		else:
+			schema = []
+			color = Color(0.35, 0.35, 0.40)
+			title_text = str(action.type)
+	else:
+		schema = GyroBlocks.ACTION_SCHEMAS.get(action.type, [])
+		color = GyroBlocks.ACTION_COLORS.get(action.type, Color(0.72, 0.55, 0.25))
+		title_text = GyroBlocks.action_name(action.type)
 	_build_data_block(
 		parent, rule, "action", action, color,
-		GyroBlocks.action_name(action.type), schema, action.data,
+		title_text, schema, action.data,
 		func(): remove_action_requested.emit(rule, action),
 		func(): copy_action_requested.emit(rule, action),
-		func(key: String, value: Variant): action.data[key] = value
+		func(key: String, value: Variant): action.data[key] = value,
+		[]
 	)
 
 func _build_data_block(
@@ -254,75 +266,72 @@ func _build_data_block(
 	panel.add_theme_stylebox_override("panel", _style(color, 8))
 	parent.add_child(panel)
 	_block_panels[resource] = panel
-
-	var is_collapsed := bool(editor.block_collapsed.get(resource, false))
+	GyroUI.attach_hold_drag(panel, func(): editor._start_drag_from_panel(kind, resource, rule, panel))
+	var is_collapsed := bool(editor.state.block_collapsed.get(resource, false))
 	panel.modulate.a = 0.45 if (bool(resource.get("disabled")) or is_collapsed) else 1.0
-	editor._drag_register(kind, resource, rule, panel, owner_array)
-
+	var arr := owner_array if not owner_array.is_empty() else editor._array_for(rule, kind)
+	editor.drag_drop.register_item({
+		"kind": kind, "resource": resource, "rule": rule, "panel": panel,
+		"array": arr
+	})
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 4)
 	panel.add_child(vbox)
-
 	var title_row := HBoxContainer.new()
 	vbox.add_child(title_row)
-
-	var handle := _make_handle()
-	handle.button_down.connect(func(): editor._start_drag_from_panel(kind, resource, rule, panel))
-	title_row.add_child(handle)
-
 	var title := Label.new()
 	title.text = title_text
 	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	title.add_theme_color_override("font_color", Color.WHITE)
 	title.add_theme_font_size_override("font_size", GyroUI.fs(18))
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	title_row.add_child(title)
-
 	var more := GyroUI.icon_button("res://ui/icons/more.svg", GyroUI.fs(26), 10)
 	more.pressed.connect(func(): block_menu_requested.emit(kind, resource, rule))
 	title_row.add_child(more)
-
 	var fields := VBoxContainer.new()
 	fields.add_theme_constant_override("separation", 4)
 	fields.visible = not is_collapsed
 	vbox.add_child(fields)
-	
 	if kind == "action":
 		var flow_action: GyroAction = resource as GyroAction
 		if flow_action != null and (flow_action.type == "If" or flow_action.type == "Repeat" or flow_action.type == "ForEachTable" or flow_action.type == "LoopRange"):
 			_build_flow_pocket(vbox, rule, flow_action)
-
 	var field_map: Dictionary = {}
 	for field_value in schema:
 		var key: String = str(field_value[0])
 		var label_text: String = str(field_value[1])
+		var field_type: String = str(field_value[2]) if field_value.size() > 2 else ""
 		var row := HBoxContainer.new()
 		fields.add_child(row)
-
 		var label := Label.new()
 		label.text = GyroLang.t(label_text)
 		label.custom_minimum_size = Vector2(GyroUI.sz(110), 0)
-		label.add_theme_color_override("font_color", Color.WHITE)
+		label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
 		label.add_theme_font_size_override("font_size", GyroUI.fs(16))
+		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		row.add_child(label)
-
 		var btn := _make_pick_button(editor._display_value(data.get(key, null)))
-		if field_value.size() > 2 and str(field_value[2]) == "var":
+		if field_type == "color":
+			btn.set_meta("color_raw", data.get(key, null))
+			btn.pressed.connect(func(): color_pick_requested.emit(set_callback, key, btn, data.get(key, "#ffffff")))
+		elif field_type == "var":
 			btn.set_meta("expr_raw", data.get(key, null))
 			btn.pressed.connect(func(): var_pick_requested.emit(set_callback, key, btn, resource))
-		elif field_value.size() > 2 and str(field_value[2]) == "obj":
+		elif field_type == "obj":
 			btn.pressed.connect(func(): obj_pick_requested.emit(set_callback, key, btn))
-		elif field_value.size() > 2 and (str(field_value[2]) == "sprite" or str(field_value[2]) == "sound"):
-			var pick_kind: String = str(field_value[2])
-			btn.pressed.connect(func(): asset_pick_requested.emit(set_callback, key, btn, pick_kind))
-		elif field_value.size() > 2 and str(field_value[2]) == "event":
+		elif field_type == "sprite" or field_type == "sound" or field_type == "font":
+			btn.pressed.connect(func(): asset_pick_requested.emit(set_callback, key, btn, field_type))
+		elif field_type == "event":
 			btn.pressed.connect(func(): event_pick_requested.emit(set_callback, key, btn))
+		elif field_type == "table":
+			btn.pressed.connect(func(): table_pick_requested.emit(set_callback, key, btn))
 		else:
 			btn.set_meta("expr_raw", data.get(key, null))
 			btn.pressed.connect(func(): expr_pick_requested.emit(set_callback, key, btn))
 		row.add_child(btn)
 		field_map[key] = btn
-	_field_nodes[resource] = field_map
 
 func _rule_title(rule: GyroEventRule) -> String:
 	if rule.is_named():
@@ -362,16 +371,20 @@ func _build_flow_pocket(vbox: VBoxContainer, rule: GyroEventRule, flow_action: G
 			continue
 		_build_flow_child_block(pocket_vbox, rule, flow_action, child)
 
-	editor._drag_register_flow(flow_action, pocket)
+	editor.drag_drop.register_item({"kind": "flow", "action": flow_action, "panel": pocket})
 
 func _build_flow_child_block(parent: Control, rule: GyroEventRule, flow_action: GyroAction, child: GyroAction) -> void:
 	var schema: Array = GyroBlocks.ACTION_SCHEMAS.get(child.type, [])
 	var color: Color = GyroBlocks.ACTION_COLORS.get(child.type, Color(0.72, 0.55, 0.25))
 	var remove_callback := func():
+		if not is_instance_valid(flow_action) or not is_instance_valid(child):
+			return
 		flow_handler.get_array(flow_action).erase(child)
 		flow_handler.sync(flow_action)
 		editor._on_flow_changed()
 	var copy_callback := func():
+		if not is_instance_valid(flow_action) or not is_instance_valid(child):
+			return
 		var arr: Array = flow_handler.get_array(flow_action)
 		var index: int = arr.find(child)
 		var copy: GyroAction = child.duplicate(true) as GyroAction
@@ -379,6 +392,8 @@ func _build_flow_child_block(parent: Control, rule: GyroEventRule, flow_action: 
 		flow_handler.sync(flow_action)
 		editor._on_flow_changed()
 	var set_callback := func(key: String, value: Variant):
+		if not is_instance_valid(child):
+			return
 		child.data[key] = value
 		flow_handler.sync(flow_action)
 	_build_data_block(
@@ -387,15 +402,6 @@ func _build_flow_child_block(parent: Control, rule: GyroEventRule, flow_action: 
 		remove_callback, copy_callback, set_callback,
 		flow_handler.get_array(flow_action)
 	)
-
-func _make_handle() -> Button:
-	var button := Button.new()
-	button.icon = _burger_icon
-	button.flat = true
-	button.add_theme_color_override("font_color", Color(1, 1, 1, 0.7))
-	button.custom_minimum_size = Vector2(GyroUI.sz(25), GyroUI.sz(35))
-	button.add_theme_constant_override("icon_max_width", 25)
-	return button
 
 func _make_pick_button(initial_text: String) -> Button:
 	var button := Button.new()
@@ -406,8 +412,8 @@ func _make_pick_button(initial_text: String) -> Button:
 	button.add_theme_stylebox_override("pressed", _pick_style_normal)
 	button.add_theme_stylebox_override("focus", _pick_style_focus)
 	var label := Label.new()
-	label.text = _short(initial_text) if initial_text != "" else GyroLang.t("pick")
-	label.add_theme_color_override("font_color", Color.WHITE)
+	label.text = _short(str(initial_text)) if str(initial_text) != "" else GyroLang.t("pick")
+	label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
 	label.add_theme_font_size_override("font_size", GyroUI.fs(16))
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	button.add_child(label)

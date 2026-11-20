@@ -122,18 +122,17 @@ func toggle() -> void:
 	else:
 		enter()
 		
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if not active:
 		return
-	
 	var focus_owner := get_viewport().gui_get_focus_owner()
 	if focus_owner != null and focus_owner is LineEdit:
 		return
-	
+
 	var pressed := false
 	var released := false
 	var pos := Vector2.ZERO
-	
+
 	if event is InputEventScreenTouch:
 		pressed = event.pressed
 		released = not event.pressed
@@ -142,16 +141,25 @@ func _unhandled_input(event: InputEvent) -> void:
 		pressed = event.pressed
 		released = not event.pressed
 		pos = event.position
-	elif event is InputEventScreenDrag or (event is InputEventMouseMotion and _dragging):
+	elif event is InputEventScreenDrag:
+		pos = event.position
 		if _dragging and selected != null:
-			_move_to(event.position)
+			_move_to(pos)
 			get_viewport().set_input_as_handled()
-		return
+			return
+	elif event is InputEventMouseMotion:
+		pos = event.position
+		if _dragging and selected != null:
+			_move_to(pos)
+			get_viewport().set_input_as_handled()
+			return
 	else:
 		return
-	
+
 	if pressed:
 		if _over_own_ui(pos):
+			return
+		if _is_pos_over_tool_ui(pos):
 			return
 		var node := _pick_node(pos)
 		_select(node)
@@ -160,7 +168,35 @@ func _unhandled_input(event: InputEvent) -> void:
 			_drag_off = pos - selected.global_position
 		get_viewport().set_input_as_handled()
 	elif released:
-		_dragging = false
+		if _dragging:
+			_dragging = false
+			get_viewport().set_input_as_handled()
+
+func _is_pos_over_tool_ui(pos: Vector2) -> bool:
+	if host == null:
+		return false
+	for child in host.get_children():
+		if child is Control:
+			var c := child as Control
+			if not c.visible:
+				continue
+			if c.z_index < 250:
+				continue
+			if c.get_global_rect().has_point(pos):
+				return true
+	return false
+
+func _is_tool_ui(ctrl: Control) -> bool:
+	var c: Node = ctrl
+	while c != null and c != host:
+		if c.name == "StageUI" or c.name == "Stage":
+			return false
+		if c is Button:
+			return true
+		if c is Control and c.z_index >= 250:
+			return true
+		c = c.get_parent()
+	return false
 
 func _over_own_ui(pos: Vector2) -> bool:
 	if host != null:
@@ -182,6 +218,7 @@ func enter() -> void:
 	if active:
 		return
 	active = true
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
 	host.set_meta("gyro_layout_active", true)
 	host.set_layout_mode(true)
@@ -224,12 +261,13 @@ func cleanup() -> void:
 		toolbar.queue_free()
 		toolbar = null
 
-
 func _move_to(pos: Vector2) -> void:
-	if selected == null:
+	if selected == null or not is_instance_valid(selected):
 		return
-	selected.position = pos - _drag_off
+	selected.global_position = pos - _drag_off
+	host.runtime.object_system.update_aabb(selected)
 	_apply_snap()
+	host.runtime.object_system.update_aabb(selected)
 	_update_guides()
 	_update_badge()
 	object_moved.emit(selected.name, selected.position)
@@ -241,19 +279,18 @@ func _pick_node(pos: Vector2) -> Node:
 			var ch := sui.get_child(i) as Control
 			if ch != null and ch.visible and ch.get_global_rect().has_point(pos):
 				return ch
-				
-	var stage := host.get_node_or_null(NodePath("Stage")) as Node2D
+	var stage := host.get_stage()
 	if stage == null:
 		return null
-		
+	var scene_pos := pos
 	var best: Node = null
 	var best_z := -9999
 	for child in stage.get_children():
 		var n := child as Node2D
 		if n == null or not n.visible or n.name == "GameCamera":
 			continue
-		var aabb := host.runtime.object_system._get_aabb(n)
-		if aabb.has_point(pos) and n.z_index >= best_z:
+		var aabb := host.runtime.object_system.get_aabb(n)
+		if aabb.has_point(scene_pos) and n.z_index >= best_z:
 			best_z = n.z_index
 			best = n
 	return best
@@ -291,9 +328,11 @@ func _apply_snap() -> void:
 		selected.position.y += layout_rect.end.y - bb.end.y
 
 func _sel_rect() -> Rect2:
+	if selected == null or not is_instance_valid(selected):
+		return Rect2()
 	if selected is Control:
 		return (selected as Control).get_global_rect()
-	return host.runtime.object_system._get_aabb(selected)
+	return host.runtime.object_system.get_aabb(selected)
 
 func _update_guides() -> void:
 	if selected == null:
@@ -388,7 +427,10 @@ func _apply_anchor(anchor: String) -> void:
 	selected.set_meta("gyro_anchor", anchor)
 	host.register_anchor(sel_name, anchor)
 	host.set_anchor_offset(sel_name, Vector2.ZERO)
-	selected.position = _anchor_pt(anchor) - host.world_offset
+	var off := host.world_offset
+	if selected.get_parent() == host.get_stage():
+		off = host.get_stage().position
+	selected.position = _anchor_pt(anchor) - off
 	_update_guides()
 
 func _update_bars() -> void:
@@ -397,3 +439,8 @@ func _update_bars() -> void:
 			bars[i].visible = false
 		if i < frame.size():
 			frame[i].visible = false
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_SIZE_CHANGED and active:
+		layout_rect = Rect2(Vector2.ZERO, host.get_viewport_rect().size)
+		_update_bars()

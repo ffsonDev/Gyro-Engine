@@ -16,7 +16,7 @@ func get_array(action: GyroAction) -> Array:
 			var child := GyroAction.new()
 			child.type = str(bd.get("type", ""))
 			child.data = (bd.get("data", {}) as Dictionary).duplicate(true)
-			child.disabled = bool(bd.get("disabled", false))   # ← добавлено
+			child.disabled = bool(bd.get("disabled", false))
 			arr.append(child)
 	_cache[action] = arr
 	return arr
@@ -28,7 +28,7 @@ func sync(action: GyroAction) -> void:
 		var child := c as GyroAction
 		if child == null:
 			continue
-		blocks.append({"type": child.type, "data": child.data.duplicate(true), "disabled": child.disabled})   # ← добавлено
+		blocks.append({"type": child.type, "data": child.data.duplicate(true), "disabled": child.disabled})
 	action.data["blocks"] = blocks
 
 func sync_all() -> void:

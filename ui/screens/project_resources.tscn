@@ -258,6 +258,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ImportVBox" type="VBoxContainer" parent="ImportPanel" unique_id=435713358]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
 theme_override_constants/separation = 12
@@ -280,12 +281,8 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="ConfirmDialog" parent="." unique_id=1642496883 instance=ExtResource("3")]
 unique_name_in_owner = true
 z_index = 40
 layout_mode = 1
-grow_horizontal = 2
-grow_vertical = 2

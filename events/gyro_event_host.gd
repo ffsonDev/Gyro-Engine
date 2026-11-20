@@ -19,7 +19,6 @@ var _stage_ui: Control
 
 var _stage: Node2D
 
-var physics_process_callback := true
 var design_size := Vector2(480, 720)
 var current_orientation := "portrait"
 var world_offset := Vector2.ZERO
@@ -27,6 +26,7 @@ var _anchors := {}
 var _anchor_offsets := {}
 var _last_vp_size := Vector2.ZERO
 var _layout_active := false
+var last_pointer := Vector2.ZERO
 
 static func anchor_point(size: Vector2, anchor: String) -> Vector2:
 	var hx := 0.5
@@ -69,7 +69,12 @@ func _reapply_anchors(size: Vector2) -> void:
 			node = get_node_or_null(NodePath("StageUI/" + str(name)))
 		if node == null:
 			continue
-		node.position = anchor_point_local(size, _anchors.get(name, "c")) + _anchor_offsets.get(name, Vector2.ZERO)
+		var off := world_offset
+		if node.get_parent() == _stage:
+			off = _stage.position
+		node.position = anchor_point(size, _anchors.get(name, "c")) - off + _anchor_offsets.get(name, Vector2.ZERO)
+		if runtime.object_system != null:
+			runtime.object_system.update_aabb(node)
 
 func set_layout_mode(on: bool) -> void:
 	_layout_active = on
@@ -77,7 +82,7 @@ func set_layout_mode(on: bool) -> void:
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	if project_path == "" and project != null:
 		project_path = project.resource_path
@@ -104,40 +109,26 @@ func _ready() -> void:
 	_stage = Node2D.new()
 	_stage.name = "Stage"
 	add_child(_stage)
-
 	_stage_ui = Control.new()
 	_stage_ui.name = "StageUI"
 	_stage_ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_stage_ui.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(_stage_ui)
-	
+	_stage_ui.process_mode = Node.PROCESS_MODE_INHERIT
 	_update_layout()
-
 	if emit_ready_event:
 		emit_event("ready", {})
-
-	var camera := Camera2D.new()
-	camera.name = "GameCamera"
-	camera.zoom = Vector2(1, 1)
-	_stage.add_child(camera)
-	camera.make_current()
-	
 	var logger := GyroLogger.get_instance()
 	logger.enable()
-	logger.log_info("Project started: " + project.settings.app_name)
-
-
-	if not get_viewport().size_changed.is_connected(_update_layout):
-		get_viewport().size_changed.connect(_update_layout)
-
+	if project != null and project.settings != null:
+		logger.log_info("Project started: " + project.settings.app_name)
+	else:
+		logger.log_info("Project started")
 	_last_vp_size = get_viewport_rect().size
-	camera.position = _last_vp_size * 0.5
-	
 	_update_layout()
-	
 	_update_layout.call_deferred()
-
-	get_viewport().size_changed.connect(_on_vp_size_changed)
+	if not get_viewport().size_changed.is_connected(_on_vp_size_changed):
+		get_viewport().size_changed.connect(_on_vp_size_changed)
 
 func emit_event(type: String, payload: Dictionary) -> void:
 	var logger := GyroLogger.get_instance()
@@ -147,9 +138,14 @@ func emit_event(type: String, payload: Dictionary) -> void:
 func _exit_tree() -> void:
 	var logger := GyroLogger.get_instance()
 	logger.disable()
+	runtime.shutdown()
 	runtime.host = null
+	if runtime.object_system != null:
+		runtime.object_system.clear_pool()
 
 func _on_vp_size_changed() -> void:
+	if not is_inside_tree():
+		return
 	var new_size := get_viewport_rect().size
 	if _last_vp_size == new_size:
 		return
@@ -169,6 +165,8 @@ func refresh_layout() -> void:
 	_update_layout()
 
 func _update_layout() -> void:
+	if not is_inside_tree():
+		return
 	var vs := get_viewport_rect().size
 	position = Vector2.ZERO
 	size = vs
@@ -179,12 +177,9 @@ func _update_layout() -> void:
 	world_offset = (vs - design_size) * 0.5
 	if _stage != null:
 		_stage.position = world_offset
-	var cam := _stage.get_node_or_null(NodePath("GameCamera")) as Camera2D
-	if cam != null:
-		cam.position = design_size * 0.5
 	if _stage_ui != null:
 		_stage_ui.position = world_offset
-		_stage_ui.size = vs
+		_stage_ui.size = design_size
 
 func set_orientation(mode: String) -> void:
 	current_orientation = mode
@@ -194,17 +189,24 @@ func set_orientation(mode: String) -> void:
 		"portrait":
 			design_size = Vector2(480, 720)
 		_:
-			var vs := get_viewport_rect().size
-			if vs.x > vs.y:
-				design_size = Vector2(720, 480)
-			else:
-				design_size = Vector2(480, 720)
+			if is_inside_tree():
+				var vs := get_viewport_rect().size
+				if vs.x > vs.y:
+					design_size = Vector2(720, 480)
+				else:
+					design_size = Vector2(480, 720)
+	if not is_inside_tree():
+		return
 	_update_layout()
 	_reapply_anchors(get_viewport_rect().size)
 
 func screen_to_design(pos: Vector2) -> Vector2:
-	return pos - world_offset
+	return pos - stage_shift()
 
+func stage_shift() -> Vector2:
+	if _stage != null:
+		return _stage.position
+	return world_offset
 
 func _process(delta: float) -> void:
 	if _app_paused:
@@ -214,17 +216,18 @@ func _process(delta: float) -> void:
 	if emit_update_events:
 		emit_event("update", {"delta": delta})
 
-func _physics_process(_delta: float) -> void:
-	pass
-
 func _input(event: InputEvent) -> void:
 	if get_meta("gyro_layout_active", false):
+		return
+	if event is InputEventMouseMotion:
+		last_pointer = event.position
 		return
 	if event is InputEventKey:
 		if emit_input_events:
 			_emit_input_event(event)
 		return
 	if event is InputEventScreenDrag:
+		last_pointer = event.position
 		runtime.move_grab(screen_to_design(event.position))
 		if runtime.has_event("drag"):
 			var dpos := screen_to_design(event.position)
@@ -243,6 +246,7 @@ func _input(event: InputEvent) -> void:
 				return
 			pressed = mouse.pressed
 			pos = mouse.position
+		last_pointer = pos
 		if not pressed:
 			runtime.release_grab()
 			if _last_touch_name != "":
@@ -252,24 +256,24 @@ func _input(event: InputEvent) -> void:
 			return
 		if _is_ui_click(pos):
 			return
-		if runtime.try_grab(pos):
+		var dpos := screen_to_design(pos)
+		if runtime.try_grab(dpos):
 			return
-		if runtime.has_event("obj_touch_begin"):
-			var touched := _top_object_at(pos)
-			if touched != "":
-				_last_touch_name = touched
-				var dpos := screen_to_design(pos)
-				emit_event("obj_touch_begin", {"node": touched, "x": dpos.x, "y": dpos.y})
+		var touched := _top_object_at(dpos)
+		if touched != "":
+			_last_touch_name = touched
+			if runtime.has_event("obj_touch_begin"):
+				emit_event("obj_touch_begin", {"node": touched, "x": dpos.x, "y": dpos.y})	
 		if emit_input_events:
 			_emit_input_event(event)
 		if emit_tap_events:
 			_emit_tap_event(event)
 
 func _is_ui_click(pos: Vector2) -> bool:
-	if _stage_ui == null:
+	if _stage_ui == null or not is_instance_valid(_stage_ui):
 		return false
 	for child in _stage_ui.get_children():
-		if child is Control:
+		if child is Control and is_instance_valid(child):
 			var control := child as Control
 			if control.visible and control.get_global_rect().has_point(pos):
 				return true
@@ -280,16 +284,17 @@ func _notification(what: int) -> void:
 		_app_paused = true
 		emit_event("app_paused", {})
 
-func _top_object_at(pos: Vector2) -> String:
+func _top_object_at(design_pos: Vector2) -> String:
 	if _stage == null:
 		return ""
+	var scene_pos := design_pos + _stage.position
 	var best_z := -9999
 	var best_name := ""
 	for child in _stage.get_children():
 		if child is Node2D and child.name != "GameCamera" and child.visible:
 			var node := child as Node2D
-			var aabb := runtime.object_system._get_aabb(node)
-			if aabb.has_point(pos):
+			var aabb := runtime.object_system.get_aabb(node)
+			if aabb.has_point(scene_pos):
 				if node.z_index >= best_z:
 					best_z = node.z_index
 					best_name = node.name
@@ -328,16 +333,23 @@ func _load_blueprint() -> void:
 		blueprint = loaded
 
 func _setup_timers() -> void:
+	var added: Dictionary = {}
 	for config_value in timer_configs:
 		var config := config_value as GyroTimerConfig
-		if config == null:
+		if config == null or config.timer_name == "":
 			continue
+		if added.has(config.timer_name):
+			continue
+		added[config.timer_name] = true
 		add_timer(config.timer_name, config.wait_time, config.one_shot, config.autostart)
 	if blueprint != null:
 		for config_value in blueprint.timers:
 			var config := config_value as GyroTimerConfig
-			if config == null:
+			if config == null or config.timer_name == "":
 				continue
+			if added.has(config.timer_name):
+				continue
+			added[config.timer_name] = true
 			add_timer(config.timer_name, config.wait_time, config.one_shot, config.autostart)
 
 func _on_timer_timeout(timer_name: String) -> void:
@@ -359,7 +371,6 @@ func _emit_input_event(event: InputEvent) -> void:
 		if touch.pressed:
 			var dpos := screen_to_design(touch.position)
 			emit_event("input", {"type": "touch", "x": dpos.x, "y": dpos.y})
-
 
 func _emit_tap_event(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:

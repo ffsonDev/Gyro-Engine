@@ -32,6 +32,7 @@ func _action_create_particles(action: GyroAction, payload: Dictionary) -> void:
 		return
 	var old := runtime._get_target_node(p_name)
 	if old != null:
+		runtime.object_system.on_object_deleted(p_name)
 		old.get_parent().remove_child(old)
 		old.free()
 	var p := GPUParticles2D.new()
@@ -95,6 +96,7 @@ func _action_create_particles(action: GyroAction, payload: Dictionary) -> void:
 	p.position = runtime.apply_anchor(p, p_name, str(action.data.get("anchor", "free")), base_pos)
 	p.emitting = true
 	stage.add_child(p)
+	runtime.invalidate_node_cache()
 	runtime.object_system.last_object_name = p_name
 
 func _action_set_particles_param(action: GyroAction, payload: Dictionary) -> void:
@@ -122,3 +124,4 @@ func _action_delete_particles(action: GyroAction, payload: Dictionary) -> void:
 	if target != null:
 		runtime.object_system.on_object_deleted(target.name)
 		target.queue_free()
+		runtime.invalidate_node_cache()

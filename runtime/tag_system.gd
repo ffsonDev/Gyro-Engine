@@ -51,7 +51,14 @@ func cleanup_tags(object_name: String) -> void:
 
 func _delete_node(n: Node) -> void:
 	runtime.object_system.on_object_deleted(n.name)
-	n.queue_free()
+	if n is Node2D:
+		var parent := n.get_parent()
+		if parent != null:
+			parent.remove_child(n)
+		runtime.object_system._return_to_pool(n as Node2D)
+	else:
+		n.queue_free()
+	runtime.invalidate_node_cache()
 
 func _for_each_tag(action: GyroAction, payload: Dictionary, fn: Callable) -> void:
 	var tag := str(runtime._resolve_value(action.data.get("tag", ""), payload))

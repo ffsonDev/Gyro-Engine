@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://ddgdpairx553g" path="res://ui/screens/home_screen.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://b5ecq7jdrdtj" path="res://ui/icons/gear.svg" id="2"]
 [ext_resource type="Texture2D" uid="uid://n0dys7h8i66o" path="res://ui/icons/documentation.svg" id="2_fjhsr"]
+[ext_resource type="Texture2D" uid="uid://cq2kydpv8c8tj" path="res://roundedicon.png" id="2_mkv44"]
 [ext_resource type="Texture2D" uid="uid://b4v3vdbw8quiv" path="res://ui/icons/plus.svg" id="4"]
 [ext_resource type="Texture2D" uid="uid://dbm4i2bhb6ksl" path="res://ui/icons/import.svg" id="5"]
 [ext_resource type="PackedScene" uid="uid://erauwd71dk3l" path="res://ui/components/gyro_input_dialog.tscn" id="7"]
@@ -24,6 +25,7 @@ anchor_bottom = 1.0
 color = Color(0.12941177, 0.14117648, 0.16078432, 1)
 
 [node name="Root" type="VBoxContainer" parent="." unique_id=635708080]
+unique_name_in_owner = true
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -34,13 +36,20 @@ offset_bottom = -16.0
 theme_override_constants/separation = 12
 
 [node name="Header" type="HBoxContainer" parent="Root" unique_id=1702066865]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
+
+[node name="TextureRect" type="TextureRect" parent="Root/Header" unique_id=67848074]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture = ExtResource("2_mkv44")
+expand_mode = 1
 
 [node name="Title" type="Label" parent="Root/Header" unique_id=797509759]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 25
 text = "Gyro Engine"
 
 [node name="Spacer" type="Control" parent="Root/Header" unique_id=1475436945]
@@ -64,6 +73,19 @@ theme_override_constants/icon_max_width = 30
 icon = ExtResource("2")
 flat = true
 icon_alignment = 1
+
+[node name="SearchEdit" type="LineEdit" parent="Root" unique_id=417318057]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search"
+
+[node name="SortButton" type="Button" parent="Root" unique_id=1731225278]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Sort"
 
 [node name="Scroll" type="ScrollContainer" parent="Root" unique_id=11370914]
 unique_name_in_owner = true
@@ -217,5 +239,3 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
